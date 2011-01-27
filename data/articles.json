@@ -1,0 +1,190 @@
+{
+    "all_or_nothing": true,
+    "docs": [
+        {
+            "_id": "http://b4winckler.wordpress.com/2010/08/07/using-the-conceal-vim-feature-with-latex/",
+            "title": "Using the conceal Vim feature with LaTeX",
+            "summary": "Vim 7.3 has just been released and with it comes the “conceal” feature (you can download MacVim 7.3 here). One neat application of this feature is that when editing LaTeX files certain backslash commands are replaced by their corresponding Unicode glyph. This is what I am talking about:",
+            "posted_on": "2010-08-07T05:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://blog.agoragames.com/2011/01/06/bundling-up-with-vim/",
+            "title": "Bundling Up With Vim",
+            "summary": "For my text editor I use vim. And with it I use a number of bundles to help simplify my life. Integrating with the editor saves time, requires less keystrokes and generally just makes it easier to process data.\n\nWith vim-rails, I can switch between an action and its view or test with only two keystrokes. Also, I can cherry pick tests to run and have a quick fix list in a buffer for when they break.\n\nRecently, I’ve discovered a wrapper for git known as vim-fugitive. Using another simple workflow, I can generate a quick fix list of the result of git status.",
+            "posted_on": "2011-01-06T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://blog.danielfischer.com/2010/11/19/a-starting-guide-to-vim-from-textmate/",
+            "title": "A Starting Guide to VIM from Textmate",
+            "summary": "For about four years I’ve been using Textmate almost every day. I’m very fast with it. I’ve always thought about switching over to VIM or Emacs but I have been scared of losing my speed. In fact, I’ve actually tried Emacs in the past and also wrote a blog post on my experience. I liked it in general, but I ended up coming back to Textmate after a week. Why? I didn’t really feel like I was gaining anything.",
+            "posted_on": "2010-11-19T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://blog.tplus1.com/index.php/2010/12/31/how-to-restart-a-gunicorn-server-from-vim/",
+            "title": "how to restart a gunicorn server without leaving vim",
+            "summary": "I’ve been using the gunicorn WSGI server lately while I work on my next project. gunicorn is fantastic, except for one tiny nuisance. I have to restart gunicorn as I change my app code. At the beginning, this meant I would switch over to the terminal where gunicorn was running. Then I’d kill the parent process by hitting CTRL+C, and then start it up again, by typing:",
+            "posted_on": "2010-12-31T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://blogs.perl.org/users/ovid/2010/11/method-extraction-in-vim.html",
+            "title": "Method Extraction In Vim",
+            "summary": "I'm hacking on code with some methods which are fairly long (inlined code for performance), but sometimes I have to extract some code out into its own method. Padre uses Devel::Refactor for this, but I didn't want to go down that road as it doesn't use PPI. Thus, I hacked my own using PPIx::EditorTools. It's not great, but long-term, I think it's a more robust solution.",
+            "posted_on": "2010-11-19T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://dancingpenguinsoflight.com/2009/02/python-and-vim-make-your-own-ide/",
+            "title": "Python and vim: Make your own IDE",
+            "summary": "I prefer to use vim for most of my systems administration and programming related editing tasks. Aside from the usual argument that it will be present on any *nix system worth its silicon that you log in to, I choose it because of the succinct and expressive power of its syntax. While I am still learning new commands and techniques all the time, and while it is true that the learning curve to be anything resembling proficient is rather steep, few editors can boast such a wide range of actions in so few commands.",
+            "posted_on": "2009-02-16T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://discontinuously.com/2011/01/jsctags-and-taglist-vim/",
+            "title": "getting jsctags to work with taglist.vim",
+            "summary": "ctags is a popular program for indexing function declarations of source files. It works great for many languages, but fails miserably on javascript. jsctags comes to its rescue: it knows how to parse javascript and gives a far more informative list of functions in the same ‘tags’ format.",
+            "posted_on": "2011-01-05T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://kevinw.github.com/2010/12/15/this-is-your-brain-on-vim/",
+            "title": "This Is Your Brain On Vim",
+            "summary": "I was watching a violinist bow intensely and I had this thought: I probably have as many brain cells devoted to my text editor as he does to playing his chosen instrument. Is it outlandish to imagine that an MRI of his brain during a difficult solo wouldn’t look much different than mine while manipulating code in vim?",
+            "posted_on": "2010-12-15T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://linux-software-news-tutorials.blogspot.com/2010/11/plugins-make-vim-true-ide.html",
+            "title": "3 Plugins to make VIM a true IDE",
+            "summary": "Let's see how to install 3 plugins that will help your vim or become closer each time to be a real IDE. I must say that since I started using it I am fascinated with this editor that although costs a lot to learn to use it at first, it is worth. But until now, had some disadvantages compared to a real IDE like Eclipse or NetBeans because it lacks some amenities that these programs offer.",
+            "posted_on": "2010-11-14T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://mortice.github.com/2010/10/19/rspec-ctags-and-vim.html",
+            "title": "RSpec, Ctags, and vim, oh my!",
+            "summary": "I recently switched to Vim for all my text-editing, including Rails development. This made me feel quite a bit more awesome.\n\nExcept.\n\nI’m working on a codebase with a number of fairly large classes and specs, and they’re a pain to navigate. The Taglist plugin makes navigation around classes quite a bit easier, but when editing a spec I was faced with this:",
+            "posted_on": "2010-10-19T05:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://od-eon.com/blogs/stefan/reloading-externally-modified-buffers-vim/",
+            "title": "reloading externally modified buffers in vim",
+            "summary": "Any non-trivial software project will have multiple people editing the same file at roughly the same time. While conflicts are managed with the help of a version control system like git, you're still left with a problem at the editor level: files opened during a \"git pull\" being modified by the merge. Here's an attempt to solve this using vim.",
+            "posted_on": "2010-12-29T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://thechangelog.com/post/2416116421/vmail-check-your-gmail-from-within-vim",
+            "title": "vmail - Check your Gmail from within vim",
+            "summary": "When I said I loved the command line, I wasn’t kidding. Therefore, of course, when I need to edit text files, I use vim. It’s just the right choice.\n\nSo it’s with a small amount of pain that I show you this interesting little project today. A common criticism that text editor (vim) fans throw in the face of operating system fans (emacs) is that a text editor should simply edit text. vmail, by Daniel Choi, lets you check your email from within vim. Here’s a (slightly outdated) screenshot:",
+            "posted_on": "2010-12-22T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://thechangelog.com/post/2508051212/the-fewest-keystrokes-wins-in-vim",
+            "title": "vimgolf: The fewest keystrokes wins - in Vim",
+            "summary": "Vim geeks take pride in solving problems in the fewest possible keystrokes, regardless of how cryptic the solution might be. With VimGolf from Ilya Grigorik, they can now compete for bragging rights in a golf-like game where the fewest strokes wins.",
+            "posted_on": "2010-12-28T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://thecoffman.com/2010/12/writing-vim-plugin-ruby/",
+            "title": "Writing your first Vim plugin using Ruby bindings",
+            "summary": "As anyone who knows me is aware – I love Vim. I’ve been using it for a number of years now and I find it to be the most efficient way to write and edit code. I’ve spent countless hours customizing my vimrc and finding useful plugins but I’ve never actually written one myself. Recently I decided to change that and I thought I’d share my experience here. ",
+            "posted_on": "2010-12-11T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://tottinge.blogsome.com/use-vim-like-a-pro",
+            "title": "Use VIM Like A Pro",
+            "summary": "There are other tutorials that are very good, and google will help you find them all. Maybe the greatest need in this world is not for another vim tutorial, but this one is mine.\n\nI have taken a slighltly different approach. I think that there is a certain mental model that makes mastering VIM much easier. Also, I include habits that make VIM your friend. I don't know who else does this.\n\nI've agonized and organized (and reorganized, and reorganized) the tutorial for top-to-bottom learning, with the goal that anyone who manages to emerge at the other end of this tutorial will have professional-grade editing skills, probably better than many of their experienced colleagues.",
+            "posted_on": "2010-12-16T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://vimcasts.org/episodes/aligning-text-with-tabular-vim/",
+            "title": "Aligning Text with tabular.vim",
+            "summary": "There are times when you can improve the readability of your code by lining up the elements on neighbouring lines. In this episode, I demonstrate how this can be acheived using the Tabular plugin. ",
+            "approved": false,
+            "posted_on": "2011-01-17T06:00:00.000Z",
+            "type": "article"
+        },
+        {
+            "_id": "http://westhoffswelt.de/blog/0056_argumentrewrap_a_vim_plugin_to_split_argument_lists.html",
+            "title": "ArgumentRewrap - A Vim plugin to automatically split argument lists",
+            "summary": "I have been using Vim as my primary PHP development environment for several years by now. Inspired by two blog articles (Coming Home To Vim, Vim Toolbox, 2010 Edition) I recently read I decided to cleanup my Vim configurations and create certain new macros for recurring tasks. One of these macros is the ArgumentRewrap plugin, which instantly saves me a lot of time.",
+            "posted_on": "2010-12-22T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://writequit.org/blog/?p=386",
+            "title": "How I develop Clojure with Vim",
+            "summary": "Recently Lau Jensen wrote a post talking about the features of Emacs and why it increases the productivity of Clojure programmers. While I don’t disagree that lisp programming in general benefits greatly from using Emacs as an editor, there are simply people who are too heavily invested into Vim (like myself) for things like viper-mode to work for them. So, I thought I’d share how I do Clojure development with Vim. Throw in my 2 cents.",
+            "posted_on": "2010-03-15T05:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://www.ibm.com/developerworks/aix/library/au-customize_vi/index.html",
+            "title": "Customizing the vi and Vim editors",
+            "summary": "The vi (visual) text editor is the oldest screen-oriented editor that is still provided by default on all UNIX, Linux, and other UNIX-like systems. ",
+            "approved": false,
+            "posted_on": "2011-01-22T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://www.kennedyprojects.com/2010/11/15/an-interview-with-the-vimpire/",
+            "title": "An interview with the VIMpire",
+            "summary": "The following is an interview with Bram Moolenar (creator of vim) that I conducted back in 1999. I’ve been a fan of vim since I started using Linux and still am. After the interview, I was able to talk my employer at the time into flying Bram into NY for Linuxworld 2000 as our guest. Good times.",
+            "posted_on": "2010-11-15T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://www.linux.com/learn/tutorials/393476:2010-vim-guide-roundup",
+            "title": "2010 Vim Guide Roundup ",
+            "summary": "Making your New Year's Resolutions for 2011? How about adding, \"learn Vim\" to the list? We make it easy, with all the Vim tutorials we've run on Linux.com in 2010.\n\nThis year we ran a series of tutorials on Vim ranging from the basics to more advanced topics like extending Vim with scripts and plugins. If you missed them the first time around, here they are again to help you get ready for efficient text editing in 2011.",
+            "posted_on": "2010-12-29T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://www.markhneedham.com/blog/2010/12/27/vim-learnings-so-far/",
+            "title": "Vim: Learnings so far",
+            "summary": "I’ve been using Vim instead of RubyMine for the last month or so and it’s been interesting observing the way that I browse code as I add plugins to make my life easier.",
+            "posted_on": "2010-12-27T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        },
+        {
+            "_id": "http://www.r-bloggers.com/reasons-for-transitioning-to-vim-bringing-latex-r-sweave-and-more-under-on",
+            "title": "Reasons for Transitioning to Vim: Bringing LaTeX, R, Sweave and More under One Roof",
+            "summary": "Over the years I've used a lot of different text editors on Windows.In general, I've used whatever text editor came with a program.When I started using R, I moved from Rgui through Tinn-R, JGR, and others,finally settling in to really enjoy the StatET plugin in Eclipse.When I started using LaTeX, I tried TexnicCenter, WinEdt, and Texlipse.Each program had the standard Windows shortcut keys and often a few extra onesfor tasks such as deleting lines and toggling comments.However, these novel shortcut keys varied between programs.",
+            "posted_on": "2011-01-10T06:00:00.000Z",
+            "type": "article",
+            "approved": true
+        }
+    ]
+}

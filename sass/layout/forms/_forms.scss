@@ -1,0 +1,128 @@
+// ------ Form Validation ------
+.input-error  {
+    background-color: $sakura;
+    color: white;
+}
+
+.error-msg {
+    @include float-right;
+    @include inline-block;
+    @include border-top-radius(4px);
+    @include linear-gradient( color-stops($dark-pink 19%, $sakura 75%), top );
+
+    color: white;
+    position: relative;
+    width: 230px;
+
+    span {
+        color: $dark-pink;
+        position: absolute;
+        bottom: 6px; left: -16px;
+    }
+}
+
+.submit-error {
+    @include float-right;
+    @include inline-block;
+    position: absolute;
+    bottom: 60px; right: 12px;
+    width: 70%;
+}
+
+.submit-success { @extend .submit-error; }
+
+label[for^=lol], input[name^=lol] {
+    position: absolute;
+    left: -99999px;
+}
+
+
+// ------ Contact Form ------
+.input-num {
+    color: $light-gray;
+    display: inline;
+    position: relative;
+    left: -4px;
+
+    &::after {
+        content: "|";
+        padding-left: 6px;
+    }
+}
+
+.basic-form {
+    @include trailer(2);
+    background-color: white;
+    padding: 24px 32px;
+    position: relative;
+
+    &::before {
+        @include upward-left-facing-triangle(44px, 174px);
+        bottom: 85px; left: 65%;
+    }
+
+    &::after {
+        @include downward-right-facing-triangle(44px, 174px);
+        top: 115px; right: 23.1%;
+    }
+
+    input[type=submit] {
+        @include circle(60px, $light-gray);
+        @include trailer(1);
+        border: none;
+    }
+
+    label:not([for^='lol']) {
+        margin-left: -17px;
+
+        &:nth-of-type(3) > .input-num::after { color: lighten($blue, 10%); }
+        &:nth-of-type(4) > .input-num::after { color: lighten($shibuya-green, 10%); }
+        &:nth-of-type(5) > .input-num::after { color: lighten($shibuya-yellow, 10%); }
+    }
+
+    .symbol { top: -24px; }
+
+    .textinput {
+        border-color: $light-gray;
+        border-top: none; border-right: none;
+    }
+}
+
+
+// ------ Article Submission Form ------
+.overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    display: none;
+
+    height: 100%; width: 100%;
+
+    position: fixed;
+    top: 0; left: 0;
+
+    z-index: 200;
+}
+
+.abs-form-container {
+    position: absolute;
+    top: 25%;
+    float: none;
+    width: 100%;
+}
+
+.abs-form {
+    margin: 0 auto;
+    width: 461px;
+
+    &::before { left: 69.1%; }
+    &::after { right: 20%; }
+
+    .close { left: 50%; }
+}
+
+.close {
+    @include inline-block;
+    position: relative;
+    left: 90%;
+
+    span { position: relative; }
+}

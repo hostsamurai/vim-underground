@@ -1,0 +1,72 @@
+h2. WTH is this?
+
+Why, a couchapp built with "soca":https://github.com/quirkey/soca of course! The intent here is to display articles and screencasts related to VIM, as well as a breakdown of scripts by popularity and how recently someone pushed an update for them. "WTF?", you say and I don't blame you. The code is far from perfect, but if anything, it's meant as an example of things you can do (and maybe shouldn't do). Developing couchapps with "soca":https://github.com/quirkey/soca makes the process that more enjoyable and I hope this example spurts discussion around the best way to go about doing things.
+
+h2. Getting Started
+
+You obviously need to have ruby, the soca gem and CouchDB installed on your system before proceeding. Generate a .couchapprc by running @soca init@ but make sure you don't override config.js in the process. Node.js is an optional dependency if you wish to scrape vim script ratings and # of downloads. The pubsubhubbub subscriber boilerplate logic included requires that you have the latest soca from github installed, as this provides a way to upload rewrite rules to CouchDB, along with a "Superfeedr":http://superfeedr.com account. Lastly, you should name the database "underground" as this is currently hardcoded in a couple of places.
+
+h3. Seeding data
+
+The data/ directory contains article, screencasts and script info that you can initially upload to your database. Simply run @thor data:seed@.
+
+h3. Retrieving script info
+
+You can generate and upload vim script information through the JSON document provided in data/ or by querying the "vim-scripts":https://github.com/vim-scripts profile through the github API like so:
+
+<pre>
+$ curl http://github.com/api/v2/json/repos/show/vim-scripts | jsonpretty > data/vim-scripts.json
+</pre>
+
+Transform the results into a more CouchDB-friendly format by running:
+
+<pre>
+$ thor seed:docify data/vim-scripts.json --push
+</pre>
+
+Or alternatively: 
+
+<pre>
+$ sed -r -f data/scripts_to_doc.sed -i data/vim-scripts.json
+</pre>
+
+h3. Scraping ratings and # of downloads
+
+The scraping script requires "npm":https://github.com/isaacs/npm and the "cradle":https://github.com/cloudhead/cradle and "node-scraper":https://github.com/mape/node-scraper modules for node.js. The script queries the VIM site 1000 scripts at a time. Call it like this:
+
+<pre>
+$ node data/tasks/ranking_scraper.js user:pass pointer
+</pre>
+
+where @pointer@ represents the offset to start. So if you wish to scrape from script 1001 to script 2001, the pointer will be 1000. Note that the offset is "0-indexed" based.
+
+h3. Pubsubhubbub subscriber boilerplate
+
+This piece of code was adapted from "couchpubtato":https://github.com/maxogden/couchpubtato and "Rocking-Chair":https://github.com/julien51/Rocking-Chair and is currently not used for anything. The idea here is to be able to subscribe to the vim-scripts atom "feed":https://github.com/vim-scripts.atom and insert/update script information as it happens by tapping into @_changes@ in CouchDB.
+
+h2. TODO
+
+* Security. The model objects currently live in the global space and there's nothing stopping anyone from uploading, modifying or deleting content from the database.
+* Get the external mailer working
+* Add tests
+* A better UI, seriously.
+
+h2. License
+
+Aptly licenced under the "wtfpl":http://sam.zoy.org/wtfpl/COPYING , reproduced here for convenience:
+
+<pre>
+            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+                    Version 2, December 2004
+
+ Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+
+ Everyone is permitted to copy and distribute verbatim or modified
+ copies of this license document, and changing it is allowed as long
+ as the name is changed.
+
+            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+  0. You just DO WHAT THE FUCK YOU WANT TO.
+</pre>

@@ -1,0 +1,32 @@
+// ------ About page ------
+.base-symbol {
+    background-color: white;
+    height: 56px;
+    padding: 17px 4px 0;
+    position: relative;
+}
+
+.symbol {
+    @extend .base-symbol;
+    @include float-right;
+    right: -93px; top: -24px;
+}
+
+#about-text {
+    background-color: white;
+    padding: 24px 32px;
+}
+
+#about-text {
+    @include trailer(5);
+
+    &::before {
+        @include upward-right-facing-triangle(60px, 200px);
+        bottom: 101px; left: 40px;
+    }
+
+    &::after {
+        @include downward-left-facing-triangle(80px, 200px);
+        top: 122px; left: 53%;
+    }
+}

@@ -1,0 +1,41 @@
+.modular {
+    @extend .basic-form;
+    @include border-top-right-radius(20px);
+    @include border-bottom-left-radius(20px);
+    @include box-shadow($light-gray, 0px, 0px, 30px, 5px);
+
+    margin: auto;
+    top: 15%;
+    width: 561px;
+
+    &::before, &::after { border: none; }
+}
+
+.keys {
+    @include border-radius(4px);
+    @include box-shadow(black, 1px, 1px, 2px, 0, inset);
+    @include text-shadow($cold-gray, 1px, 1px, 0);
+
+    background-color: $dark-gray;
+    color: white;
+    padding: 1px 4px;
+}
+
+#vim-keys, #form-keys {
+    border-bottom: 1px solid $light-gray;
+}
+
+#form-keys, #other-keys {
+    h3 { margin-top: 9.75px; }
+}
+
+#help ul {
+    display: inline-block;
+    vertical-align: text-top;
+}
+
+
+#vim-keys ul {
+    &:first-of-type { width: 20%; }
+    &:nth-of-type(2), &:last-of-type { width: 35%; }
+}

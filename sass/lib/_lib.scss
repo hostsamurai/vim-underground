@@ -1,0 +1,92 @@
+@mixin circle($diameter, $color) {
+    @include border-radius($diameter);
+    @include inline-block;
+
+    background-color: $color;
+    height: $diameter; width: $diameter;
+    text-align: center;
+}
+
+
+@mixin bordered-circle($diameter, $border-width, $border-color, $bg-color: white) {
+    @include circle($diameter, $bg-color);
+    border: $border-width solid $border-color;
+}
+
+
+@mixin triangle($top, $right, $bottom, $left, $style: solid, $color: white) {
+    border-width: $top $right $bottom $left;
+    border-style: $style;
+
+    display: inline;
+    height: 0; width: 0;
+    content: " ";
+    position: relative;
+}
+
+
+// left-facing: 0 0 h w
+@mixin left-facing-triangle($height, $width, $style: solid, $color: white) {
+    @include triangle(0, 0, $height, $width, $style, $color);
+    border-color: transparent transparent $color transparent;
+}
+
+// right-facing: h w 0 0
+@mixin right-facing-triangle($height, $width, $style: solid, $color: white) {
+    @include triangle($height, $width, 0, 0, $style, $color);
+    border-color: $color transparent transparent transparent;
+}
+
+// upward-facing: 0 w h w
+@mixin upward-facing-triangle($height, $width, $style: solid, $color: white) {
+    @include triangle(0, $width, $height, $width, $style, $color);
+    border-color: transparent transparent $color transparent;
+}
+
+// upward-right-facing: 0 w h 0
+@mixin upward-right-facing-triangle($height, $width, $style: solid, $color: white) {
+    @include triangle(0, $width, $height, 0, $style, $color);
+    border-color: transparent transparent $color transparent;
+}
+
+// upward-left-facing:
+@mixin upward-left-facing-triangle($height, $width, $style: solid, $color: white) {
+    @include triangle(0, 0, $height, $width, $style, $color);
+    border-color: transparent transparent $color transparent;
+}
+
+// downward-facing: h w 0 w
+@mixin downward-facing-triangle($height, $width, $style: solid, $color: white) {
+    @include triangle($height, $width, 0, $width, $style, $color);
+    border-color: $color transparent transparent transparent;
+}
+
+// downward-left-facing: h 0 0 w
+@mixin downward-left-facing-triangle($height, $width, $style: solid, $color: white) {
+    @include triangle($height, 0, 0, $width, $style, $color);
+    border-color: $color transparent transparent transparent;
+}
+
+// downward-right-facing: h w 0 0
+@mixin downward-right-facing-triangle($height, $width, $style: solid, $color: white) {
+    @include triangle($height, $width, 0, 0, $style, $color);
+    border-color: $color transparent transparent transparent;
+}
+
+
+@mixin hover-tag($content) {
+    @include border-radius(2px);
+
+    content: $content;
+
+    background-color: $hot-pink;
+    color: white;
+
+    padding: 4px;
+    position: absolute;
+    top: 30px; right: 10px;
+
+    @include adjust-font-size-to(11px, 1, 38px);
+    @extend .sans;
+    text-align: center;
+}

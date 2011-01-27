@@ -1,0 +1,409 @@
+{
+    "all_or_nothing": true,
+    "docs": [
+        {
+            "_id": "http://vimeo.com/14868992",
+            "title": "Vim in IRB",
+            "summary": "Demo: how to use vi (or emacs, or TextMate, etc.) from within IRB. ",
+            "posted_on": "2010-09-10T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/14868992\" width=\"640\" height=\"400\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/885/943/88594320_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/15443936",
+            "title": "Globals, Command Line and Functions",
+            "summary": "In this \"advanced\" video, we use the modification of an XML Mindmap into a standard bullet-style hierarchical list. To do this, we do nothing but use the Command-Line. Why? Well, we want to remember this stuff persistently in a function later. Ultra cool stuff!",
+            "posted_on": "2010-09-30T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/15443936\" width=\"640\" height=\"480\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/930/298/93029810_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/16458939",
+            "title": "Arrrrcamp 2010.10: Vim, walking without crutches by Drew Neil",
+            "summary": "In his provocatively titled blog post \"Everyone Who Tried to Convince Me to use Vim was Wrong\", Yehuda Katz showed how he switched from TextMate to Vim without experiencing an initial dip in productivity. Begin by emulating the working environment that you are comfortable with, then adopt Vim's idioms as and when you discover them. This is a welcome alternative to the hazing \"\"do everything the Vim way from day 1\" approach, which is widely advocated by veterans. Anything that offers a leg-up Vim's infamous learning curve is to be commended. But be careful not to get too comfortable. Mastering Vim requires a change in mindset and if you don't break some of your old habits you could miss out. I will begin by showing how a TextMate user can make Vim feel almost like home. I will show what preferences you can set in your vimrc file, and which plugins you can install to emulate the TextMate experience. Like walking with crutches, some of these features are useful while you build your strength, but if you can learn to walk without them you will be able to move faster. I will show how. ",
+            "posted_on": "2010-11-03T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/16458939\" width=\"400\" height=\"224\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/100/797/100797153_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/18424044",
+            "type": "screencast",
+            "updated_at": 1295850160956,
+            "title": "15 Years of CPAN",
+            "summary": "15 Years of CPAN Visualized! Read more showmetheco.de/​articles/​2011/​01/​15-years-of-cpan.html.\n",
+            "approved": false,
+            "posted_on": "2011-01-22T06:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/18424044\" width=\"640\" height=\"360\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/115/869/115869361_640.jpg",
+            "_deleted_conflicts": [
+                "2-bdf989d12b43ca928a75e15c0cb1b611"
+                ]
+        },
+        {
+            "_id": "http://vimeo.com/3186769",
+            "title": "Vim file explorer views",
+            "summary": "Vim is a powerful text editor that comes with a nifty file explorer, making navigating your mess of files easier than pogo sticking back and forth between the command line and vim. ",
+            "posted_on": "2009-02-12T06:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/3186769\" width=\"1280\" height=\"800\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/775/775027_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/3775923",
+            "title": "Relative line numbers in vim",
+            "summary": "Video showing how to do relative line numbers in vim. ",
+            "posted_on": "2009-03-20T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/3775923\" width=\"1280\" height=\"720\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/565/875/5658752_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/4007386",
+            "title": "Using ctags in vim",
+            "summary": "Now that you have your ctags created by git (smartic.us/​2009/​04/​03/​creating-ctags-with-git-hooks/​), you now need a ctags tutorial. This one is light due to the fact I was trying to get it all in there in 2 minutes.\n\nMake sure to do a help :tags if you are in vim or consult the oracle and rub the tiki god totem if you use emacs. ",
+            "posted_on": "2009-04-04T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/4007386\" width=\"1280\" height=\"720\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/747/689/7476898_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/4020903",
+            "title": "Code folding in vim",
+            "summary": "Too much code on the screen is a big distraction. In vim, this wasn't as straight forward as I thought it was going to be, so I'm sharing what I learned with you. ",
+            "posted_on": "2009-04-05T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/4020903\" width=\"1280\" height=\"720\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/757/266/7572665_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/4069219",
+            "title": "Using the vim tag list plugin",
+            "summary": "Previously we looked at using tags in vim (smartic.us/​2009/​04/​05/​using-ctags-in-vim/​). Now we'll work at making it easier for you.\n\nPlus, is your ruby plugin for vim updated? Are you sure? If not, have a look github.com/​vim-ruby/​vim-ruby or github.com/​bryanl/​vimconfig",
+            "posted_on": "2009-04-08T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/4069219\" width=\"1280\" height=\"720\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/796/566/7965667_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/4446112",
+            "title": "One Vim ... just one",
+            "summary": "Using One Vim session is the way to go... using more than one is less than great. Don't do it. ",
+            "posted_on": "2009-05-02T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/4446112\" width=\"574\" height=\"464\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/107/524/10752442_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/4446843",
+            "title": "The Vim Expression Register",
+            "summary": "Vim extensibility is enhanced heavily by the use of the expression register. If you want to know how to use it and what it's for, hit play. ",
+            "posted_on": "2009-05-02T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/4446843\" width=\"574\" height=\"464\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/107/577/10757732_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/4448265",
+            "title": "Demo of ProtoDef Vim plugin",
+            "summary": "Have a look for the ProtoDef script at vim.org/​scripts/​script.php?script_id=2624.\n\nProtoDef will pull prototype declarations from a C++ header file and create definitions in the C++ implementation file. ",
+            "posted_on": "2009-05-02T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/4448265\" width=\"574\" height=\"464\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/107/680/10768017_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/4448635",
+            "title": "Vim Macros and Global commands (one)",
+            "summary": "Vim has some big power in the macro system. And good ol' vi has some power as well... in the global commands. This video uses both mechanisms to make the same kind of change to an XML file. ",
+            "posted_on": "2009-05-02T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/4448635\" width=\"574\" height=\"464\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/107/704/10770493_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/4449258",
+            "title": "Vim XP Template plugin demo",
+            "summary": "A basic overview of the XPT Vim plugin vim.org/​scripts/​script.php?script_id=2611. ",
+            "posted_on": "2009-05-02T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/4449258\" width=\"578\" height=\"448\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/107/745/10774592_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/4454614",
+            "title": "Vim Autocommands",
+            "summary": "Vim's got Autocommands. And they rock... check 'em out. ",
+            "posted_on": "2009-05-03T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/4454614\" width=\"578\" height=\"448\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/108/133/10813367_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/4456458",
+            "title": "Using a Vim Macro to edit many files",
+            "summary": "This video shows how to modify any number of code files in the same way with a recorded macro and a whole bunch of power and ease. ",
+            "posted_on": "2009-05-03T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/4456458\" width=\"578\" height=\"448\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/108/263/10826300_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/4457161",
+            "title": "Using the Vim VisIncr plugin",
+            "summary": "The VisIncr plugin for Vim (vim.org/​scripts/​script.php?script_id=670) is pretty cool. This little movie demonstrates its most basic usage and how it might help out in the real world. ",
+            "posted_on": "2009-05-03T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/4457161\" width=\"572\" height=\"448\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/108/314/10831460_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6025010",
+            "title": "Basic Editing (Screencast 2)",
+            "summary": "In this screencast we look at using Vim to let you do some pretty serious work with file handling. There are a number of \"file renamers\" and the like out there that give you big complex GUIs and such, but they're all pretty silly once you realize how you can do this with Vim. ",
+            "posted_on": "2009-08-09T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6025010\" width=\"572\" height=\"448\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/214/674/21467436_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6093081",
+            "title": "Surround Plugin",
+            "summary": "The Surround plugin ( vim.org/​scripts/​script.php?script_id=1697 ) and the Repeat plugin ( vim.org/​scripts/​script.php?script_id=2136 ) are a great pair. Check out this video to see what the surround plugin can do. ",
+            "posted_on": "2009-08-13T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6093081\" width=\"566\" height=\"496\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/219/039/21903968_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6110008",
+            "title": "Destruction is Good",
+            "summary": "Here's a little tip on how to destroy the contents of a file all in the name of a good cause. We use some commands that work on the global level to tear a file up and distill out just the bits and pieces we're interested in. ",
+            "posted_on": "2008-08-14T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6110008\" width=\"566\" height=\"496\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/219/966/21996624_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6154082",
+            "title": "Find Command and the Path",
+            "summary": "The 'path' setting is extremely important for moving around your filesystem from within Vim. Have a read up on \":help 'path'\" for more information and to know what it's for, how it works, etc.. This video is a short introduction to it and gives you a bit of taste of how you can set it with some serious flexibility. ",
+            "posted_on": "2009-08-17T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6154082\" width=\"640\" height=\"512\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/222/990/22299000_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6170479",
+            "title": "BASIC Movement (Screencast 1)",
+            "summary": "Ok... this is really basic stuff. I noticed some folks doing some annoying arrow-key movement lately and it annoys me :) For those of you using the arrow keys a lot, have a look at this video. If you're already the wWeEbBgegE0$fFtT guru, then there probably won't be a whole lot of exciting stuff in here for ya :) ",
+            "posted_on": "2009-08-18T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6170479\" width=\"640\" height=\"512\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/224/173/22417332_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6185584",
+            "title": "BASIC Movement (Screencast 2)",
+            "summary": "A continuation of BASIC Movement (Screencast 1). Again, this is pretty beginner stuff so if you're already an expert on C-F,C-B,C-U,C-D, M, L, H, gg, G, *, #, g*, g#, / and ? you might want to skip this one. :) ",
+            "posted_on": "2009-08-19T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6185584\" width=\"640\" height=\"512\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/225/443/22544386_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6216655",
+            "title": "BASIC Movement (Screencast 3)",
+            "summary": "The last in the BASIC Movement series. Here we cover some bigger movements - jumps. This is the end of the videos on this series but it's not the end of motion in Vim. After watching this, please go further... read up on motion! ",
+            "posted_on": "2009-08-21T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6216655\" width=\"628\" height=\"480\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/227/492/22749238_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6306508",
+            "title": "Working with Many Files (Screencast 1)",
+            "summary": "We're going to start filling in a gaping whole in the videos thus far: Working with Many Files. This is going to be the absolute basic methods for working with multiple files in one of Vim's most important concept - buffers.\n\nPlease visit derekwyatt.org to see a better organization of these videos and to make some comments. I'm trying to make that site more of the \"go to\" spot for these things. Vimeo is a fantastic site, but it's not great at organizing things or managing all of the other information I think we want to cover with Vim. ",
+            "posted_on": "2009-08-27T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6306508\" width=\"564\" height=\"432\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/234/012/23401236_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6307101",
+            "title": "Working with Many Files (Screencast 2)",
+            "summary": "We're moving ahead with our study of working with many files. We're going to cover the args list, the buffer list, how to sequentially move forward through both and a ridiculously powerful command known as :bufdo.\n\nHead to derekwyatt.org to make some comments if you'd like and check out some of the other videos in the different categories. ",
+            "posted_on": "2009-08-27T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6307101\" width=\"564\" height=\"432\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/234/058/23405804_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6329762",
+            "title": "Basic Editing (Screencast 1)",
+            "summary": "This is basic editing, hopefully more well structured and clearer than the original video I did on this. In this video we cover iIaAxXddsrRcCoO.\n\nHead over to derekwyatt.org/​vim/​vim-tutorial-videos/​vim-novice-tutorial-videos/​ for some more videos, as well as an in-text recap of this video and some decent organization. Please make comments at derekwyatt.org if possible since that's much easier for me to follow! ",
+            "posted_on": "2009-08-29T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6329762\" width=\"600\" height=\"474\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/235/741/23574162_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6332848",
+            "title": "Basic Editing (Screencast 2)",
+            "summary": "In this episode we cover yanking, putting, joining and visual mode.\n\nHead over to derekwyatt.org/​vim/​vim-tutorial-videos/​vim-novice-tutorial-videos/​ for some more videos, as well as an in-text recap of this video and some decent organization. Please make comments at derekwyatt.org if possible since that's much easier for me to follow! ",
+            "posted_on": "2009-08-29T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6332848\" width=\"600\" height=\"474\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/235/878/23587870_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6342264",
+            "title": "Working with Many Files (Screencast 3)",
+            "summary": "In this video we cover how to work with windows! Some people have really been waiting for this and it's been a long time coming, I know. This is the last major piece of information you need in order to be able to work with many files in Vim. Windows give you a viewport on to your buffers and now that you've got a lot of buffers loaded, you're going to want to see more than one at a time.",
+            "posted_on": "2009-08-30T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6342264\" width=\"640\" height=\"576\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/236/165/23616506_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/6999927",
+            "title": "Welcome to Vim",
+            "summary": "This is a Vim Introduction to be watched by those looking to start using Vim or are curious about what it can do, or whatever... You don't necessarily \"learn\" anything here except that Vim is amazing and you get to learn my personal take on it :)",
+            "posted_on": "2009-10-10T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/6999927\" width=\"480\" height=\"352\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/286/468/28646859_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/7035132",
+            "title": "Vim's Help System",
+            "summary": "Alright, we've gone through a lot of basic Vim stuff at this point and it's now time to show you how to use Vim's help system effectively. After this video you should be able to hyperlink through the documentation, look up what you need to and search what you need to look for as well. These are key features that let you kick your Vim knowledge into *high gear*!",
+            "posted_on": "2009-10-12T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/7035132\" width=\"480\" height=\"352\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/289/234/28923425_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/7096383",
+            "title": "The vimrc File and Vim Runtime Directories",
+            "summary": "It's time to start customizing Vim. You've passed the Novice stuff, you know how to edit, move around, blah blah blah... now you need to start customizing. Adding colour schemes, creating mappings, persisting your settings, etc etc... This video will discuss how Vim works in terms of customization so that you can start moving forward with making Vim tailor itself to your needs.",
+            "posted_on": "2009-10-16T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/7096383\" width=\"480\" height=\"352\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/293/792/29379269_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/7129986",
+            "title": "Vim Modes Introduction",
+            "summary": "Modes are what set the Vi family of editors apart from all other editors. In order to become strong in the way of Vim kung-fu you must be familiar with Vim's modes. This video introduces the different modes that are carried inside Vim in preparation for getting into some more detail soon.",
+            "posted_on": "2009-10-18T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/7129986\" width=\"480\" height=\"352\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/296/374/29637470_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/7133419",
+            "title": "Insert Mode",
+            "summary": "The first of the modes we're going to cover is Insert Mode. There are a number of things that I personally find useful in insert mode - I don't cover them all, of course. Here we cover the following:\n\n- How to get help for insert mode.\n- The 'textwidth' and 'expandtab' options\n- Deleting the previous word\n- Inserting and deleting leading siftwidths\n- How to move while in insert mode - seriously you don't want to do this\n- Using CTRL-V to literally insert a character\n- Completions using the CTRL-X family of completions and the CTRL-N and CTRL-P commands\n\nHead to derekwyatt.org/​vim/​vim-tutorial-videos/​vim-intermediate-tutorial-videos/​#insert-mode to get a summary of this with some links to the help as well as other videos in this category. ",
+            "posted_on": "2009-08-19T05:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/7133419\" width=\"480\" height=\"352\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/296/685/29668594_200.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/8856779",
+            "title": "Moving text around in vim",
+            "summary": "Vim is great if you like to move text around. Here are some examples of things you can accomplish ",
+            "posted_on": "2010-01-19T06:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/8856779\" width=\"1280\" height=\"720\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/424/276/42427601_1280.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://vimeo.com/9174088",
+            "title": "Creating vim macros",
+            "summary": "Catch the blog post here: smartic.us/​2010/​02/​03/​creating-macros-in-vim/​\n\nI included a little cheat sheet. ",
+            "posted_on": "2010-02-03T06:00:00.000Z",
+            "html": "<iframe src=\"http://player.vimeo.com/video/9174088\" width=\"1280\" height=\"720\" frameborder=\"0\"></iframe>",
+            "thumb_url": "http://b.vimeocdn.com/ts/447/502/44750272_640.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://www.youtube.com/watch?v=KVAeelM-0QI",
+            "title": "Lococast.net Screencast Vim 3： Powerful Buffers",
+            "summary": "http://lococast.net goes over what a buffer is in Vim, how it differs from a window, and how we can use windows with buffers to work on our files much faster than we can with tabs.\n\nCommands we talk about\n\n:buffers\n:buffer 2\n:buffer 3\n:b 2\n:buffers\n:sb 4\n:bnext\n:bn\n:bprevious\n:bp\n:ball ",
+            "posted_on": "2010-09-04T05:00:00.000Z",
+            "html": "<object width=\"640\" height=\"360\"><param name=\"wmode\" value=\"opaque\"></param><param name=\"movie\" value=\"http://www.youtube.com/v/KVAeelM-0QI?fs=1\"></param><param name=\"allowFullScreen\" value=\"true\"></param><param name=\"allowscriptaccess\" value=\"always\"></param><embed src=\"http://www.youtube.com/v/KVAeelM-0QI?fs=1\" type=\"application/x-shockwave-flash\" width=\"640\" height=\"360\" allowscriptaccess=\"always\" allowfullscreen=\"true\" wmode=\"opaque\"></embed></object>",
+            "thumb_url": "http://i4.ytimg.com/vi/KVAeelM-0QI/hqdefault.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://www.youtube.com/watch?v=SzrcMilnre8&list=UL",
+            "title": "Lococast Screencast Vim 4 Visual Mode",
+            "summary": "Vim provides some great tools for performing text operations on highlighted or selected blocks of text. Check out this video for a demonstration on how to use visual mode along with the column visual mode to really speed up how you do things in Vim.",
+            "posted_on": "2010-10-05T05:00:00.000Z",
+            "html": "<object width=\"640\" height=\"360\"><param name=\"wmode\" value=\"opaque\"></param><param name=\"movie\" value=\"http://www.youtube.com/v/SzrcMilnre8?fs=1\"></param><param name=\"allowFullScreen\" value=\"true\"></param><param name=\"allowscriptaccess\" value=\"always\"></param><embed src=\"http://www.youtube.com/v/SzrcMilnre8?fs=1\" type=\"application/x-shockwave-flash\" width=\"640\" height=\"360\" allowscriptaccess=\"always\" allowfullscreen=\"true\" wmode=\"opaque\"></embed></object>",
+            "thumb_url": "http://i4.ytimg.com/vi/SzrcMilnre8/hqdefault.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://www.youtube.com/watch?v=XXJO_Swmdnw&list=UL",
+            "title": "Lococast.net Screencasts Vim 1： Splits",
+            "summary": "Legend has it that vim users don't need tabs. How is that possible you ask? It's because Vim has the great power to be able to split windows and navigate them with simple keystrokes. Learn what splits are, how they're used, and open the doors to what they can give you. You might find yourself losing your tabs after a while.",
+            "posted_on": "2010-08-16T05:00:00.000Z",
+            "html": "<object width=\"640\" height=\"360\"><param name=\"wmode\" value=\"opaque\"></param><param name=\"movie\" value=\"http://www.youtube.com/v/XXJO_Swmdnw?fs=1\"></param><param name=\"allowFullScreen\" value=\"true\"></param><param name=\"allowscriptaccess\" value=\"always\"></param><embed src=\"http://www.youtube.com/v/XXJO_Swmdnw?fs=1\" type=\"application/x-shockwave-flash\" width=\"640\" height=\"360\" allowscriptaccess=\"always\" allowfullscreen=\"true\" wmode=\"opaque\"></embed></object>",
+            "thumb_url": "http://i1.ytimg.com/vi/XXJO_Swmdnw/hqdefault.jpg",
+            "type": "screencast",
+            "approved": true
+        },
+        {
+            "_id": "http://www.youtube.com/watch?v=eX9m3g5J-XA",
+            "title": "7 Habits For Effective Text Editing 2.0",
+            "summary": "A large percentage of time behind the computer screen is spent on editing text. Investing a little time in learning more efficient ways to use a text editor pays itself back fairly quickly. This presentation will give an overview of the large number of ways of using Vim in a smart way to edit programs, structured text and documentation. Examples will be used to make clear how learning a limited number of habits will avoid wasting time and lower the number of mistakes.\nBram Moolenaar is mostly known for being the benevolent dictator of the text editor Vim. His roots are in electrical engineering and for a long time he worked on inventing image...\n",
+            "posted_on": "2007-07-24T05:00:00.000Z",
+            "html": "<object width=\"640\" height=\"360\"><param name=\"wmode\" value=\"opaque\"></param><param name=\"movie\" value=\"http://www.youtube.com/v/eX9m3g5J-XA?fs=1\"></param><param name=\"allowFullScreen\" value=\"true\"></param><param name=\"allowscriptaccess\" value=\"always\"></param><embed src=\"http://www.youtube.com/v/eX9m3g5J-XA?fs=1\" type=\"application/x-shockwave-flash\" width=\"640\" height=\"360\" allowscriptaccess=\"always\" allowfullscreen=\"true\" wmode=\"opaque\"></embed></object>",
+            "thumb_url": "http://i2.ytimg.com/vi/eX9m3g5J-XA/hqdefault.jpg",
+            "type": "screencast",
+            "approved": true
+        }
+    ]
+}

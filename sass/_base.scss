@@ -1,0 +1,68 @@
+//**
+//  Susy: Un-obtrusive grids for designers
+//  By: Eric A. Meyer and OddBird
+//  Site: susy.oddbird.net
+//**
+
+// Font Sizes --------------------------------------------------------------
+
+$base-font-size: 13px;
+$base-line-height: 19.5px;
+
+// Grid --------------------------------------------------------------
+
+$total-cols: 19;
+$col-width: 5em;
+$gutter-width: 0.625em; // 10px
+$side-gutter-width: $gutter-width;
+
+// Don't move this @import above the GRID and FONT-SIZE variables.
+@import "susy/susy";
+
+// Colors --------------------------------------------------------------
+
+$base: #4c4c4c;
+$alt: #005498;
+
+$red:                  #DE0000;
+$dark-red:             #BD2424;
+$blood-red:            #A1292E;
+$blue:                 #00AAFF;
+$violet:               #6B0098;
+$dark-gray:            #5E5E5E;
+$light-gray:           #DADADA;
+$gray:                 #8B8B8B;
+$cold-gray:            #423847;
+
+$hot-pink:             #FF2A8D;
+$dark-pink:            #C91481;
+$sakura:               #E3003D;
+
+$shibuya-red:          #D63755;
+$shibuya-yellow:       #FDC20E;
+$shibuya-pink:         #EC3F91;
+$shibuya-green:        #499101;
+
+$shibuya-hover-red:    #F87A85;
+$shibuya-hover-yellow: #FECE6C;
+$shibuya-hover-pink:   #F081AB;
+$shibuya-hover-green:  #70B30E;
+
+
+// Fonts --------------------------------------------------------------
+
+@mixin sans-family {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+@mixin serif-family {
+  font-family: Cambria, Georgia, serif;
+}
+
+@mixin monospace-family {
+  font-family: "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, Courier, monospace, sans-serif;
+}
+
+// OTHER MIXINS --------------------------------------------------------------
+// Mixins set here will be available in defaults, screen, print and IE
+// Or anywhere you import either base.sass or defaults.sass

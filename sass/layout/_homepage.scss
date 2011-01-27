@@ -1,0 +1,163 @@
+// ------ Imports ------
+@import 'articles/articles';
+@import 'screencasts/screencasts';
+@import 'scripts/scripts';
+@import 'about/about';
+@import 'forms/forms';
+@import 'feeds/feeds';
+@import 'help/help';
+
+
+// ------ General styles ------
+.container {
+    margin-right: 200px;
+
+    &:last-of-type { margin-right: 0; }
+}
+
+
+header {
+    height: 200px;
+    width: 100%;
+    position: fixed;
+
+    #header-info, #main-nav {
+        position: relative;
+        z-index: 100;
+    }
+
+    #header-info {
+        @include float-left;
+        height: 75px;
+        width: 67%;
+
+        background-color: $cold-gray;
+        color: white;
+    }
+
+    #page-info, #extra { @include inline-block; }
+
+    #page-info {
+        width: 75%;
+        &::after {
+            padding-left: 20px;
+        }
+    }
+
+    #extra {
+        width: 23%;
+
+        a {
+            @include link-colors(white, $hot-pink, white);
+            padding-right: 10px;
+            position: relative;
+
+            &:first-of-type:hover::after {
+                @include hover-tag("keyboard shortcuts");
+                width: 300%;
+            }
+
+            &:nth-of-type(2):hover::after {
+                @include hover-tag("submit article");
+                width: 200%;
+            }
+
+            &:nth-of-type(3):hover::after {
+                @include hover-tag("about");
+            }
+
+            &:nth-of-type(4):hover::after {
+                @include hover-tag("feeds");
+            }
+
+            &:last-of-type:hover::after {
+                @include hover-tag("contact");
+            }
+        }
+    }
+
+    img { padding-left: 4px; }
+
+    #main-nav {
+        @include float-right;
+        background-color: white;
+        display: inline-block;
+        height: inherit;
+        width: 33%;
+
+        a {
+            @include link-colors(white, $blue, white);
+
+            &::before {
+                display: block;
+            }
+        }
+
+        .link-wrapper {
+
+            @include inline-block;
+            height: inherit;
+            width: 25%;
+            margin-right: -4px;
+            padding-top: 16px;
+
+            &::before {
+                color: white;
+                margin-left: 30px;
+            }
+
+            &:first-of-type {
+                background-color: $shibuya-red;
+                &:hover { background-color: $shibuya-hover-red; }
+            }
+            &:nth-of-type(2) {
+                background-color: $shibuya-yellow;
+                &:hover { background-color: $shibuya-hover-yellow; }
+            }
+            &:nth-of-type(3) {
+                background-color: $shibuya-pink;
+                &:hover { background-color: $shibuya-hover-pink; }
+            }
+            &:last-of-type {
+                background-color: $shibuya-green;
+                &:hover { background-color: $shibuya-hover-green; }
+            }
+
+            span {
+                color: white;
+                display: block;
+                margin-top: -20px;
+            }
+        }
+    }
+}
+
+ul {
+    list-style-type: none;
+    margin-left: 0;
+}
+
+.no-js {
+    @include radial-gradient(color-stops($red, $dark-red 75%, $blood-red 655px));
+    @include text-shadow(lighten($cold-gray, 10%), -1px, -1px, 1px);
+
+    border-bottom: 4px solid $blood-red;
+    color: white;
+    height: 70px;
+    width: 100%;
+    position: fixed;
+    z-index: 1000;
+}
+
+
+// ------ Main sections ------
+#articles, #screencasts, #scripts, #about, #feeds {
+    @include trailer(6);
+    clear: none;
+    max-width: none;
+    padding-top: 280px;
+}
+
+
+// ------ Load media queries last ------
+@import 'media/queries';
