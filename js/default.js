@@ -8051,7 +8051,9 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 })(jQuery);
 
 // name: sammy
-// version: 0.6.2
+// version: 0.6.3
+
+// Sammy.js / http://sammyjs.org
 
 (function($, window) {
 
@@ -8064,9 +8066,10 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
       // borrowed from jQuery
       _isFunction = function( obj ) { return Object.prototype.toString.call(obj) === "[object Function]"; },
       _isArray = function( obj ) { return Object.prototype.toString.call(obj) === "[object Array]"; },
-      _decode = decodeURIComponent,
+      _decode = function( str ) { return decodeURIComponent(str.replace(/\+/g, ' ')); },
+      _encode = encodeURIComponent,
       _escapeHTML = function(s) {
-        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        return String(s).replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       },
       _routeWrapper = function(verb) {
         return function(path, callback) { return this.route.apply(this, [verb, path, callback]); };
@@ -8122,7 +8125,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
     }
   };
 
-  Sammy.VERSION = '0.6.2';
+  Sammy.VERSION = '0.6.3';
 
   // Add to the global logger pool. Takes a function that accepts an
   // unknown number of arguments and should print them or send them somewhere
@@ -8192,8 +8195,9 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
     // Does not render functions.
     // For example. Given this Sammy.Object:
     //
-    //    var s = new Sammy.Object({first_name: 'Sammy', last_name: 'Davis Jr.'});
-    //    s.toHTML() //=> '<strong>first_name</strong> Sammy<br /><strong>last_name</strong> Davis Jr.<br />'
+    //     var s = new Sammy.Object({first_name: 'Sammy', last_name: 'Davis Jr.'});
+    //     s.toHTML()
+    //     //=> '<strong>first_name</strong> Sammy<br /><strong>last_name</strong> Davis Jr.<br />'
     //
     toHTML: function() {
       var display = "";
@@ -8323,7 +8327,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
             current_location != Sammy.HashLocationProxy._last_location) {
             window.setTimeout(function() {
               $(window).trigger('hashchange', [true]);
-            }, 13);
+            }, 0);
           }
           Sammy.HashLocationProxy._last_location = current_location;
         };
@@ -8370,18 +8374,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 
     // An array of the default events triggered by the
     // application during its lifecycle
-    APP_EVENTS: ['run',
-                 'unload',
-                 'lookup-route',
-                 'run-route',
-                 'route-found',
-                 'event-context-before',
-                 'event-context-after',
-                 'changed',
-                 'error',
-                 'check-form-submission',
-                 'redirect',
-                 'location-changed'],
+    APP_EVENTS: ['run', 'unload', 'lookup-route', 'run-route', 'route-found', 'event-context-before', 'event-context-after', 'changed', 'error', 'check-form-submission', 'redirect', 'location-changed'],
 
     _last_route: null,
     _location_proxy: null,
@@ -8416,8 +8409,8 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
     },
 
     // returns a jQuery object of the Applications bound element.
-    $element: function() {
-      return $(this.element_selector);
+    $element: function(selector) {
+      return selector ? $(this.element_selector).find(selector) : $(this.element_selector);
     },
 
     // `use()` is the entry point for including Sammy plugins.
@@ -8428,7 +8421,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
     // Any additional arguments are passed to the app function sequentially.
     //
     // For much more detail about plugins, check out:
-    // http://code.quirkey.com/sammy/doc/plugins.html
+    // [http://sammyjs.org/docs/plugins](http://sammyjs.org/docs/plugins)
     //
     // ### Example
     //
@@ -8516,7 +8509,8 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
     },
 
     // `route()` is the main method for defining routes within an application.
-    // For great detail on routes, check out: http://code.quirkey.com/sammy/doc/routes.html
+    // For great detail on routes, check out:
+    // [http://sammyjs.org/docs/routes](http://sammyjs.org/docs/routes)
     //
     // This method also has aliases for each of the different verbs (eg. `get()`, `post()`, etc.)
     //
@@ -8603,16 +8597,16 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
     //
     // ### Example
     //
-    //    var app = $.sammy(function() {
+    //      var app = $.sammy(function() {
     //
-    //      this.mapRoutes([
-    //          ['get', '#/', function() { this.log('index'); }],
-    //          // strings in callbacks are looked up as methods on the app
-    //          ['post', '#/create', 'addUser'],
-    //          // No verb assumes 'any' as the verb
-    //          [/dowhatever/, function() { this.log(this.verb, this.path)}];
-    //        ]);
-    //    })
+    //        this.mapRoutes([
+    //            ['get', '#/', function() { this.log('index'); }],
+    //            // strings in callbacks are looked up as methods on the app
+    //            ['post', '#/create', 'addUser'],
+    //            // No verb assumes 'any' as the verb
+    //            [/dowhatever/, function() { this.log(this.verb, this.path)}];
+    //          ]);
+    //      });
     //
     mapRoutes: function(route_array) {
       var app = this;
@@ -8634,8 +8628,6 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
     // * All events are bound within the `eventNamespace()`
     // * Events are not actually bound until the application is started with `run()`
     // * callbacks are evaluated within the context of a Sammy.EventContext
-    //
-    // See http://code.quirkey.com/sammy/docs/events.html for more info.
     //
     bind: function(name, data, callback) {
       var app = this;
@@ -8797,20 +8789,20 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
     //
     // ### Example
     //
-    //    var app = $.sammy(function() {
+    //     var app = $.sammy(function() {
     //
-    //      helpers({
-    //        upcase: function(text) {
-    //         return text.toString().toUpperCase();
-    //        }
-    //      });
+    //       helpers({
+    //         upcase: function(text) {
+    //          return text.toString().toUpperCase();
+    //         }
+    //       });
     //
-    //      get('#/', function() { with(this) {
-    //        // inside of this context I can use the helpers
-    //        $('#main').html(upcase($('#main').text());
-    //      }});
+    //       get('#/', function() { with(this) {
+    //         // inside of this context I can use the helpers
+    //         $('#main').html(upcase($('#main').text());
+    //       }});
     //
-    //    });
+    //     });
     //
     //
     // ### Arguments
@@ -8857,8 +8849,8 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
     //
     // ### Example
     //
-    //    var app = $.sammy(function() { ... }); // your application
-    //    $(function() { // document.ready
+    //     var app = $.sammy(function() { ... }); // your application
+    //     $(function() { // document.ready
     //        app.run();
     //     });
     //
@@ -9153,18 +9145,18 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
     //
     // ### Example
     //
-    //    var app = $.sammy(function() {
+    //      var app = $.sammy(function() {
     //
-    //      // implements a 'fade out'/'fade in'
-    //      this.swap = function(content) {
-    //        this.$element().hide('slow').html(content).show('slow');
-    //      }
+    //        // implements a 'fade out'/'fade in'
+    //        this.swap = function(content) {
+    //          this.$element().hide('slow').html(content).show('slow');
+    //        }
     //
-    //      get('#/', function() {
-    //        this.partial('index.html.erb') // will fade out and in
+    //        get('#/', function() {
+    //          this.partial('index.html.erb') // will fade out and in
+    //        });
+    //
     //      });
-    //
-    //    });
     //
     swap: function(content) {
       return this.$element().html(content);
@@ -9230,6 +9222,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
       $_method = $form.find('input[name="_method"]');
       if ($_method.length > 0) { verb = $_method.val(); }
       if (!verb) { verb = $form[0].getAttribute('method'); }
+      if (!verb || verb == '') { verb = 'get'; }
       return $.trim(verb.toString().toLowerCase());
     },
 
@@ -9239,16 +9232,32 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
       $form = $(form);
       path  = $form.attr('action');
       verb  = this._getFormVerb($form);
-      if (!verb || verb == '') { verb = 'get'; }
       this.log('_checkFormSubmission', $form, path, verb);
       if (verb === 'get') {
-        this.setLocation(path + '?' + $form.serialize());
+        this.setLocation(path + '?' + this._serializeFormParams($form));
         returned = false;
       } else {
         params = $.extend({}, this._parseFormParams($form));
         returned = this.runRoute(verb, path, params, form.get(0));
       };
       return (typeof returned == 'undefined') ? false : returned;
+    },
+
+    _serializeFormParams: function($form) {
+       var queryString = "",
+         fields = $form.serializeArray(),
+         i;
+       if (fields.length > 0) {
+         queryString = this._encodeFormPair(fields[0].name, fields[0].value);
+         for (i = 1; i < fields.length; i++) {
+           queryString = queryString + "&" + this._encodeFormPair(fields[i].name, fields[i].value);
+         }
+       }
+       return queryString;
+    },
+
+    _encodeFormPair: function(name, value){
+      return _encode(name) + "=" + _encode(value);
     },
 
     _parseFormParams: function($form) {
@@ -9269,7 +9278,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
         pairs = parts[1].split('&');
         for (i = 0; i < pairs.length; i++) {
           pair = pairs[i].split('=');
-          params = this._parseParamPair(params, _decode(pair[0]), _decode(pair[1]));
+          params = this._parseParamPair(params, _decode(pair[0]), _decode(pair[1] || ""));
         }
       }
       return params;
@@ -9378,7 +9387,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
           if (returned !== false) {
             context.next(returned);
           }
-        }, 13);
+        }, 0);
       }
       return this;
     },
@@ -9512,7 +9521,6 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
       if (_isFunction(location) && !data) {
         return this.then(location);
       } else {
-        if (!data && this.content) { data = this.content; }
         return this.load(location)
                    .interpolate(data, location)
                    .then(callback);
@@ -9531,12 +9539,12 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
     // asynchronous functions into the queue. The content passed to the
     // callback is passed as `content` to the next item in the queue.
     //
-    // === Example
+    // ### Example
     //
-    //        this.send($.getJSON, '/app.json')
-    //            .then(function(json) {
-    //              $('#message).text(json['message']);
-    //            });
+    //     this.send($.getJSON, '/app.json')
+    //         .then(function(json) {
+    //           $('#message).text(json['message']);
+    //          });
     //
     //
     send: function() {
@@ -9675,17 +9683,17 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
   //
   // ### Example
   //
-  //  $.sammy(function() {
-  //    // The context here is this Sammy.Application
-  //    this.get('#/:name', function() {
-  //      // The context here is a new Sammy.EventContext
-  //      if (this.params['name'] == 'sammy') {
-  //        this.partial('name.html.erb', {name: 'Sammy'});
-  //      } else {
-  //        this.redirect('#/somewhere-else')
-  //      }
-  //    });
-  //  });
+  //       $.sammy(function() {
+  //         // The context here is this Sammy.Application
+  //         this.get('#/:name', function() {
+  //           // The context here is a new Sammy.EventContext
+  //           if (this.params['name'] == 'sammy') {
+  //             this.partial('name.html.erb', {name: 'Sammy'});
+  //           } else {
+  //             this.redirect('#/somewhere-else')
+  //           }
+  //         });
+  //       });
   //
   // Initialize a new EventContext
   //
@@ -9712,7 +9720,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 
     // A shortcut to the app's `$element()`
     $element: function() {
-      return this.app.$element();
+      return this.app.$element(_makeArray(arguments).shift());
     },
 
     // Look up a templating engine within the current app and context.
@@ -9730,7 +9738,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
       // if path is actually an engine function just return it
       if (_isFunction(engine)) { return engine; }
       // lookup engine name by path extension
-      engine = engine.toString();
+      engine = (engine || context.app.template_engine).toString();
       if ((engine_match = engine.match(/\.([^\.]+)$/))) {
         engine = engine_match[1];
       }
@@ -9995,369 +10003,6 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 })(jQuery, window.Sammy);
 
 (function($) {
-
-  // json2.js - only included if native json does not exist
-  // http://www.json.org/js.html
-  if (!window.JSON) {
-    window.JSON = {};
-  }
-  (function () {
-
-      function f(n) {
-          // Format integers to have at least two digits.
-          return n < 10 ? '0' + n : n;
-      }
-
-      if (typeof Date.prototype.toJSON !== 'function') {
-
-          Date.prototype.toJSON = function (key) {
-
-              return this.getUTCFullYear()   + '-' +
-                   f(this.getUTCMonth() + 1) + '-' +
-                   f(this.getUTCDate())      + 'T' +
-                   f(this.getUTCHours())     + ':' +
-                   f(this.getUTCMinutes())   + ':' +
-                   f(this.getUTCSeconds())   + 'Z';
-          };
-
-          String.prototype.toJSON =
-          Number.prototype.toJSON =
-          Boolean.prototype.toJSON = function (key) {
-              return this.valueOf();
-          };
-      }
-
-      var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-          escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-          gap,
-          indent,
-          meta = {    // table of character substitutions
-              '\b': '\\b',
-              '\t': '\\t',
-              '\n': '\\n',
-              '\f': '\\f',
-              '\r': '\\r',
-              '"' : '\\"',
-              '\\': '\\\\'
-          },
-          rep;
-
-
-      function quote(string) {
-
-  // If the string contains no control characters, no quote characters, and no
-  // backslash characters, then we can safely slap some quotes around it.
-  // Otherwise we must also replace the offending characters with safe escape
-  // sequences.
-
-          escapable.lastIndex = 0;
-          return escapable.test(string) ?
-              '"' + string.replace(escapable, function (a) {
-                  var c = meta[a];
-                  return typeof c === 'string' ? c :
-                      '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-              }) + '"' :
-              '"' + string + '"';
-      }
-
-
-      function str(key, holder) {
-
-  // Produce a string from holder[key].
-
-          var i,          // The loop counter.
-              k,          // The member key.
-              v,          // The member value.
-              length,
-              mind = gap,
-              partial,
-              value = holder[key];
-
-  // If the value has a toJSON method, call it to obtain a replacement value.
-
-          if (value && typeof value === 'object' &&
-                  typeof value.toJSON === 'function') {
-              value = value.toJSON(key);
-          }
-
-  // If we were called with a replacer function, then call the replacer to
-  // obtain a replacement value.
-
-          if (typeof rep === 'function') {
-              value = rep.call(holder, key, value);
-          }
-
-  // What happens next depends on the value's type.
-
-          switch (typeof value) {
-          case 'string':
-              return quote(value);
-
-          case 'number':
-
-  // JSON numbers must be finite. Encode non-finite numbers as null.
-
-              return isFinite(value) ? String(value) : 'null';
-
-          case 'boolean':
-          case 'null':
-
-  // If the value is a boolean or null, convert it to a string. Note:
-  // typeof null does not produce 'null'. The case is included here in
-  // the remote chance that this gets fixed someday.
-
-              return String(value);
-
-  // If the type is 'object', we might be dealing with an object or an array or
-  // null.
-
-          case 'object':
-
-  // Due to a specification blunder in ECMAScript, typeof null is 'object',
-  // so watch out for that case.
-
-              if (!value) {
-                  return 'null';
-              }
-
-  // Make an array to hold the partial results of stringifying this object value.
-
-              gap += indent;
-              partial = [];
-
-  // Is the value an array?
-
-              if (Object.prototype.toString.apply(value) === '[object Array]') {
-
-  // The value is an array. Stringify every element. Use null as a placeholder
-  // for non-JSON values.
-
-                  length = value.length;
-                  for (i = 0; i < length; i += 1) {
-                      partial[i] = str(i, value) || 'null';
-                  }
-
-  // Join all of the elements together, separated with commas, and wrap them in
-  // brackets.
-
-                  v = partial.length === 0 ? '[]' :
-                      gap ? '[\n' + gap +
-                              partial.join(',\n' + gap) + '\n' +
-                                  mind + ']' :
-                            '[' + partial.join(',') + ']';
-                  gap = mind;
-                  return v;
-              }
-
-  // If the replacer is an array, use it to select the members to be stringified.
-
-              if (rep && typeof rep === 'object') {
-                  length = rep.length;
-                  for (i = 0; i < length; i += 1) {
-                      k = rep[i];
-                      if (typeof k === 'string') {
-                          v = str(k, value);
-                          if (v) {
-                              partial.push(quote(k) + (gap ? ': ' : ':') + v);
-                          }
-                      }
-                  }
-              } else {
-
-  // Otherwise, iterate through all of the keys in the object.
-
-                  for (k in value) {
-                      if (Object.hasOwnProperty.call(value, k)) {
-                          v = str(k, value);
-                          if (v) {
-                              partial.push(quote(k) + (gap ? ': ' : ':') + v);
-                          }
-                      }
-                  }
-              }
-
-  // Join all of the member texts together, separated with commas,
-  // and wrap them in braces.
-
-              v = partial.length === 0 ? '{}' :
-                  gap ? '{\n' + gap + partial.join(',\n' + gap) + '\n' +
-                          mind + '}' : '{' + partial.join(',') + '}';
-              gap = mind;
-              return v;
-          }
-      }
-
-  // If the JSON object does not yet have a stringify method, give it one.
-
-      if (typeof JSON.stringify !== 'function') {
-          JSON.stringify = function (value, replacer, space) {
-
-  // The stringify method takes a value and an optional replacer, and an optional
-  // space parameter, and returns a JSON text. The replacer can be a function
-  // that can replace values, or an array of strings that will select the keys.
-  // A default replacer method can be provided. Use of the space parameter can
-  // produce text that is more easily readable.
-
-              var i;
-              gap = '';
-              indent = '';
-
-  // If the space parameter is a number, make an indent string containing that
-  // many spaces.
-
-              if (typeof space === 'number') {
-                  for (i = 0; i < space; i += 1) {
-                      indent += ' ';
-                  }
-
-  // If the space parameter is a string, it will be used as the indent string.
-
-              } else if (typeof space === 'string') {
-                  indent = space;
-              }
-
-  // If there is a replacer, it must be a function or an array.
-  // Otherwise, throw an error.
-
-              rep = replacer;
-              if (replacer && typeof replacer !== 'function' &&
-                      (typeof replacer !== 'object' ||
-                       typeof replacer.length !== 'number')) {
-                  throw new Error('JSON.stringify');
-              }
-
-  // Make a fake root object containing our value under the key of ''.
-  // Return the result of stringifying the value.
-
-              return str('', {'': value});
-          };
-      }
-
-
-  // If the JSON object does not yet have a parse method, give it one.
-
-      if (typeof JSON.parse !== 'function') {
-          JSON.parse = function (text, reviver) {
-
-  // The parse method takes a text and an optional reviver function, and returns
-  // a JavaScript value if the text is a valid JSON text.
-
-              var j;
-
-              function walk(holder, key) {
-
-  // The walk method is used to recursively walk the resulting structure so
-  // that modifications can be made.
-
-                  var k, v, value = holder[key];
-                  if (value && typeof value === 'object') {
-                      for (k in value) {
-                          if (Object.hasOwnProperty.call(value, k)) {
-                              v = walk(value, k);
-                              if (v !== undefined) {
-                                  value[k] = v;
-                              } else {
-                                  delete value[k];
-                              }
-                          }
-                      }
-                  }
-                  return reviver.call(holder, key, value);
-              }
-
-
-  // Parsing happens in four stages. In the first stage, we replace certain
-  // Unicode characters with escape sequences. JavaScript handles many characters
-  // incorrectly, either silently deleting them, or treating them as line endings.
-
-              cx.lastIndex = 0;
-              if (cx.test(text)) {
-                  text = text.replace(cx, function (a) {
-                      return '\\u' +
-                          ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-                  });
-              }
-
-  // In the second stage, we run the text against regular expressions that look
-  // for non-JSON patterns. We are especially concerned with '()' and 'new'
-  // because they can cause invocation, and '=' because it can cause mutation.
-  // But just to be safe, we want to reject all unexpected forms.
-
-  // We split the second stage into 4 regexp operations in order to work around
-  // crippling inefficiencies in IE's and Safari's regexp engines. First we
-  // replace the JSON backslash pairs with '@' (a non-JSON character). Second, we
-  // replace all simple value tokens with ']' characters. Third, we delete all
-  // open brackets that follow a colon or comma or that begin the text. Finally,
-  // we look to see that the remaining characters are only whitespace or ']' or
-  // ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
-
-              if (/^[\],:{}\s]*$/.
-  test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@').
-  replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
-  replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-
-  // In the third stage we use the eval function to compile the text into a
-  // JavaScript structure. The '{' operator is subject to a syntactic ambiguity
-  // in JavaScript: it can begin a block or an object literal. We wrap the text
-  // in parens to eliminate the ambiguity.
-
-                  j = eval('(' + text + ')');
-
-  // In the optional fourth stage, we recursively walk the new structure, passing
-  // each name/value pair to a reviver function for possible transformation.
-
-                  return typeof reviver === 'function' ?
-                      walk({'': j}, '') : j;
-              }
-
-  // If the text is not JSON parseable, then a SyntaxError is thrown.
-
-              throw new SyntaxError('JSON.parse');
-          };
-      }
-  }());
-
-  Sammy = Sammy || {};
-
-  // Sammy.JSON is a simple wrapper around Douglas Crockford's ever-useful json2.js
-  // (http://www.json.org/js.html]) Sammy.JSON includes the top level JSON object if
-  // it doesn't already exist (a.k.a. does not override the native implementation that
-  // some browsers include). It also adds a <tt>json()</tt> helper to a Sammy app when
-  // included.
-  Sammy.JSON = function(app) {
-
-    app.helpers({
-      // json is a polymorphic function that translates objects aback and forth
-      // from JSON to JS. If given a string, it will parse into JS, if given a JS
-      // object it will stringify into JSON.
-      //
-      // ### Example
-      //
-      //      var app = $.sammy(function() {
-      //        this.use(Sammy.JSON);
-      //
-      //        this.get('#/', function() {
-      //          this.json({user_id: 123}); //=> "{\"user_id\":\"123\"}"
-      //          this.json("{\"user_id\":\"123\"}"); //=> [object Object]
-      //          this.json("{\"user_id\":\"123\"}").user_id; //=> "123"
-      //        });
-      //      })
-      //
-      //
-      json: function(object) {
-        if (typeof object == 'string') {
-          return JSON.parse(object);
-        } else {
-          return JSON.stringify(object);
-        }
-      }
-    });
-
-  }
-
-})(jQuery);
-
-(function($) {
     var Handlebars = {
         compilerCache: {},
 
@@ -10598,7 +10243,6 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
         this.message = message;
     };
 
-// Build out our basic SafeString type
     Handlebars.SafeString = function(string) {
         this.string = string;
     }
@@ -10968,584 +10612,6 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
         app.helper(method_alias, handlebars);
 
     };
-
-})(jQuery);
-
-(function($) {
-
-  Sammy = Sammy || {};
-
-  // Sammy.Store is an abstract adapter class that wraps the multitude of in
-  // browser data storage into a single common set of methods for storing and
-  // retreiving data. The JSON library is used (through the inclusion of the
-  // Sammy.JSON) plugin, to automatically convert objects back and forth from
-  // stored strings.
-  //
-  // Sammy.Store can be used directly, but within a Sammy.Application it is much
-  // easier to use the `Sammy.Storage` plugin and its helper methods.
-  //
-  // Sammy.Store also supports the KVO pattern, by firing DOM/jQuery Events when
-  // a key is set.
-  //
-  // ### Example
-  //
-  //      // create a new store named 'mystore', tied to the #main element, using HTML5 localStorage
-  //      // Note: localStorage only works on browsers that support it
-  //      var store = new Sammy.Store({name: 'mystore', element: '#element', type: 'local'});
-  //      store.set('foo', 'bar');
-  //      store.get('foo'); //=> 'bar'
-  //      store.set('json', {obj: 'this is an obj'});
-  //      store.get('json'); //=> {obj: 'this is an obj'}
-  //      store.keys(); //=> ['foo','json']
-  //      store.clear('foo');
-  //      store.keys(); //=> ['json']
-  //      store.clearAll();
-  //      store.keys(); //=> []
-  //
-  // ### Arguments
-  //
-  // The constructor takes a single argument which is a Object containing these possible options.
-  //
-  // * `name` The name/namespace of this store. Stores are unique by name/type. (default 'store')
-  // * `element` A selector for the element that the store is bound to. (default 'body')
-  // * `type` The type of storage/proxy to use (default 'memory')
-  //
-  // Extra options are passed to the storage constructor.
-  // Sammy.Store supports the following methods of storage:
-  //
-  // * `memory` Basic object storage
-  // * `data` jQuery.data DOM Storage
-  // * `cookie` Access to document.cookie. Limited to 2K
-  // * `local` HTML5 DOM localStorage, browswer support is currently limited.
-  // * `session` HTML5 DOM sessionStorage, browswer support is currently limited.
-  //
-  Sammy.Store = function(options) {
-    var store = this;
-    this.options  = options || {};
-    this.name     = this.options.name || 'store';
-    this.element  = this.options.element || 'body';
-    this.$element = $(this.element);
-    if ($.isArray(this.options.type)) {
-      $.each(this.options.type, function(i, type) {
-        if (Sammy.Store.isAvailable(type)) {
-          store.type = type;
-          return false;
-        }
-      });
-    } else {
-      this.type = this.options.type || 'memory';
-    }
-    this.meta_key = this.options.meta_key || '__keys__';
-    this.storage  = new Sammy.Store[Sammy.Store.stores[this.type]](this.name, this.element, this.options);
-  };
-
-  Sammy.Store.stores = {
-    'memory': 'Memory',
-    'data': 'Data',
-    'local': 'LocalStorage',
-    'session': 'SessionStorage',
-    'cookie': 'Cookie'
-  };
-
-  $.extend(Sammy.Store.prototype, {
-    // Checks for the availability of the current storage type in the current browser/config.
-    isAvailable: function() {
-      if ($.isFunction(this.storage.isAvailable)) {
-        return this.storage.isAvailable();
-      } else {
-        true;
-      }
-    },
-    // Checks for the existance of `key` in the current store. Returns a boolean.
-    exists: function(key) {
-      return this.storage.exists(key);
-    },
-    // Sets the value of `key` with `value`. If `value` is an
-    // object, it is turned to and stored as a string with `JSON.stringify`.
-    // It also tries to conform to the KVO pattern triggering jQuery events on the
-    // element that the store is bound to.
-    //
-    // ### Example
-    //
-    //      var store = new Sammy.Store({name: 'kvo'});
-    //      $('body').bind('set-kvo-foo', function(e, data) {
-    //        Sammy.log(data.key + ' changed to ' + data.value);
-    //      });
-    //      store.set('foo', 'bar'); // logged: foo changed to bar
-    //
-    set: function(key, value) {
-      var string_value = (typeof value == 'string') ? value : JSON.stringify(value);
-      key = key.toString();
-      this.storage.set(key, string_value);
-      if (key != this.meta_key) {
-        this._addKey(key);
-        this.$element.trigger('set-' + this.name, {key: key, value: value});
-        this.$element.trigger('set-' + this.name + '-' + key, {key: key, value: value});
-      };
-      // always return the original value
-      return value;
-    },
-    // Returns the set value at `key`, parsing with `JSON.parse` and
-    // turning into an object if possible
-    get: function(key) {
-      var value = this.storage.get(key);
-      if (typeof value == 'undefined' || value == null || value == '') {
-        return value;
-      }
-      try {
-        return JSON.parse(value);
-      } catch(e) {
-        return value;
-      }
-    },
-    // Removes the value at `key` from the current store
-    clear: function(key) {
-      this._removeKey(key);
-      return this.storage.clear(key);
-    },
-    // Clears all the values for the current store.
-    clearAll: function() {
-      var self = this;
-      this.each(function(key, value) {
-        self.clear(key);
-      });
-    },
-    // Returns the all the keys set for the current store as an array.
-    // Internally Sammy.Store keeps this array in a 'meta_key' for easy access.
-    keys: function() {
-      return this.get(this.meta_key) || [];
-    },
-    // Iterates over each key value pair passing them to the `callback` function
-    //
-    // ### Example
-    //
-    //      store.each(function(key, value) {
-    //        Sammy.log('key', key, 'value', value);
-    //      });
-    //
-    each: function(callback) {
-      var i = 0,
-          keys = this.keys(),
-          returned;
-
-      for (i; i < keys.length; i++) {
-        returned = callback(keys[i], this.get(keys[i]));
-        if (returned === false) { return false; }
-      };
-    },
-    // Filters the store by a filter function that takes a key value.
-    // Returns an array of arrays where the first element of each array
-    // is the key and the second is the value of that key.
-    //
-    // ### Example
-    //
-    //      var store = new Sammy.Store;
-    //      store.set('one', 'two');
-    //      store.set('two', 'three');
-    //      store.set('1', 'two');
-    //      var returned = store.filter(function(key, value) {
-    //        // only return
-    //        return value === 'two';
-    //      });
-    //      // returned => [['one', 'two'], ['1', 'two']];
-    //
-    filter: function(callback) {
-      var found = [];
-      this.each(function(key, value) {
-        if (callback(key, value)) {
-          found.push([key, value]);
-        }
-        return true;
-      });
-      return found;
-    },
-    // Works exactly like filter except only returns the first matching key
-    // value pair instead of all of them
-    first: function(callback) {
-      var found = false;
-      this.each(function(key, value) {
-        if (callback(key, value)) {
-          found = [key, value];
-          return false;
-        }
-      });
-      return found;
-    },
-    // Returns the value at `key` if set, otherwise, runs the callback
-    // and sets the value to the value returned in the callback.
-    //
-    // ### Example
-    //
-    //    var store = new Sammy.Store;
-    //    store.exists('foo'); //=> false
-    //    store.fetch('foo', function() {
-    //      return 'bar!';
-    //    }); //=> 'bar!'
-    //    store.get('foo') //=> 'bar!'
-    //    store.fetch('foo', function() {
-    //      return 'baz!';
-    //    }); //=> 'bar!
-    //
-    fetch: function(key, callback) {
-      if (!this.exists(key)) {
-        return this.set(key, callback.apply(this));
-      } else {
-        return this.get(key);
-      }
-    },
-    // loads the response of a request to `path` into `key`.
-    //
-    // ### Example
-    //
-    // In /mytemplate.tpl:
-    //
-    //    My Template
-    //
-    // In app.js:
-    //
-    //    var store = new Sammy.Store;
-    //    store.load('mytemplate', '/mytemplate.tpl', function() {
-    //      s.get('mytemplate') //=> My Template
-    //    });
-    //
-    load: function(key, path, callback) {
-      var s = this;
-      $.get(path, function(response) {
-        s.set(key, response);
-        if (callback) { callback.apply(this, [response]); }
-      });
-    },
-
-    _addKey: function(key) {
-      var keys = this.keys();
-      if ($.inArray(key, keys) == -1) { keys.push(key); }
-      this.set(this.meta_key, keys);
-    },
-    _removeKey: function(key) {
-      var keys = this.keys();
-      var index = $.inArray(key, keys);
-      if (index != -1) { keys.splice(index, 1); }
-      this.set(this.meta_key, keys);
-    }
-  });
-
-  // Tests if the type of storage is available/works in the current browser/config.
-  // Especially useful for testing the availability of the awesome, but not widely
-  // supported HTML5 DOM storage
-  Sammy.Store.isAvailable = function(type) {
-    try {
-      return Sammy.Store[Sammy.Store.stores[type]].prototype.isAvailable();
-    } catch(e) {
-      return false;
-    }
-  };
-
-  // Memory ('memory') is the basic/default store. It stores data in a global
-  // JS object. Data is lost on refresh.
-  Sammy.Store.Memory = function(name, element) {
-    this.name  = name;
-    this.element = element;
-    this.namespace = [this.element, this.name].join('.');
-    Sammy.Store.Memory.store = Sammy.Store.Memory.store || {};
-    Sammy.Store.Memory.store[this.namespace] = Sammy.Store.Memory.store[this.namespace] || {};
-    this.store = Sammy.Store.Memory.store[this.namespace];
-  };
-  $.extend(Sammy.Store.Memory.prototype, {
-    isAvailable: function() { return true; },
-    exists: function(key) {
-      return (typeof this.store[key] != "undefined");
-    },
-    set: function(key, value) {
-      return this.store[key] = value;
-    },
-    get: function(key) {
-      return this.store[key];
-    },
-    clear: function(key) {
-      delete this.store[key];
-    }
-  });
-
-  // Data ('data') stores objects using the jQuery.data() methods. This has the advantadge
-  // of scoping the data to the specific element. Like the 'memory' store its data
-  // will only last for the length of the current request (data is lost on refresh/etc).
-  Sammy.Store.Data = function(name, element) {
-    this.name = name;
-    this.element = element;
-    this.$element = $(element);
-  };
-  $.extend(Sammy.Store.Data.prototype, {
-    isAvailable: function() { return true; },
-    exists: function(key) {
-      return !!this.$element.data(this._key(key));
-    },
-    set: function(key, value) {
-      return this.$element.data(this._key(key), value);
-    },
-    get: function(key) {
-      return this.$element.data(this._key(key));
-    },
-    clear: function(key) {
-      this.$element.removeData(this._key(key));
-    },
-    _key: function(key) {
-      return ['store', this.name, key].join('.');
-    }
-  });
-
-  // LocalStorage ('local') makes use of HTML5 DOM Storage, and the window.localStorage
-  // object. The great advantage of this method is that data will persist beyond
-  // the current request. It can be considered a pretty awesome replacement for
-  // cookies accessed via JS. The great disadvantage, though, is its only available
-  // on the latest and greatest browsers.
-  //
-  // For more info on DOM Storage:
-  // [https://developer.mozilla.org/en/DOM/Storage]
-  // [http://www.w3.org/TR/2009/WD-webstorage-20091222/]
-  //
-  Sammy.Store.LocalStorage = function(name, element) {
-    this.name = name;
-    this.element = element;
-  };
-  $.extend(Sammy.Store.LocalStorage.prototype, {
-    isAvailable: function() {
-      return ('localStorage' in window) && (window.location.protocol != 'file:');
-    },
-    exists: function(key) {
-      return (this.get(key) != null);
-    },
-    set: function(key, value) {
-      return window.localStorage.setItem(this._key(key), value);
-    },
-    get: function(key) {
-      return window.localStorage.getItem(this._key(key));
-    },
-    clear: function(key) {
-      window.localStorage.removeItem(this._key(key));;
-    },
-    _key: function(key) {
-      return ['store', this.element, this.name, key].join('.');
-    }
-  });
-
-  // .SessionStorage ('session') is similar to LocalStorage (part of the same API)
-  // and shares similar browser support/availability. The difference is that
-  // SessionStorage is only persistant through the current 'session' which is defined
-  // as the length that the current window is open. This means that data will survive
-  // refreshes but not close/open or multiple windows/tabs. For more info, check out
-  // the `LocalStorage` documentation and links.
-  Sammy.Store.SessionStorage = function(name, element) {
-    this.name = name;
-    this.element = element;
-  };
-  $.extend(Sammy.Store.SessionStorage.prototype, {
-    isAvailable: function() {
-      return ('sessionStorage' in window) &&
-      (window.location.protocol != 'file:') &&
-      ($.isFunction(window.sessionStorage.setItem));
-    },
-    exists: function(key) {
-      return (this.get(key) != null);
-    },
-    set: function(key, value) {
-      return window.sessionStorage.setItem(this._key(key), value);
-    },
-    get: function(key) {
-      var value = window.sessionStorage.getItem(this._key(key));
-      if (value && typeof value.value != "undefined") { value = value.value }
-      return value;
-    },
-    clear: function(key) {
-      window.sessionStorage.removeItem(this._key(key));;
-    },
-    _key: function(key) {
-      return ['store', this.element, this.name, key].join('.');
-    }
-  });
-
-  // .Cookie ('cookie') storage uses browser cookies to store data. JavaScript
-  // has access to a single document.cookie variable, which is limited to 2Kb in
-  // size. Cookies are also considered 'unsecure' as the data can be read easily
-  // by other sites/JS. Cookies do have the advantage, though, of being widely
-  // supported and persistent through refresh and close/open. Where available,
-  // HTML5 DOM Storage like LocalStorage and SessionStorage should be used.
-  //
-  // .Cookie can also take additional options:
-  //
-  // * `expires_in` Number of seconds to keep the cookie alive (default 2 weeks).
-  // * `path` The path to activate the current cookie for (default '/').
-  //
-  // For more information about document.cookie, check out the pre-eminint article
-  // by ppk: [http://www.quirksmode.org/js/cookies.html]
-  //
-  Sammy.Store.Cookie = function(name, element, options) {
-    this.name = name;
-    this.element = element;
-    this.options = options || {};
-    this.path = this.options.path || '/';
-    // set the expires in seconds or default 14 days
-    this.expires_in = this.options.expires_in || (14 * 24 * 60 * 60);
-  };
-  $.extend(Sammy.Store.Cookie.prototype, {
-    isAvailable: function() {
-      return ('cookie' in document) && (window.location.protocol != 'file:');
-    },
-    exists: function(key) {
-      return (this.get(key) != null);
-    },
-    set: function(key, value) {
-      return this._setCookie(key, value);
-    },
-    get: function(key) {
-      return this._getCookie(key);
-    },
-    clear: function(key) {
-      this._setCookie(key, "", -1);
-    },
-    _key: function(key) {
-      return ['store', this.element, this.name, key].join('.');
-    },
-    _getCookie: function(key) {
-      var escaped = this._key(key).replace(/(\.|\*|\(|\)|\[|\])/g, '\\$1');
-      var match = document.cookie.match("(^|;\\s)" + escaped + "=([^;]*)(;|$)")
-      return (match ? match[2] : null);
-    },
-    _setCookie: function(key, value, expires) {
-      if (!expires) { expires = (this.expires_in * 1000) }
-      var date = new Date();
-      date.setTime(date.getTime() + expires);
-      var set_cookie = [
-        this._key(key), "=", value,
-        "; expires=", date.toGMTString(),
-        "; path=", this.path
-      ].join('');
-      document.cookie = set_cookie;
-    }
-  });
-
-  // Sammy.Storage is a plugin that provides shortcuts for creating and using
-  // Sammy.Store objects. Once included it provides the `store()` app level
-  // and helper methods. Depends on Sammy.JSON (or json2.js).
-  Sammy.Storage = function(app) {
-    this.use(Sammy.JSON);
-
-    this.stores = this.stores || {};
-
-    // `store()` creates and looks up existing `Sammy.Store` objects
-    // for the current application. The first time used for a given `'name'`
-    // initializes a `Sammy.Store` and also creates a helper under the store's
-    // name.
-    //
-    // ### Example
-    //
-    //      var app = $.sammy(function() {
-    //        this.use(Sammy.Storage);
-    //
-    //        // initializes the store on app creation.
-    //        this.store('mystore', {type: 'cookie'});
-    //
-    //        this.get('#/', function() {
-    //          // returns the Sammy.Store object
-    //          this.store('mystore');
-    //          // sets 'foo' to 'bar' using the shortcut/helper
-    //          // equivilent to this.store('mystore').set('foo', 'bar');
-    //          this.mystore('foo', 'bar');
-    //          // returns 'bar'
-    //          // equivilent to this.store('mystore').get('foo');
-    //          this.mystore('foo');
-    //          // returns 'baz!'
-    //          // equivilent to:
-    //          // this.store('mystore').fetch('foo!', function() {
-    //          //   return 'baz!';
-    //          // })
-    //          this.mystore('foo!', function() {
-    //            return 'baz!';
-    //          });
-    //
-    //          this.clearMystore();
-    //          // equivilent to:
-    //          // this.store('mystore').clearAll()
-    //        });
-    //
-    //      });
-    //
-    // ### Arguments
-    //
-    // * `name` The name of the store and helper. the name must be unique per application.
-    // * `options` A JS object of options that can be passed to the Store constuctor on initialization.
-    //
-    this.store = function(name, options) {
-      // if the store has not been initialized
-      if (typeof this.stores[name] == 'undefined') {
-        // create initialize the store
-        var clear_method_name = "clear" + name.substr(0,1).toUpperCase() + name.substr(1);
-        this.stores[name] = new Sammy.Store($.extend({
-          name: name,
-          element: this.element_selector
-        }, options || {}));
-        // app.name()
-        this[name] = function(key, value) {
-          if (typeof value == 'undefined') {
-            return this.stores[name].get(key);
-          } else if ($.isFunction(value)) {
-            return this.stores[name].fetch(key, value);
-          } else {
-            return this.stores[name].set(key, value)
-          }
-        };
-        // app.clearName();
-        this[clear_method_name] = function() {
-          return this.stores[name].clearAll();
-        }
-        // context.name()
-        this.helper(name, function() {
-          return this.app[name].apply(this.app, arguments);
-        });
-        // context.clearName();
-        this.helper(clear_method_name, function() {
-          return this.app[clear_method_name]();
-        });
-      }
-      return this.stores[name];
-    };
-
-    this.helpers({
-      store: function() {
-        return this.app.store.apply(this.app, arguments);
-      }
-    });
-  };
-
-  // Sammy.Session is an additional plugin for creating a common 'session' store
-  // for the given app. It is a very simple wrapper around `Sammy.Storage`
-  // that provides a simple fallback mechanism for trying to provide the best
-  // possible storage type for the session. This means, `LocalStorage`
-  // if available, otherwise `Cookie`, otherwise `Memory`.
-  // It provides the `session()` helper through `Sammy.Storage#store()`.
-  //
-  // See the `Sammy.Storage` plugin for full documentation.
-  //
-  Sammy.Session = function(app, options) {
-    this.use(Sammy.Storage);
-    // check for local storage, then cookie storage, then just use memory
-    this.store('session', $.extend({type: ['local', 'cookie', 'memory']}, options));
-  };
-
-  // Sammy.Cache provides helpers for caching data within the lifecycle of a
-  // Sammy app. The plugin provides two main methods on `Sammy.Application`,
-  // `cache` and `clearCache`. Each app has its own cache store so that
-  // you dont have to worry about collisions. As of 0.5 the original Sammy.Cache module
-  // has been deprecated in favor of this one based on Sammy.Storage. The exposed
-  // API is almost identical, but Sammy.Storage provides additional backends including
-  // HTML5 Storage. `Sammy.Cache` will try to use these backends when available
-  // (in this order) `LocalStorage`, `SessionStorage`, and `Memory`
-  Sammy.Cache = function(app, options) {
-    this.use(Sammy.Storage);
-    // set cache_partials to true
-    this.cache_partials = true;
-    // check for local storage, then session storage, then just use memory
-    this.store('cache', $.extend({type: ['local', 'session', 'memory']}, options));
-  };
 
 })(jQuery);
 
@@ -11960,738 +11026,6 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
   document.createElement("time");
 })(jQuery);
 
-/*
- strftime for Javascript
- Copyright (c) 2008, Philip S Tellis <philip@bluesmoon.info>
- All rights reserved.
-
- This code is distributed under the terms of the BSD licence
-
- Redistribution and use of this software in source and binary forms, with or without modification,
- are permitted provided that the following conditions are met:
-
-   * Redistributions of source code must retain the above copyright notice, this list of conditions
-     and the following disclaimer.
-   * Redistributions in binary form must reproduce the above copyright notice, this list of
-     conditions and the following disclaimer in the documentation and/or other materials provided
-     with the distribution.
-   * The names of the contributors to this file may not be used to endorse or promote products
-     derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-/**
- * \file strftime.js
- * \author Philip S Tellis \<philip@bluesmoon.info\>
- * \version 1.3
- * \date 2008/06
- * \brief Javascript implementation of strftime
- *
- * Implements strftime for the Date object in javascript based on the PHP implementation described at
- * http://www.php.net/strftime  This is in turn based on the Open Group specification defined
- * at http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html This implementation does not
- * include modified conversion specifiers (i.e., Ex and Ox)
- *
- * The following format specifiers are supported:
- *
- * \copydoc formats
- *
- * \%a, \%A, \%b and \%B should be localised for non-English locales.
- *
- * \par Usage:
- * This library may be used as follows:
- * \code
- *     var d = new Date();
- *
- *     var ymd = d.strftime('%Y/%m/%d');
- *     var iso = d.strftime('%Y-%m-%dT%H:%M:%S%z');
- *
- * \endcode
- *
- * \sa \link Date.prototype.strftime Date.strftime \endlink for a description of each of the supported format specifiers
- * \sa Date.ext.locales for localisation information
- * \sa http://www.php.net/strftime for the PHP implementation which is the basis for this
- * \sa http://tech.bluesmoon.info/2008/04/strftime-in-javascript.html for feedback
- */
-
-//! Date extension object - all supporting objects go in here.
-Date.ext = {};
-
-//! Utility methods
-Date.ext.util = {};
-
-/**
-\brief Left pad a number with something
-\details Takes a number and pads it to the left with the passed in pad character
-\param x  The number to pad
-\param pad  The string to pad with
-\param r  [optional] Upper limit for pad.  A value of 10 pads to 2 digits, a value of 100 pads to 3 digits.
-    Default is 10.
-
-\return The number left padded with the pad character.  This function returns a string and not a number.
-*/
-Date.ext.util.xPad=function(x, pad, r)
-{
-  if(typeof(r) == 'undefined')
-  {
-    r=10;
-  }
-  for( ; parseInt(x, 10)<r && r>1; r/=10)
-    x = pad.toString() + x;
-  return x.toString();
-};
-
-/**
-\brief Currently selected locale.
-\details
-The locale for a specific date object may be changed using \code Date.locale = "new-locale"; \endcode
-The default will be based on the lang attribute of the HTML tag of your document
-*/
-Date.prototype.locale = 'en-GB';
-//! \cond FALSE
-if(document.getElementsByTagName('html') && document.getElementsByTagName('html')[0].lang)
-{
-  Date.prototype.locale = document.getElementsByTagName('html')[0].lang;
-}
-//! \endcond
-
-/**
-\brief Localised strings for days of the week and months of the year.
-\details
-To create your own local strings, add a locale object to the locales object.
-The key of your object should be the same as your locale name.  For example:
-   en-US,
-   fr,
-   fr-CH,
-   de-DE
-Names are case sensitive and are described at http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
-Your locale object must contain the following keys:
-\param a  Short names of days of week starting with Sunday
-\param A  Long names days of week starting with Sunday
-\param b  Short names of months of the year starting with January
-\param B  Long names of months of the year starting with February
-\param c  The preferred date and time representation in your locale
-\param p  AM or PM in your locale
-\param P  am or pm in your locale
-\param x  The  preferred date representation for the current locale without the time.
-\param X  The preferred time representation for the current locale without the date.
-
-\sa Date.ext.locales.en for a sample implementation
-\sa \ref localisation for detailed documentation on localising strftime for your own locale
-*/
-Date.ext.locales = { };
-
-/**
- * \brief Localised strings for English (British).
- * \details
- * This will be used for any of the English dialects unless overridden by a country specific one.
- * This is the default locale if none specified
- */
-Date.ext.locales.en = {
-  a: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-  A: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  b: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  B: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-  c: '%a %d %b %Y %T %Z',
-  p: ['AM', 'PM'],
-  P: ['am', 'pm'],
-  x: '%d/%m/%y',
-  X: '%T'
-};
-
-//! \cond FALSE
-// Localised strings for US English
-Date.ext.locales['en-US'] = Date.ext.locales.en;
-Date.ext.locales['en-US'].c = '%a %d %b %Y %r %Z';
-Date.ext.locales['en-US'].x = '%D';
-Date.ext.locales['en-US'].X = '%r';
-
-// Localised strings for British English
-Date.ext.locales['en-GB'] = Date.ext.locales.en;
-
-// Localised strings for Australian English
-Date.ext.locales['en-AU'] = Date.ext.locales['en-GB'];
-//! \endcond
-
-//! \brief List of supported format specifiers.
-/**
- * \details
- * \arg \%a - abbreviated weekday name according to the current locale
- * \arg \%A - full weekday name according to the current locale
- * \arg \%b - abbreviated month name according to the current locale
- * \arg \%B - full month name according to the current locale
- * \arg \%c - preferred date and time representation for the current locale
- * \arg \%C - century number (the year divided by 100 and truncated to an integer, range 00 to 99)
- * \arg \%d - day of the month as a decimal number (range 01 to 31)
- * \arg \%D - same as %m/%d/%y
- * \arg \%e - day of the month as a decimal number, a single digit is preceded by a space (range ' 1' to '31')
- * \arg \%g - like %G, but without the century
- * \arg \%G - The 4-digit year corresponding to the ISO week number
- * \arg \%h - same as %b
- * \arg \%H - hour as a decimal number using a 24-hour clock (range 00 to 23)
- * \arg \%I - hour as a decimal number using a 12-hour clock (range 01 to 12)
- * \arg \%j - day of the year as a decimal number (range 001 to 366)
- * \arg \%m - month as a decimal number (range 01 to 12)
- * \arg \%M - minute as a decimal number
- * \arg \%n - newline character
- * \arg \%p - either `AM' or `PM' according to the given time value, or the corresponding strings for the current locale
- * \arg \%P - like %p, but lower case
- * \arg \%r - time in a.m. and p.m. notation equal to %I:%M:%S %p
- * \arg \%R - time in 24 hour notation equal to %H:%M
- * \arg \%S - second as a decimal number
- * \arg \%t - tab character
- * \arg \%T - current time, equal to %H:%M:%S
- * \arg \%u - weekday as a decimal number [1,7], with 1 representing Monday
- * \arg \%U - week number of the current year as a decimal number, starting with
- *            the first Sunday as the first day of the first week
- * \arg \%V - The ISO 8601:1988 week number of the current year as a decimal number,
- *            range 01 to 53, where week 1 is the first week that has at least 4 days
- *            in the current year, and with Monday as the first day of the week.
- * \arg \%w - day of the week as a decimal, Sunday being 0
- * \arg \%W - week number of the current year as a decimal number, starting with the
- *            first Monday as the first day of the first week
- * \arg \%x - preferred date representation for the current locale without the time
- * \arg \%X - preferred time representation for the current locale without the date
- * \arg \%y - year as a decimal number without a century (range 00 to 99)
- * \arg \%Y - year as a decimal number including the century
- * \arg \%z - numerical time zone representation
- * \arg \%Z - time zone name or abbreviation
- * \arg \%% - a literal `\%' character
- */
-Date.ext.formats = {
-  a: function(d) { return Date.ext.locales[d.locale].a[d.getDay()]; },
-  A: function(d) { return Date.ext.locales[d.locale].A[d.getDay()]; },
-  b: function(d) { return Date.ext.locales[d.locale].b[d.getMonth()]; },
-  B: function(d) { return Date.ext.locales[d.locale].B[d.getMonth()]; },
-  c: 'toLocaleString',
-  C: function(d) { return Date.ext.util.xPad(parseInt(d.getFullYear()/100, 10), 0); },
-  d: ['getDate', '0'],
-  e: ['getDate', ' '],
-  g: function(d) { return Date.ext.util.xPad(parseInt(Date.ext.util.G(d)/100, 10), 0); },
-  G: function(d) {
-      var y = d.getFullYear();
-      var V = parseInt(Date.ext.formats.V(d), 10);
-      var W = parseInt(Date.ext.formats.W(d), 10);
-
-      if(W > V) {
-        y++;
-      } else if(W===0 && V>=52) {
-        y--;
-      }
-
-      return y;
-    },
-  H: ['getHours', '0'],
-  I: function(d) { var I=d.getHours()%12; return Date.ext.util.xPad(I===0?12:I, 0); },
-  j: function(d) {
-      var ms = d - new Date('' + d.getFullYear() + '/1/1 GMT');
-      ms += d.getTimezoneOffset()*60000;
-      var doy = parseInt(ms/60000/60/24, 10)+1;
-      return Date.ext.util.xPad(doy, 0, 100);
-    },
-  m: function(d) { return Date.ext.util.xPad(d.getMonth()+1, 0); },
-  M: ['getMinutes', '0'],
-  p: function(d) { return Date.ext.locales[d.locale].p[d.getHours() >= 12 ? 1 : 0 ]; },
-  P: function(d) { return Date.ext.locales[d.locale].P[d.getHours() >= 12 ? 1 : 0 ]; },
-  S: ['getSeconds', '0'],
-  u: function(d) { var dow = d.getDay(); return dow===0?7:dow; },
-  U: function(d) {
-      var doy = parseInt(Date.ext.formats.j(d), 10);
-      var rdow = 6-d.getDay();
-      var woy = parseInt((doy+rdow)/7, 10);
-      return Date.ext.util.xPad(woy, 0);
-    },
-  V: function(d) {
-      var woy = parseInt(Date.ext.formats.W(d), 10);
-      var dow1_1 = (new Date('' + d.getFullYear() + '/1/1')).getDay();
-      // First week is 01 and not 00 as in the case of %U and %W,
-      // so we add 1 to the final result except if day 1 of the year
-      // is a Monday (then %W returns 01).
-      // We also need to subtract 1 if the day 1 of the year is
-      // Friday-Sunday, so the resulting equation becomes:
-      var idow = woy + (dow1_1 > 4 || dow1_1 <= 1 ? 0 : 1);
-      if(idow == 53 && (new Date('' + d.getFullYear() + '/12/31')).getDay() < 4)
-      {
-        idow = 1;
-      }
-      else if(idow === 0)
-      {
-        idow = Date.ext.formats.V(new Date('' + (d.getFullYear()-1) + '/12/31'));
-      }
-
-      return Date.ext.util.xPad(idow, 0);
-    },
-  w: 'getDay',
-  W: function(d) {
-      var doy = parseInt(Date.ext.formats.j(d), 10);
-      var rdow = 7-Date.ext.formats.u(d);
-      var woy = parseInt((doy+rdow)/7, 10);
-      return Date.ext.util.xPad(woy, 0, 10);
-    },
-  y: function(d) { return Date.ext.util.xPad(d.getFullYear()%100, 0); },
-  Y: 'getFullYear',
-  z: function(d) {
-      var o = d.getTimezoneOffset();
-      var H = Date.ext.util.xPad(parseInt(Math.abs(o/60), 10), 0);
-      var M = Date.ext.util.xPad(o%60, 0);
-      return (o>0?'-':'+') + H + M;
-    },
-  Z: function(d) { return d.toString().replace(/^.*\(([^)]+)\)$/, '$1'); },
-  '%': function(d) { return '%'; }
-};
-
-/**
-\brief List of aggregate format specifiers.
-\details
-Aggregate format specifiers map to a combination of basic format specifiers.
-These are implemented in terms of Date.ext.formats.
-
-A format specifier that maps to 'locale' is read from Date.ext.locales[current-locale].
-
-\sa Date.ext.formats
-*/
-Date.ext.aggregates = {
-  c: 'locale',
-  D: '%m/%d/%y',
-  h: '%b',
-  n: '\n',
-  r: '%I:%M:%S %p',
-  R: '%H:%M',
-  t: '\t',
-  T: '%H:%M:%S',
-  x: 'locale',
-  X: 'locale'
-};
-
-//! \cond FALSE
-// Cache timezone values because they will never change for a given JS instance
-Date.ext.aggregates.z = Date.ext.formats.z(new Date());
-Date.ext.aggregates.Z = Date.ext.formats.Z(new Date());
-//! \endcond
-
-//! List of unsupported format specifiers.
-/**
- * \details
- * All format specifiers supported by the PHP implementation are supported by
- * this javascript implementation.
- */
-Date.ext.unsupported = { };
-
-
-/**
- * \brief Formats the date according to the specified format.
- * \param fmt  The format to format the date in.  This may be a combination of the following:
- * \copydoc formats
- *
- * \return  A string representation of the date formatted based on the passed in parameter
- * \sa http://www.php.net/strftime for documentation on format specifiers
-*/
-Date.prototype.strftime=function(fmt)
-{
-  // Fix locale if declared locale hasn't been defined
-  // After the first call this condition should never be entered unless someone changes the locale
-  if(!(this.locale in Date.ext.locales))
-  {
-    if(this.locale.replace(/-[a-zA-Z]+$/, '') in Date.ext.locales)
-    {
-      this.locale = this.locale.replace(/-[a-zA-Z]+$/, '');
-    }
-    else
-    {
-      this.locale = 'en-GB';
-    }
-  }
-
-  var d = this;
-  // First replace aggregates
-  while(fmt.match(/%[cDhnrRtTxXzZ]/))
-  {
-    fmt = fmt.replace(/%([cDhnrRtTxXzZ])/g, function(m0, m1)
-        {
-          var f = Date.ext.aggregates[m1];
-          return (f == 'locale' ? Date.ext.locales[d.locale][m1] : f);
-        });
-  }
-
-
-  // Now replace formats - we need a closure so that the date object gets passed through
-  var str = fmt.replace(/%([aAbBCdegGHIjmMpPSuUVwWyY%])/g, function(m0, m1)
-      {
-        var f = Date.ext.formats[m1];
-        if(typeof(f) == 'string') {
-          return d[f]();
-        } else if(typeof(f) == 'function') {
-          return f.call(d, d);
-        } else if(typeof(f) == 'object' && typeof(f[0]) == 'string') {
-          return Date.ext.util.xPad(d[f[0]](), f[1]);
-        } else {
-          return m1;
-        }
-      });
-  d=null;
-  return str;
-};
-
-/**
- * \mainpage strftime for Javascript
- *
- * \section toc Table of Contents
- * - \ref intro_sec
- * - <a class="el" href="strftime.js">Download full source</a> / <a class="el" href="strftime-min.js">minified</a>
- * - \subpage usage
- * - \subpage format_specifiers
- * - \subpage localisation
- * - \link strftime.js API Documentation \endlink
- * - \subpage demo
- * - \subpage changelog
- * - \subpage faq
- * - <a class="el" href="http://tech.bluesmoon.info/2008/04/strftime-in-javascript.html">Feedback</a>
- * - \subpage copyright_licence
- *
- * \section intro_sec Introduction
- *
- * C and PHP developers have had access to a built in strftime function for a long time.
- * This function is an easy way to format dates and times for various display needs.
- *
- * This library brings the flexibility of strftime to the javascript Date object
- *
- * Use this library if you frequently need to format dates in javascript in a variety of ways.  For example,
- * if you have PHP code that writes out formatted dates, and want to mimic the functionality using
- * progressively enhanced javascript, then this library can do exactly what you want.
- *
- *
- *
- *
- * \page usage Example usage
- *
- * \section usage_sec Usage
- * This library may be used as follows:
- * \code
- *     var d = new Date();
- *
- *     var ymd = d.strftime('%Y/%m/%d');
- *     var iso = d.strftime('%Y-%m-%dT%H:%M:%S%z');
- *
- * \endcode
- *
- * \subsection examples Examples
- *
- * To get the current time in hours and minutes:
- * \code
- *   var d = new Date();
- *   d.strftime("%H:%M");
- * \endcode
- *
- * To get the current time with seconds in AM/PM notation:
- * \code
- *   var d = new Date();
- *   d.strftime("%r");
- * \endcode
- *
- * To get the year and day of the year for August 23, 2009:
- * \code
- *   var d = new Date('2009/8/23');
- *   d.strftime("%Y-%j");
- * \endcode
- *
- * \section demo_sec Demo
- *
- * Try your own examples on the \subpage demo page.  You can use any of the supported
- * \subpage format_specifiers.
- *
- *
- *
- *
- * \page localisation Localisation
- * You can localise strftime by implementing the short and long forms for days of the
- * week and months of the year, and the localised aggregates for the preferred date
- * and time representation for your locale.  You need to add your locale to the
- * Date.ext.locales object.
- *
- * \section localising_fr Localising for french
- *
- * For example, this is how we'd add French language strings to the locales object:
- * \dontinclude index.html
- * \skip Generic french
- * \until };
- * The % format specifiers are all defined in \ref formats.  You can use any of those.
- *
- * This locale definition may be included in your own source file, or in the HTML file
- * including \c strftime.js, however it must be defined \em after including \c strftime.js
- *
- * The above definition includes generic french strings and formats that are used in France.
- * Other french speaking countries may have other representations for dates and times, so we
- * need to override this for them.  For example, Canadian french uses a Y-m-d date format,
- * while French french uses d.m.Y.  We fix this by defining Canadian french to be the same
- * as generic french, and then override the format specifiers for \c x for the \c fr-CA locale:
- * \until End french
- *
- * You can now use any of the French locales at any time by setting \link Date.prototype.locale Date.locale \endlink
- * to \c "fr", \c "fr-FR", \c "fr-CA", or any other french dialect:
- * \code
- *     var d = new Date("2008/04/22");
- *     d.locale = "fr";
- *
- *     d.strftime("%A, %d %B == %x");
- * \endcode
- * will return:
- * \code
- *     mardi, 22 avril == 22.04.2008
- * \endcode
- * While changing the locale to "fr-CA":
- * \code
- *     d.locale = "fr-CA";
- *
- *     d.strftime("%A, %d %B == %x");
- * \endcode
- * will return:
- * \code
- *     mardi, 22 avril == 2008-04-22
- * \endcode
- *
- * You can use any of the format specifiers defined at \ref formats
- *
- * The locale for all dates defaults to the value of the \c lang attribute of your HTML document if
- * it is set, or to \c "en" otherwise.
- * \note
- * Your locale definitions \b MUST be added to the locale object before calling
- * \link Date.prototype.strftime Date.strftime \endlink.
- *
- * \sa \ref formats for a list of format specifiers that can be used in your definitions
- * for c, x and X.
- *
- * \section locale_names Locale names
- *
- * Locale names are defined in RFC 1766. Typically, a locale would be a two letter ISO639
- * defined language code and an optional ISO3166 defined country code separated by a -
- *
- * eg: fr-FR, de-DE, hi-IN
- *
- * \sa http://www.ietf.org/rfc/rfc1766.txt
- * \sa http://www.loc.gov/standards/iso639-2/php/code_list.php
- * \sa http://www.iso.org/iso/country_codes/iso_3166_code_lists/english_country_names_and_code_elements.htm
- *
- * \section locale_fallback Locale fallbacks
- *
- * If a locale object corresponding to the fully specified locale isn't found, an attempt will be made
- * to fall back to the two letter language code.  If a locale object corresponding to that isn't found
- * either, then the locale will fall back to \c "en".  No warning will be issued.
- *
- * For example, if we define a locale for de:
- * \until };
- * Then set the locale to \c "de-DE":
- * \code
- *     d.locale = "de-DE";
- *
- *     d.strftime("%a, %d %b");
- * \endcode
- * In this case, the \c "de" locale will be used since \c "de-DE" has not been defined:
- * \code
- *     Di, 22 Apr
- * \endcode
- *
- * Swiss german will return the same since it will also fall back to \c "de":
- * \code
- *     d.locale = "de-CH";
- *
- *     d.strftime("%a, %d %b");
- * \endcode
- * \code
- *     Di, 22 Apr
- * \endcode
- *
- * We need to override the \c a specifier for Swiss german, since it's different from German german:
- * \until End german
- * We now get the correct results:
- * \code
- *     d.locale = "de-CH";
- *
- *     d.strftime("%a, %d %b");
- * \endcode
- * \code
- *     Die, 22 Apr
- * \endcode
- *
- * \section builtin_locales Built in locales
- *
- * This library comes with pre-defined locales for en, en-GB, en-US and en-AU.
- *
- *
- *
- *
- * \page format_specifiers Format specifiers
- *
- * \section specifiers Format specifiers
- * strftime has several format specifiers defined by the Open group at
- * http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html
- *
- * PHP added a few of its own, defined at http://www.php.net/strftime
- *
- * This javascript implementation supports all the PHP specifiers
- *
- * \subsection supp Supported format specifiers:
- * \copydoc formats
- *
- * \subsection unsupportedformats Unsupported format specifiers:
- * \copydoc unsupported
- *
- *
- *
- *
- * \page demo strftime demo
- * <div style="float:right;width:45%;">
- * \copydoc formats
- * </div>
- * \htmlinclude index.html
- *
- *
- *
- *
- * \page faq FAQ
- *
- * \section how_tos Usage
- *
- * \subsection howtouse Is there a manual on how to use this library?
- *
- * Yes, see \ref usage
- *
- * \subsection wheretoget Where can I get a minified version of this library?
- *
- * The minified version is available <a href="strftime-min.js" title="Minified strftime.js">here</a>.
- *
- * \subsection which_specifiers Which format specifiers are supported?
- *
- * See \ref format_specifiers
- *
- * \section whys Why?
- *
- * \subsection why_lib Why this library?
- *
- * I've used the strftime function in C, PHP and the Unix shell, and found it very useful
- * to do date formatting.  When I needed to do date formatting in javascript, I decided
- * that it made the most sense to just reuse what I'm already familiar with.
- *
- * \subsection why_another Why another strftime implementation for Javascript?
- *
- * Yes, there are other strftime implementations for Javascript, but I saw problems with
- * all of them that meant I couldn't use them directly.  Some implementations had bad
- * designs.  For example, iterating through all possible specifiers and scanning the string
- * for them.  Others were tied to specific libraries like prototype.
- *
- * Trying to extend any of the existing implementations would have required only slightly
- * less effort than writing this from scratch.  In the end it took me just about 3 hours
- * to write the code and about 6 hours battling with doxygen to write these docs.
- *
- * I also had an idea of how I wanted to implement this, so decided to try it.
- *
- * \subsection why_extend_date Why extend the Date class rather than subclass it?
- *
- * I tried subclassing Date and failed.  I didn't want to waste time on figuring
- * out if there was a problem in my code or if it just wasn't possible.  Adding to the
- * Date.prototype worked well, so I stuck with it.
- *
- * I did have some worries because of the way for..in loops got messed up after json.js added
- * to the Object.prototype, but that isn't an issue here since {} is not a subclass of Date.
- *
- * My last doubt was about the Date.ext namespace that I created.  I still don't like this,
- * but I felt that \c ext at least makes clear that this is external or an extension.
- *
- * It's quite possible that some future version of javascript will add an \c ext or a \c locale
- * or a \c strftime property/method to the Date class, but this library should probably
- * check for capabilities before doing what it does.
- *
- * \section curiosity Curiosity
- *
- * \subsection how_big How big is the code?
- *
- * \arg 26K bytes with documentation
- * \arg 4242 bytes minified using <a href="http://developer.yahoo.com/yui/compressor/">YUI Compressor</a>
- * \arg 1477 bytes minified and gzipped
- *
- * \subsection how_long How long did it take to write this?
- *
- * 15 minutes for the idea while I was composing this blog post:
- * http://tech.bluesmoon.info/2008/04/javascript-date-functions.html
- *
- * 3 hours in one evening to write v1.0 of the code and 6 hours the same
- * night to write the docs and this manual.  As you can tell, I'm fairly
- * sleepy.
- *
- * Versions 1.1 and 1.2 were done in a couple of hours each, and version 1.3
- * in under one hour.
- *
- * \section contributing Contributing
- *
- * \subsection how_to_rfe How can I request features or make suggestions?
- *
- * You can leave a comment on my blog post about this library here:
- * http://tech.bluesmoon.info/2008/04/strftime-in-javascript.html
- *
- * \subsection how_to_contribute Can I/How can I contribute code to this library?
- *
- * Yes, that would be very nice, thank you.  You can do various things.  You can make changes
- * to the library, and make a diff against the current file and mail me that diff at
- * philip@bluesmoon.info, or you could just host the new file on your own servers and add
- * your name to the copyright list at the top stating which parts you've added.
- *
- * If you do mail me a diff, let me know how you'd like to be listed in the copyright section.
- *
- * \subsection copyright_signover Who owns the copyright on contributed code?
- *
- * The contributor retains copyright on contributed code.
- *
- * In some cases I may use contributed code as a template and write the code myself.  In this
- * case I'll give the contributor credit for the idea, but will not add their name to the
- * copyright holders list.
- *
- *
- *
- *
- * \page copyright_licence Copyright & Licence
- *
- * \section copyright Copyright
- * \dontinclude strftime.js
- * \skip Copyright
- * \until rights
- *
- * \section licence Licence
- * \skip This code
- * \until SUCH DAMAGE.
- *
- *
- *
- * \page changelog ChangeLog
- *
- * \par 1.3 - 2008/06/17:
- * - Fixed padding issue with negative timezone offsets in %r
- *   reported and fixed by Mikko <mikko.heimola@iki.fi>
- * - Added support for %P
- * - Internationalised %r, %p and %P
- *
- * \par 1.2 - 2008/04/27:
- * - Fixed support for c (previously it just returned toLocaleString())
- * - Add support for c, x and X
- * - Add locales for en-GB, en-US and en-AU
- * - Make en-GB the default locale (previous was en)
- * - Added more localisation docs
- *
- * \par 1.1 - 2008/04/27:
- * - Fix bug in xPad which wasn't padding more than a single digit
- * - Fix bug in j which had an off by one error for days after March 10th because of daylight savings
- * - Add support for g, G, U, V and W
- *
- * \par 1.0 - 2008/04/22:
- * - Initial release with support for a, A, b, B, c, C, d, D, e, H, I, j, m, M, p, r, R, S, t, T, u, w, y, Y, z, Z, and %
- */
-
 /**
  * h5Validate
  * @version v0.3.3
@@ -12965,157 +11299,6 @@ Date.prototype.strftime=function(fmt)
 		return methods.bindDelegation.call(this, settings);
 	};
 }(jQuery));
-/*
- * jQuery Hotkeys Plugin
- * Copyright 2010, John Resig
- * Dual licensed under the MIT or GPL Version 2 licenses.
- *
- * Based upon the plugin by Tzury Bar Yochay:
- * http://github.com/tzuryby/hotkeys
- *
- * Original idea by:
- * Binny V A, http://www.openjs.com/scripts/events/keyboard_shortcuts/
-*/
-
-(function(jQuery){
-	
-	jQuery.hotkeys = {
-		version: "0.8",
-
-		specialKeys: {
-			8: "backspace", 9: "tab", 13: "return", 16: "shift", 17: "ctrl", 18: "alt", 19: "pause",
-			20: "capslock", 27: "esc", 32: "space", 33: "pageup", 34: "pagedown", 35: "end", 36: "home",
-			37: "left", 38: "up", 39: "right", 40: "down", 45: "insert", 46: "del", 
-			96: "0", 97: "1", 98: "2", 99: "3", 100: "4", 101: "5", 102: "6", 103: "7",
-			104: "8", 105: "9", 106: "*", 107: "+", 109: "-", 110: ".", 111 : "/", 
-			112: "f1", 113: "f2", 114: "f3", 115: "f4", 116: "f5", 117: "f6", 118: "f7", 119: "f8", 
-			120: "f9", 121: "f10", 122: "f11", 123: "f12", 144: "numlock", 145: "scroll", 191: "/", 224: "meta"
-		},
-	
-		shiftNums: {
-			"`": "~", "1": "!", "2": "@", "3": "#", "4": "$", "5": "%", "6": "^", "7": "&", 
-			"8": "*", "9": "(", "0": ")", "-": "_", "=": "+", ";": ": ", "'": "\"", ",": "<", 
-			".": ">",  "/": "?",  "\\": "|"
-		}
-	};
-
-	function keyHandler( handleObj ) {
-		// Only care when a possible input has been specified
-		if ( typeof handleObj.data !== "string" ) {
-			return;
-		}
-		
-		var origHandler = handleObj.handler,
-			keys = handleObj.data.toLowerCase().split(" ");
-	
-		handleObj.handler = function( event ) {
-			// Don't fire in text-accepting inputs that we didn't directly bind to
-			if ( this !== event.target && (/textarea|select/i.test( event.target.nodeName ) ||
-				 event.target.type === "text") ) {
-				return;
-			}
-			
-			// Keypress represents characters, not special keys
-			var special = event.type !== "keypress" && jQuery.hotkeys.specialKeys[ event.which ],
-				character = String.fromCharCode( event.which ).toLowerCase(),
-				key, modif = "", possible = {};
-
-			// check combinations (alt|ctrl|shift+anything)
-			if ( event.altKey && special !== "alt" ) {
-				modif += "alt+";
-			}
-
-			if ( event.ctrlKey && special !== "ctrl" ) {
-				modif += "ctrl+";
-			}
-			
-			// TODO: Need to make sure this works consistently across platforms
-			if ( event.metaKey && !event.ctrlKey && special !== "meta" ) {
-				modif += "meta+";
-			}
-
-			if ( event.shiftKey && special !== "shift" ) {
-				modif += "shift+";
-			}
-
-			if ( special ) {
-				possible[ modif + special ] = true;
-
-			} else {
-				possible[ modif + character ] = true;
-				possible[ modif + jQuery.hotkeys.shiftNums[ character ] ] = true;
-
-				// "$" can be triggered as "Shift+4" or "Shift+$" or just "$"
-				if ( modif === "shift+" ) {
-					possible[ jQuery.hotkeys.shiftNums[ character ] ] = true;
-				}
-			}
-
-			for ( var i = 0, l = keys.length; i < l; i++ ) {
-				if ( possible[ keys[i] ] ) {
-					return origHandler.apply( this, arguments );
-				}
-			}
-		};
-	}
-
-	jQuery.each([ "keydown", "keyup", "keypress" ], function() {
-		jQuery.event.special[ this ] = { add: keyHandler };
-	});
-
-})( jQuery );
-(function($, Sammy) {
-    function processResponse(resp, context, ref) {
-        context.pagination(ref, { nextKey: resp.key, nextKeyID: resp.id });
-    }
-
-    function processResults(resp, options) {
-        var results = [],
-            ref = options.reference,
-            limit = options.limit;
-
-        if (ref.nextIndex) {
-            limit += ref.nextIndex - 1;
-            results = resp.rows[0].value
-                                  .slice(ref.nextIndex, limit);
-        } else {
-            for(var i=0; i<resp.rows.length; i+=1) {
-               results.push(resp.rows[i].value);
-            }
-        }
-
-       return { rows: results };
-    }
-
-
-    Sammy = Sammy || {};
-
-    Sammy.Paginator = function(app, method_alias) {
-        var paginator = function(fun, options) {
-            var ctx = this;
-
-            return this.send(fun, options)
-                       .then(function(resp) {
-                           var next;
-
-                           if (resp.rows.length == options.limit) {
-                               next = resp.rows.pop();
-                           } else {
-                               next = { key: null, id: null };
-                           }
-
-                           processResponse(next, ctx, options.reference);
-
-                           return processResults(resp, options);
-                       });
-        }
-
-        if (!method_alias) method_alias = "paginate";
-        app.helper(method_alias, paginator);
-    };
-
-})(jQuery, window.Sammy);
-
 (function($, Sammy) {
 
     Sammy = Sammy || {};
@@ -13258,325 +11441,53 @@ Date.prototype.strftime=function(fmt)
 })(jQuery, window.Sammy);
 
 (function($, Sammy) {
-    var MenuUpdater = {
-        coversViewport: function($div) {
-            var winX = $(window).scrollLeft(),
-                divX = $div.position().left * 1.0;
+    function processResponse(resp, context, ref) {
+        context.pagination(ref, { nextKey: resp.key, nextKeyID: resp.id });
+    }
 
-            if ( winX === divX ) {
-                return true;
-            } else if (divX > 0 && winX/divX >= 0.5) {
-                return true;
+    function processResults(resp, options) {
+        var results = [],
+            ref = options.reference,
+            limit = options.limit;
+
+        if (ref.nextIndex) {
+            limit += ref.nextIndex - 1;
+            results = resp.rows[0].value
+                                  .slice(ref.nextIndex, limit);
+        } else {
+            for(var i=0; i<resp.rows.length; i+=1) {
+               results.push(resp.rows[i].value);
             }
-
-            return false;
-        },
-
-        isViewable: function($div) {
-            return $div.has(':in-viewport').length !== 0 && this.coversViewport($div) ? true : false;
-        },
-
-        configMenu: function(directions) {
-            if (!this.signaledCorrectly(directions)) {
-                $('.link-wrapper').removeClass('down-arrow left-arrow right-arrow')
-                                  .first()
-                                  .addClass(directions.first)
-                                  .end()
-                                  .filter(':nth-child(2)')
-                                  .addClass(directions.second)
-                                  .end()
-                                  .filter(':nth-child(3)')
-                                  .addClass(directions.third)
-                                  .end()
-                                  .last()
-                                  .addClass(directions.last);
-            }
-        },
-
-        signaledCorrectly: function(directions) {
-            var $nav = $('.link-wrapper');
-
-            return $nav.first().hasClass(directions.first).length > 0 &&
-                   $nav.filter(':nth-child(2)').hasClass(directions.second).length > 0 &&
-                   $nav.filter(':nth-child(3)').hasClass(directions.third).length > 0 &&
-                   $nav.last().hasClass(directions.last).length > 0;
-        },
-
-        updateMenu: function($container) {
-            switch ($container.attr('id')) {
-            case "articles":
-                this.configMenu({
-                    first:  'down-arrow', second: 'right-arrow',
-                    third:  'right-arrow', last:   'right-arrow'
-                });
-                break;
-            case "screencasts":
-                this.configMenu({
-                    first:  'left-arrow', second: 'down-arrow',
-                    third:  'right-arrow', last:   'right-arrow'
-                });
-                break;
-            case "scripts":
-                this.configMenu({
-                    first:  'left-arrow', second: 'left-arrow',
-                    third:  'down-arrow', last:   'right-arrow'
-                });
-                break;
-            case "about":
-                this.configMenu({
-                    first:  'left-arrow', second: 'left-arrow',
-                    third:  'left-arrow', last:   'down-arrow'
-                });
-                break;
-            default:
-                $('.link-wrapper').removeClass('down-arrow left-arrow right-arrow')
-                                  .addClass('left-arrow');
-            }
-        },
-
-        updateHeader: function($container) {
-            var container_id = $container.attr('id'),
-                mappings = {
-                    articles: "Latest Articles",
-                    screencasts: "Latest Screencasts",
-                    scripts: "Scripts",
-                    about: "About",
-                    feeds: "Feeds"
-                };
-
-            $('#page-info').text(function(i, text) {
-                var id_text = mappings[container_id];
-                if (text !== id_text) $(this).text(id_text);
-            });
         }
-    };
+
+       return { rows: results };
+    }
 
 
     Sammy = Sammy || {};
 
-    Sammy.MenuUpdater = function(app, method_alias) {
-        var menu_updater = function() {
-            var $container = $('.container:in-viewport');
+    Sammy.Paginator = function(app, method_alias) {
+        var paginator = function(fun, options) {
+            var ctx = this;
 
-            if (MenuUpdater.isViewable($container)) {
-                MenuUpdater.updateMenu($container);
-                MenuUpdater.updateHeader($container);
-            }
-        };
+            return this.send(fun, options)
+                       .then(function(resp) {
+                           var next;
 
-        if (!method_alias) method_alias = 'menu_updater';
-        app.helper(method_alias, menu_updater);
-    };
+                           if (resp.rows.length == options.limit) {
+                               next = resp.rows.pop();
+                           } else {
+                               next = { key: null, id: null };
+                           }
 
-})(jQuery, window.Sammy);
+                           processResponse(next, ctx, options.reference);
 
-(function($, Sammy) {
-
-    var Hotkeys = {};
-
-    Hotkeys.VimlikeKeys = {
-        X_SCROLL: $(window).height() * 0.15,
-        Y_SCROLL: $(window).width() * 0.15,
-
-        bindVerticalScroll: function(key, amount) {
-            $(document).bind('keyup', key, function () {
-                var pos = $(this).scrollTop() + amount;
-
-                $(this).scrollTop(pos);
-            });
-        },
-
-        scrollUp: function(key) {
-            this.bindVerticalScroll(key, this.Y_SCROLL * -1);
-        },
-
-        scrollDown: function(key) {
-            this.bindVerticalScroll(key, this.Y_SCROLL);
-        },
-
-        bindHorizontalScroll: function(key, amount) {
-            $(document).bind('keyup', key, function () {
-                var pos = $(this).scrollLeft() + amount;
-
-                $(this).scrollLeft(pos);
-            });
-        },
-
-        scrollLeft: function(key) {
-            this.bindHorizontalScroll(key, this.X_SCROLL * -1);
-        },
-
-        scrollRight: function(key) {
-            this.bindHorizontalScroll(key, this.X_SCROLL);
-        },
-
-        scrollToEndPoint: function(key, amount, horizontal) {
-            $(document).bind('keyup', key, function () {
-                if (horizontal) {
-                    $(this).scrollLeft(amount);
-                } else {
-                    $(this).scrollTop(amount);
-                }
-            });
-        },
-
-        scrollToEnd: function(key) {
-            this.scrollToEndPoint(key, $(document).width(), true);
-        },
-
-        scrollToStart: function(key) {
-            this.scrollToEndPoint(key, 0, true);
-        },
-
-        scrollToPageTop: function(key) {
-            this.scrollToEndPoint(key, 0);
-        },
-
-        scrollToPageBottom: function(key) {
-            this.scrollToEndPoint(key, $(document).height());
-        },
-
-        scrollToNextSection: function(key) {
-            $(document).bind('keyup', key, function () {
-                var next = $('.container:in-viewport').next().offset().left;
-                $(this).scrollLeft(next);
-            });
-        },
-
-        scrollToPrevSection: function(key) {
-            $(document).bind('keyup', key, function () {
-                var prev = $('.container:in-viewport').prev().offset().left;
-                $(this).scrollLeft(prev);
-            });
-        },
-
-        bind: function(keys) {
-            // Navigation
-            //
-            // j - Scroll down
-            // k - Scroll up
-            // l - Scroll right
-            // h - Scroll left
-            this.scrollUp(keys.up);
-            this.scrollDown(keys.down);
-            this.scrollLeft(keys.left);
-            this.scrollRight(keys.right);
-
-            // $  - Scroll to leftmost part of page (feeds)
-            // ^  - Scroll to rightmost part of page (articles)
-            this.scrollToEnd(keys.end);
-            this.scrollToStart(keys.start);
-
-            // shift + j - Scroll to bottom of page
-            // shift + k - Scroll to top of page
-            this.scrollToPageTop(keys.top);
-            this.scrollToPageBottom(keys.bottom);
-
-            // shift + l - scroll to next section if any
-            // shift + h - scroll to previous section if any
-            this.scrollToNextSection(keys.next);
-            this.scrollToPrevSection(keys.prev);
+                           return processResults(resp, options);
+                       });
         }
-    }
 
-    // Keys for submitting a new article or sending an email
-    //
-    // :w - Submit a new article - trigger show-form
-    // ,c - submit an email
-    // :q - close the current form
-    Hotkeys.FormKeys = {
-        bindFormKeys: function(key, link, ctx) {
-            $(document).bind('keyup', key, function () {
-                ctx.trigger('show-form', { "$overlay": $('.overlay'),
-                                           "$form":    $('.overlay').find('form'),
-                                           "$this":    $(link) });
-            });
-        },
-
-        bindSubmitForm: function(key, link, context) {
-            this.bindFormKeys(key, link, context);
-        },
-
-        bindContactForm: function(key, link, context) {
-            this.bindFormKeys(key, link, context);
-        },
-
-        bindCloseForm: function(key, context) {
-            $(document).bind('keyup', key, function () {
-                var $elems = $('.overlay .close');
-
-                if ($elems.is(':visible')) {
-                    context.trigger('close-popup', { '$this': $elems });
-                }
-            });
-        },
-
-        bind: function(keys) {
-            this.bindSubmitForm(keys.submit.combo, keys.submit.link, keys.context);
-            this.bindContactForm(keys.contact.combo, keys.contact.link, keys.context);
-            this.bindCloseForm(keys.close, keys.context);
-        }
-    }
-
-    // Other navigation
-    //
-    // a - go to articles
-    // s - go to screencasts
-    // d - go to scripts
-    Hotkeys.OtherKeys = {
-        bindToElem: function(id, key) {
-            $(document).bind('keyup', key, function(e) {
-                var pos = $('#' + id).offset().left;
-                $(this).scrollLeft(pos);
-            });
-        },
-
-        bindHelp: function(key, context) {
-            $(document).bind('keyup', key, function () {
-                context.trigger('show-help');
-            });
-        },
-
-        bind: function(keys) {
-            for (var key in keys.nav) {
-                this.bindToElem(key, keys.nav[key]);
-            }
-
-            this.bindHelp(keys.help, keys.context);
-        }
-    }
-
-    Sammy = Sammy || {};
-
-    Sammy.Hotkeys = function(app, method_alias) {
-        var ctx = this,
-            vim_keys = { up: 'k', down: 'j', left: 'h', right: 'l',
-                         end: '$', start: '^', bottom: 'shift+g', top: 'shift+k',
-                         prev: 'shift+h', next: 'shift+l' },
-
-            form_keys = {
-                submit:  { combo: ': w', link: '#extra > a:nth(1)' },
-                contact: { combo: ', c', link: '#extra > a:last' },
-                close:   ': q',
-                context: ctx
-            },
-
-            other_keys = {
-                nav: { 'articles': 'a',
-                       'screencasts': 's',
-                       'scripts': 'd',
-                       'about': '?'
-                    },
-                help: 'shift+i',
-                context: ctx
-            };
-
-        Hotkeys.VimlikeKeys.bind(vim_keys);
-        Hotkeys.FormKeys.bind(form_keys);
-        Hotkeys.OtherKeys.bind(other_keys);
-
-        if (!method_alias) method_alias = 'hotkeys';
-        app.helper(method_alias, this);
+        if (!method_alias) method_alias = "paginate";
+        app.helper(method_alias, paginator);
     };
 
 })(jQuery, window.Sammy);
@@ -13588,8 +11499,6 @@ Date.prototype.strftime=function(fmt)
             .use('Handlebars', 'hb')
             .use('Couch')
             .use('Storage')
-            .use('MenuUpdater', 'menu_updater')
-            .use('Hotkeys')
             .use('FormValidator')
             .use('Paginator', 'paginate');
         this.raise_errors = true;
@@ -13599,12 +11508,6 @@ Date.prototype.strftime=function(fmt)
 
         // Helpers
         this.helpers({
-            webkitFix: function () {
-                if (window.webkitNotifications && $("head link[href$=webkit.css]").length === 0) {
-                    $('head').append("<link rel='stylesheet' media='screen,projection' href='css/webkit.css'/>");
-                }
-            },
-
             fancyDates: function () {
                 var ctx = this;
 
@@ -13714,16 +11617,10 @@ Date.prototype.strftime=function(fmt)
 
 
         this.before('#/', function() {
-            this.webkitFix();
             this.pagination('articles', { nextKey: ["a", "a"], nextKeyID: "a" });
             this.pagination('screencasts', { nextKey: ["a", "a"], nextKeyID: "a" });
             this.pagination('scripts_popular', { nextKey: [ 100000, "a" ], nextKeyID: "a" });
             this.pagination('scripts_updated', { nextKey: [ "z", "a" ], nextKeyID: "a" });
-        });
-
-        this.after(function () {
-            // update menu with our current location
-            $(window).trigger('scroll');
         });
 
 
@@ -13731,40 +11628,10 @@ Date.prototype.strftime=function(fmt)
         this.get('#/', function () {
             var ctx = this;
 
-            // feeds
-            this.render('templates/feeds.hb')
-                .appendTo('#feeds');
-
-            // articles
-            this.loadArticles('viewLatestArticles', 'articles');
-
-            // screencasts
-            this.loadArticles('viewLatestScreencasts', 'screencasts')
-                .then(function () {
-                    $('#screencasts .summary > p').each(function(i, text) {
-                        var $text = $(this).text(),
-                            summarized;
-
-                        $text.length > 145 ? summarized = $text.substring(0,145) + '...'
-                                           : summarized = $text;
-                        $(this).text(summarized);
-                    });
-                });
-
-            // scripts
-            this.send(Script['viewByRating'], { limit: 25, startkey: ["10000", "a"] })
-                .then('chooseAtRandom')
-                .render('templates/scripts/featured.hb')
-                .appendTo('#scripts #featured');
-
-            this.loadScriptListings('viewByRating', 'scripts_popular', 'commit', '#popular ul');
-            this.loadScriptListings('viewByUpdateTime', 'scripts_updated', 'h-commit', '#updated ul');
         });
 
         this.post('#/new', function () {
-            var ctx = this,
-                record = new Object;
-            Article.processRecord(record, this.params, this.target);
+
         });
 
         this.post('#/contact', function () {
@@ -13773,51 +11640,6 @@ Date.prototype.strftime=function(fmt)
 
 
         // Custom Events
-        this.bind('show-more', function(e, data) {
-            var ctx = this,
-                $elem = data.selector,
-                $parents = $elem.parents(),
-                ref = data.reference,
-                paginate_me = {};
-
-            if (ref === "popular" || ref === "updated") {
-                ref = "scripts_" + ref;
-            }
-
-            paginate_me.options = { startkey:       ctx.pagination(ref).nextKey,
-                                    startkey_docid: ctx.pagination(ref).nextKeyID,
-                                    reference:      ref };
-
-            switch (ref) {
-            case "articles": case "screencasts":
-                paginate_me.template = "templates/" + ref + "/more.hb";
-                paginate_me.parent = "#" + ref + " .more-" + ref;
-                $.extend(paginate_me.options, { limit: 11 });
-
-                paginate_me.fun = ref === "articles" ? Article['viewLatestArticles']
-                                                     : Article['viewLatestScreencasts'];
-                break;
-            case "scripts_updated": case "scripts_popular":
-                paginate_me.template = "templates/scripts/snippet.hb";
-                paginate_me.parent   = $elem.parents('ul');
-                $.extend(paginate_me.options, { limit: 10 });
-
-                if (ref === "scripts_updated") {
-                    paginate_me.fun = Script['viewByUpdateTime'];
-                    paginate_me.css_class = "h-commit";
-                } else {
-                    paginate_me.fun = Script['viewByRating'];
-                    paginate_me.css_class = "commit";
-                }
-
-                break;
-            }
-
-            paginate_me.ref = ref;
-            paginate_me['$elem'] = $elem;
-            ctx.paginationHandler(paginate_me);
-        });
-
         this.bind('add-article', function(e, data) {
             var ctx = this,
                 form = data.target,
@@ -13959,26 +11781,6 @@ Date.prototype.strftime=function(fmt)
         this.bind('run', function() {
             var ctx = this;
 
-            $('.no-js').remove();
-
-            $(window).scroll(function () {
-                ctx.menu_updater();
-            });
-
-            // ---- Bindings for displaying more articles, scripts, etc. ----
-            $('.show-more, .more-wrapper > a', $(this).parent('div')[0]).live('click', function(e) {
-                e.preventDefault();
-                var ref;
-
-                if ($(this).parents('#scripts').length != 0) {
-                    ref = $(this).parents('section:first').attr('id');
-                } else {
-                    ref = $(this).parents('.container').attr('id');
-                }
-
-                ctx.trigger('show-more', { selector: $(this), reference: ref });
-            });
-
 
             // ---- Form validation bindings ----
             ctx.trigger('load-validation', { form: 'form' });
@@ -14006,18 +11808,6 @@ Date.prototype.strftime=function(fmt)
                 e.preventDefault();
                 ctx.trigger('show-help');
             });
-
-
-            // ---- Animated scrolling ----
-            $('#main-nav a, #extra a[href!=#]', $(this).parent('div')[0]).live('click', function(e) {
-                e.preventDefault();
-
-                var href = $(this).attr('href'),
-                    pos = $(href).offset().left.toString() + "px";
-
-                $('html,body').animate({ scrollLeft: pos })
-                              .trigger('scroll'); // just in case header info is not updated
-            });
         });
     });
 
@@ -14027,110 +11817,4 @@ Date.prototype.strftime=function(fmt)
     });
 
 })(jQuery);
-
-Article = Sammy('body').createModel('article');
-Article.extend({
-
-    getScreenCastRegex: function () {
-        // courtesy of embedly regexp generator
-        return /http:\/\/(.*youtube\.com\/watch.*|.*\.youtube\.com\/v\/.*|youtu\.be\/.*|.*\.youtube\.com\/user\/.*|.*\.youtube\.com\/.*#.*\/.*|m\.youtube\.com\/watch.*|m\.youtube\.com\/index.*|.*\.youtube\.com\/profile.*|.*justin\.tv\/.*|.*justin\.tv\/.*\/b\/.*|.*justin\.tv\/.*\/w\/.*|www\.ustream\.tv\/recorded\/.*|www\.ustream\.tv\/channel\/.*|www\.ustream\.tv\/.*|qik\.com\/video\/.*|qik\.com\/.*|qik\.ly\/.*|.*revision3\.com\/.*|.*\.dailymotion\.com\/video\/.*|.*\.dailymotion\.com\/.*\/video\/.*|www\.collegehumor\.com\/video:.*|.*twitvid\.com\/.*|www\.break\.com\/.*\/.*|vids\.myspace\.com\/index\.cfm\?fuseaction=vids\.individual&videoid.*|www\.myspace\.com\/index\.cfm\?fuseaction=.*&videoid.*|www\.metacafe\.com\/watch\/.*|www\.metacafe\.com\/w\/.*|blip\.tv\/file\/.*|.*\.blip\.tv\/file\/.*|video\.google\.com\/videoplay\?.*|.*revver\.com\/video\/.*|video\.yahoo\.com\/watch\/.*\/.*|video\.yahoo\.com\/network\/.*|.*viddler\.com\/explore\/.*\/videos\/.*|liveleak\.com\/view\?.*|www\.liveleak\.com\/view\?.*|animoto\.com\/play\/.*|dotsub\.com\/view\/.*|www\.overstream\.net\/view\.php\?oid=.*|www\.livestream\.com\/.*|www\.worldstarhiphop\.com\/videos\/video.*\.php\?v=.*|worldstarhiphop\.com\/videos\/video.*\.php\?v=.*|teachertube\.com\/viewVideo\.php.*|www\.teachertube\.com\/viewVideo\.php.*|www1\.teachertube\.com\/viewVideo\.php.*|www2\.teachertube\.com\/viewVideo\.php.*|bambuser\.com\/v\/.*|bambuser\.com\/channel\/.*|bambuser\.com\/channel\/.*\/broadcast\/.*|www\.schooltube\.com\/video\/.*\/.*|bigthink\.com\/ideas\/.*|bigthink\.com\/series\/.*|sendables\.jibjab\.com\/view\/.*|sendables\.jibjab\.com\/originals\/.*|www\.xtranormal\.com\/watch\/.*|dipdive\.com\/media\/.*|dipdive\.com\/member\/.*\/media\/.*|dipdive\.com\/v\/.*|.*\.dipdive\.com\/media\/.*|.*\.dipdive\.com\/v\/.*|www\.whitehouse\.gov\/photos-and-video\/video\/.*|www\.whitehouse\.gov\/video\/.*|wh\.gov\/photos-and-video\/video\/.*|wh\.gov\/video\/.*|www\.hulu\.com\/watch.*|www\.hulu\.com\/w\/.*|hulu\.com\/watch.*|hulu\.com\/w\/.*|.*crackle\.com\/c\/.*|www\.fancast\.com\/.*\/videos|www\.funnyordie\.com\/videos\/.*|www\.funnyordie\.com\/m\/.*|funnyordie\.com\/videos\/.*|funnyordie\.com\/m\/.*|www\.vimeo\.com\/groups\/.*\/videos\/.*|www\.vimeo\.com\/.*|vimeo\.com\/m\/#\/featured\/.*|vimeo\.com\/groups\/.*\/videos\/.*|vimeo\.com\/.*|vimeo\.com\/m\/#\/featured\/.*|www\.ted\.com\/talks\/.*\.html.*|www\.ted\.com\/talks\/lang\/.*\/.*\.html.*|www\.ted\.com\/index\.php\/talks\/.*\.html.*|www\.ted\.com\/index\.php\/talks\/lang\/.*\/.*\.html.*|.*nfb\.ca\/film\/.*|www\.thedailyshow\.com\/watch\/.*|www\.thedailyshow\.com\/full-episodes\/.*|www\.thedailyshow\.com\/collection\/.*\/.*\/.*|movies\.yahoo\.com\/movie\/.*\/video\/.*|movies\.yahoo\.com\/movie\/.*\/trailer|movies\.yahoo\.com\/movie\/.*\/video|www\.colbertnation\.com\/the-colbert-report-collections\/.*|www\.colbertnation\.com\/full-episodes\/.*|www\.colbertnation\.com\/the-colbert-report-videos\/.*|www\.comedycentral\.com\/videos\/index\.jhtml\?.*|www\.theonion\.com\/video\/.*|theonion\.com\/video\/.*|wordpress\.tv\/.*\/.*\/.*\/.*\/|www\.traileraddict\.com\/trailer\/.*|www\.traileraddict\.com\/clip\/.*|www\.traileraddict\.com\/poster\/.*|www\.escapistmagazine\.com\/videos\/.*|www\.trailerspy\.com\/trailer\/.*\/.*|www\.trailerspy\.com\/trailer\/.*|www\.trailerspy\.com\/view_video\.php.*|www\.atom\.com\/.*\/.*\/|fora\.tv\/.*\/.*\/.*\/.*|www\.spike\.com\/video\/.*|www\.gametrailers\.com\/video\/.*|gametrailers\.com\/video\/.*|www\.koldcast\.tv\/video\/.*|www\.koldcast\.tv\/#video:.*|techcrunch\.tv\/watch.*|techcrunch\.tv\/.*\/watch.*|mixergy\.com\/.*|video\.pbs\.org\/video\/.*|www\.zapiks\.com\/.*|tv\.digg\.com\/diggnation\/.*|tv\.digg\.com\/diggreel\/.*|tv\.digg\.com\/diggdialogg\/.*|www\.trutv\.com\/video\/.*|www\.nzonscreen\.com\/title\/.*|nzonscreen\.com\/title\/.*|app\.wistia\.com\/embed\/medias\/.*|https:\/\/app\.wistia\.com\/embed\/medias\/.*|www\.godtube\.com\/featured\/video\/.*|godtube\.com\/featured\/video\/.*|www\.godtube\.com\/watch\/.*|godtube\.com\/watch\/.*|www\.tangle\.com\/view_video.*|mediamatters\.org\/mmtv\/.*|www\.clikthrough\.com\/theater\/video\/.*|espn\.go\.com\/video\/clip.*|espn\.go\.com\/.*\/story.*|abcnews\.com\/.*\/video\/.*|abcnews\.com\/video\/playerIndex.*|washingtonpost\.com\/wp-dyn\/.*\/video\/.*\/.*\/.*\/.*|www\.washingtonpost\.com\/wp-dyn\/.*\/video\/.*\/.*\/.*\/.*|www\.boston\.com\/video.*|boston\.com\/video.*|www\.facebook\.com\/photo\.php.*|www\.facebook\.com\/video\/video\.php.*|www\.facebook\.com\/v\/.*|cnbc\.com\/id\/.*\?.*video.*|www\.cnbc\.com\/id\/.*\?.*video.*|cnbc\.com\/id\/.*\/play\/1\/video\/.*|www\.cnbc\.com\/id\/.*\/play\/1\/video\/.*|cbsnews\.com\/video\/watch\/.*|www\.google\.com\/buzz\/.*\/.*\/.*|www\.google\.com\/buzz\/.*|www\.google\.com\/profiles\/.*|google\.com\/buzz\/.*\/.*\/.*|google\.com\/buzz\/.*|google\.com\/profiles\/.*|www\.cnn\.com\/video\/.*|edition\.cnn\.com\/video\/.*|money\.cnn\.com\/video\/.*|today\.msnbc\.msn\.com\/id\/.*\/vp\/.*|www\.msnbc\.msn\.com\/id\/.*\/vp\/.*|www\.msnbc\.msn\.com\/id\/.*\/ns\/.*|today\.msnbc\.msn\.com\/id\/.*\/ns\/.*|multimedia\.foxsports\.com\/m\/video\/.*\/.*|msn\.foxsports\.com\/video.*|www\.globalpost\.com\/video\/.*|www\.globalpost\.com\/dispatch\/.*)/i;
-    },
-
-    isScreencast: function(url) {
-        var regex = Article.getScreenCastRegex();
-        return regex.test(url);
-    },
-
-    processRecord: function(newRcd, params, form) {
-        var ctx = Sammy('body');
-
-        if (params.lol1 || params.lol2) {
-            throw new Error("Looks like you're a bot. Epic fail.");
-        }
-
-        for (key in params) {
-            if (!/^lol\d$/.test(key)) {
-                newRcd[key] = params[key];
-            }
-        }
-
-        newRcd.posted_on = Date();
-        newRcd.approved = false;
-
-        if (Article.isScreencast(params.link)) {
-            $.embedly(params.link, {
-                urlRe:   Article.getScreenCastRegex(),
-                success: function(oembed, dict) {
-                    newRcd.html           = oembed.html;
-                    newRcd.thumb_url      = oembed.thumbnail_url;
-                    newRcd.author         = oembed.author;
-                    newRcd.author_website = oembed.author_website;
-                    newRcd.type           = "screencast";
-                    ctx.trigger('add-article', { record: newRcd, target: form });
-                }
-            });
-        } else {
-            newRcd.type = "article";
-            ctx.trigger('add-article', { record: newRcd, target: form });
-        }
-    },
-
-    beforeSave: function(doc) {
-        if (!doc._id) {
-            doc._id = doc.link;
-            delete doc.link;
-        }
-        return doc;
-    },
-
-    viewLatestArticles: function(options, callback) {
-        return Article.view('latest_articles', $.extend({
-            startkey: options.startkey,
-            startkey_docid: options.startkey_docid,
-            limit: options.limit || 10,
-            descending: true
-        }, options || {}), callback);
-    },
-
-    viewLatestScreencasts: function(options, callback) {
-        return Article.view('latest_screencasts', $.extend({
-            startkey: options.startkey,
-            startkey_docid: options.startkey_docid,
-            limit: options.limit || 10,
-            descending: true
-        }, options || {}), callback);
-    }
-});
-
-Script = Sammy('body').createModel('script');
-Script.extend({
-    viewByRating: function(options, callback) {
-        return Script.view('by_rating', $.extend({
-            startkey:       options.startkey || [10000, "a"],
-            startkey_docid: options.startkey_docid || "a",
-            limit:          options.limit || 10,
-            descending:     true
-        }, options || {}), callback);
-    },
-
-    viewByUpdateTime: function(options, callback) {
-        return Script.view('by_update_time', $.extend({
-            startkey:       options.startkey,
-            startkey_docid: options.startkey_docid,
-            limit:          options.limit || 10,
-            descending:     true
-        }, options || {}), callback);
-    }
-});
-
-Feed = Sammy('body').createModel('feed');
-Feed.extend({
-
-    getEntries: function(options, callback) {
-        return Feed.view('entries', $.extend({
-            key: options.feed_id,
-            limit: options.limit || 10
-        }, options || {}), callback);
-    }
-});
 

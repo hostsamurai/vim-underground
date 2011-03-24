@@ -1,42 +1,38 @@
 // ------ @font-face declarations ------
-$couch-path: "/underground/_design/underground/css/type/";
-
 @include font-face("Notice Std",
-         font-files($couch-path + "NoticeStd-webfont.woff", woff,
-                    $couch-path + "NoticeStd-webfont.ttf", truetype,
-                    $couch-path + "NoticeStd-webfont.svg#webfontTm26TXR9", svg),
-         eot($couch-path + "NoticeStd-webfont.eot"));
+         font-files("NoticeStd-webfont.woff", woff,
+                    "NoticeStd-webfont.ttf", truetype,
+                    "NoticeStd-webfont.svg#webfontTm26TXR9", svg),
+         eot("NoticeStd-webfont.eot"));
 
 @include font-face("Notice Second",
-         font-files($couch-path + "Notice2Std-webfont.woff", woff,
-                    $couch-path + "Notice2Std-webfont.ttf", truetype,
-                    $couch-path + "Notice2Std-webfont.svg#webfontrEW32TJz", svg),
-         eot($couch-path + "Notice2Std-webfont.eot"));
+         font-files("Notice2Std-webfont.woff", woff,
+                    "Notice2Std-webfont.ttf", truetype,
+                    "Notice2Std-webfont.svg#webfontrEW32TJz", svg),
+         eot("Notice2Std-webfont.eot"));
 
 @include font-face("Notice Third",
-         font-files($couch-path + "Notice3Std-webfont.woff", woff,
-                    $couch-path + "Notice3Std-webfont.ttf", truetype,
-                    $couch-path + "Notice3Std-webfont.svg#webfontrNqMzmZm", svg),
+         font-files("Notice3Std-webfont.woff", woff,
+                    "Notice3Std-webfont.ttf", truetype,
+                    "Notice3Std-webfont.svg#webfontrNqMzmZm", svg),
          eot($couch-path"Notice3Std-webfont.eot"));
 
 
 @include font-face("Symbol Signs",
-         font-files($couch-path + "symbol-signs-webfont.woff", woff,
-                    $couch-path + "symbol-signs-webfont.ttf", truetype,
-                    $couch-path + "symbol-signs-webfont.svg#webfont1U3YPa2J", svg),
-         eot($couch-path + "symbol-signs-webfont.eot"));
+         font-files("symbol-signs-webfont.woff", woff,
+                    "symbol-signs-webfont.ttf", truetype,
+                    "symbol-signs-webfont.svg#webfont1U3YPa2J", svg),
+         eot("symbol-signs-webfont.eot"));
 
 
 @include font-face("Iconic Stroke",
-         font-files($couch-path + "iconic_stroke.ttf", truetype,
-                    $couch-path + "iconic_stroke.otf", opentype,
-                    $couch-path + "iconic_stroke.svg#iconic", svg),
-         eot($couch-path + "iconic_stroke.eot"));
+         font-files("iconic_stroke.ttf", truetype,
+                    "iconic_stroke.otf", opentype,
+                    "iconic_stroke.svg#iconic", svg),
+         eot("iconic_stroke.eot"));
 
 
 // ------ General font styles ------
 body {
     @extend .sans;
 }
-
-@import "type/homepage";

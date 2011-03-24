@@ -1,0 +1,13 @@
+<date datetime="{{posted_on}}">{{posted_on}}</date>
+
+<a href="{{link}}">
+    <h4>{{title}}</h4>
+</a>
+
+{{#summary}}
+    <p>{{summary}}</p>
+{{/summary}}
+
+{{#thumbnail}}
+    <img src="" alt="{{title}}"/>
+{{/thumbnail}}

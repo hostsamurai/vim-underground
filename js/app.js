@@ -5,8 +5,6 @@
             .use('Handlebars', 'hb')
             .use('Couch')
             .use('Storage')
-            .use('MenuUpdater', 'menu_updater')
-            .use('Hotkeys')
             .use('FormValidator')
             .use('Paginator', 'paginate');
         this.raise_errors = true;
@@ -16,12 +14,6 @@
 
         // Helpers
         this.helpers({
-            webkitFix: function () {
-                if (window.webkitNotifications && $("head link[href$=webkit.css]").length === 0) {
-                    $('head').append("<link rel='stylesheet' media='screen,projection' href='css/webkit.css'/>");
-                }
-            },
-
             fancyDates: function () {
                 var ctx = this;
 
@@ -131,16 +123,10 @@
 
 
         this.before('#/', function() {
-            this.webkitFix();
             this.pagination('articles', { nextKey: ["a", "a"], nextKeyID: "a" });
             this.pagination('screencasts', { nextKey: ["a", "a"], nextKeyID: "a" });
             this.pagination('scripts_popular', { nextKey: [ 100000, "a" ], nextKeyID: "a" });
             this.pagination('scripts_updated', { nextKey: [ "z", "a" ], nextKeyID: "a" });
-        });
-
-        this.after(function () {
-            // update menu with our current location
-            $(window).trigger('scroll');
         });
 
 
@@ -148,40 +134,10 @@
         this.get('#/', function () {
             var ctx = this;
 
-            // feeds
-            this.render('templates/feeds.hb')
-                .appendTo('#feeds');
-
-            // articles
-            this.loadArticles('viewLatestArticles', 'articles');
-
-            // screencasts
-            this.loadArticles('viewLatestScreencasts', 'screencasts')
-                .then(function () {
-                    $('#screencasts .summary > p').each(function(i, text) {
-                        var $text = $(this).text(),
-                            summarized;
-
-                        $text.length > 145 ? summarized = $text.substring(0,145) + '...'
-                                           : summarized = $text;
-                        $(this).text(summarized);
-                    });
-                });
-
-            // scripts
-            this.send(Script['viewByRating'], { limit: 25, startkey: ["10000", "a"] })
-                .then('chooseAtRandom')
-                .render('templates/scripts/featured.hb')
-                .appendTo('#scripts #featured');
-
-            this.loadScriptListings('viewByRating', 'scripts_popular', 'commit', '#popular ul');
-            this.loadScriptListings('viewByUpdateTime', 'scripts_updated', 'h-commit', '#updated ul');
         });
 
         this.post('#/new', function () {
-            var ctx = this,
-                record = new Object;
-            Article.processRecord(record, this.params, this.target);
+
         });
 
         this.post('#/contact', function () {
@@ -190,51 +146,6 @@
 
 
         // Custom Events
-        this.bind('show-more', function(e, data) {
-            var ctx = this,
-                $elem = data.selector,
-                $parents = $elem.parents(),
-                ref = data.reference,
-                paginate_me = {};
-
-            if (ref === "popular" || ref === "updated") {
-                ref = "scripts_" + ref;
-            }
-
-            paginate_me.options = { startkey:       ctx.pagination(ref).nextKey,
-                                    startkey_docid: ctx.pagination(ref).nextKeyID,
-                                    reference:      ref };
-
-            switch (ref) {
-            case "articles": case "screencasts":
-                paginate_me.template = "templates/" + ref + "/more.hb";
-                paginate_me.parent = "#" + ref + " .more-" + ref;
-                $.extend(paginate_me.options, { limit: 11 });
-
-                paginate_me.fun = ref === "articles" ? Article['viewLatestArticles']
-                                                     : Article['viewLatestScreencasts'];
-                break;
-            case "scripts_updated": case "scripts_popular":
-                paginate_me.template = "templates/scripts/snippet.hb";
-                paginate_me.parent   = $elem.parents('ul');
-                $.extend(paginate_me.options, { limit: 10 });
-
-                if (ref === "scripts_updated") {
-                    paginate_me.fun = Script['viewByUpdateTime'];
-                    paginate_me.css_class = "h-commit";
-                } else {
-                    paginate_me.fun = Script['viewByRating'];
-                    paginate_me.css_class = "commit";
-                }
-
-                break;
-            }
-
-            paginate_me.ref = ref;
-            paginate_me['$elem'] = $elem;
-            ctx.paginationHandler(paginate_me);
-        });
-
         this.bind('add-article', function(e, data) {
             var ctx = this,
                 form = data.target,
@@ -376,26 +287,6 @@
         this.bind('run', function() {
             var ctx = this;
 
-            $('.no-js').remove();
-
-            $(window).scroll(function () {
-                ctx.menu_updater();
-            });
-
-            // ---- Bindings for displaying more articles, scripts, etc. ----
-            $('.show-more, .more-wrapper > a', $(this).parent('div')[0]).live('click', function(e) {
-                e.preventDefault();
-                var ref;
-
-                if ($(this).parents('#scripts').length != 0) {
-                    ref = $(this).parents('section:first').attr('id');
-                } else {
-                    ref = $(this).parents('.container').attr('id');
-                }
-
-                ctx.trigger('show-more', { selector: $(this), reference: ref });
-            });
-
 
             // ---- Form validation bindings ----
             ctx.trigger('load-validation', { form: 'form' });
@@ -422,18 +313,6 @@
             $('#extra > a:first').live('click', function(e) {
                 e.preventDefault();
                 ctx.trigger('show-help');
-            });
-
-
-            // ---- Animated scrolling ----
-            $('#main-nav a, #extra a[href!=#]', $(this).parent('div')[0]).live('click', function(e) {
-                e.preventDefault();
-
-                var href = $(this).attr('href'),
-                    pos = $(href).offset().left.toString() + "px";
-
-                $('html,body').animate({ scrollLeft: pos })
-                              .trigger('scroll'); // just in case header info is not updated
             });
         });
     });

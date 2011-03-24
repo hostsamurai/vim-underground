@@ -3,5 +3,9 @@
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
 
-@import "base";
+@import "compass/css3";
 @import "compass/reset";
+@import "compass/utilities";
+@import "compass/typography";
+@import "defaults";
+@import "layout";

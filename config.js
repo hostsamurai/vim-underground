@@ -8,7 +8,7 @@
         "images":         "_attachments/images",
         "sass":           false,
         "js":             "_attachments/js",
-        "templates":      "_attachments/templates",
+        "templates":      "templates",
         "db":             "",
         "README.textile": false,
         "Thorfile":       false,
