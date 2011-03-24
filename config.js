@@ -1,5 +1,5 @@
 {
-    "id": "underground",
+    "id": "underground-git",
     "mapDirectories": {
         "config.js":      "config",
         "index.html":     "_attachments/index.html",

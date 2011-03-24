@@ -1,12 +1,15 @@
+/**
+ * this file contains the json representation for rewrite rules
+**/
 [
-    {
-        "from":   "feeds/:_id/entries",
-        "to":     "/_show/challenge",
-        "method": "GET"
-    },
-    {
-        "from":   "feeds/:_id/entries",
-        "to":     "_update/entries/:_id",
-        "method": "POST"
-    }
+  { // rewriting / to index.html
+    "from":"/",
+    "to":"index.html",
+    "method":"GET",
+    "query":{}
+  },
+  { // keeping relative urls sane
+    "from":"/*",
+    "to":"/*"
+  }
 ]

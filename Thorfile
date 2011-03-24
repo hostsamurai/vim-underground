@@ -43,9 +43,9 @@ class Seed < Thor
 
   private
 
-    def post(type)
-      docs = File.read "./data/#{type}.json"
-      puts "Pushing #{type}" 
-      RestClient.post "#{@db}/_bulk_docs", docs, :content_type => :json, :accept => :json
-    end
+  def post(type)
+    docs = File.read "./data/#{type}.json"
+    puts "Pushing #{type}" 
+    RestClient.post "#{@db}/_bulk_docs", docs, :content_type => :json, :accept => :json
+  end
 end

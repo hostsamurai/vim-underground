@@ -1,28 +1,20 @@
-// bundled_path: js/default.js
-// compressed_path: js/production.js
-// vendor_dir: js/vendor
-
-/ start adding your requirements below:
-
-sha1
-jquery 1.4.4
-jquery.couch 0.11
-sammy 0.6.2
-sammy.couch 0.1.0
-sammy.json 0.6.2
-sammy.handlebars 0.6.2
-sammy.storage 0.6.2
-jquery.viewport 0.1.0
-jquery.embedly 2.0.0
-jquery.timeago 0.9.2
-strftime 1.3
-jquery.h5validate 0.3.3
-jquery.hotkeys 0.8
-js/helpers/paginator
-js/helpers/form
-js/helpers/menu
-js/helpers/hotkeys
-js/app
-js/models/article
-js/models/script
-js/models/feed
+{
+  "bundle_dir": "js",
+  "compressed_suffix": ".min",
+  "vendor_dir": "js/vendor",
+  "bundles": {
+    "default": [
+      "sha1",
+      [ "jquery", "1.4.4" ],
+      [ "jquery.couch", "0.11" ],
+      [ "sammy", "0.6.3" ],
+      [ "sammy.couch", "0.1.0" ],
+      [ "sammy.handlebars", "0.6.3" ],
+      [ "jquery.viewport", "0.1.0" ],
+      [ "jquery.embedly", "2.0.0" ],
+      [ "jquery.timeago", "0.9.2" ],
+      [ "jquery.h5validate", "0.3.3" ],
+      "js/app"
+    ]
+  }
+}
