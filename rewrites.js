@@ -8,7 +8,8 @@
         "method":"GET",
         "query":{
             "descending": true,
-            "limit": 15
+            "limit": 15,
+            "rows": 3
         }
     },
 

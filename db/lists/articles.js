@@ -5,10 +5,14 @@ function(head, req) {
     provides("html", function () {
         var mustache = require('lib/mustache'),
             articles = [],
-            row;
+            rows = [],
+            i = 0,
+            article,
+            row,
+            stash;
 
         while (row = getRow()) {
-            var article = row.value,
+            article = row.value,
                 a = {
                     title:     article.title,
                     summary:   article.summary,
@@ -20,8 +24,14 @@ function(head, req) {
             key = row.key;
         }
 
-        var stash = {
-            articles: articles,
+        // split articles into an array of arrays representing rows
+        while (i < req.query.rows) {
+            rows.push({ articles: articles.splice(0,5) });
+            i += 1;
+        }
+
+        stash = {
+            rows: rows,
             key: key,
             older: function () { return path.older(key); }
         };

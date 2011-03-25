@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{{title}} Vim Underground</title>
+        <title>{{page_title}} Vim Underground</title>
 
         <meta name="description" content="The latest user-generated VIM news and articles"/>
         <meta name="keywords" content="vim news, linux vim, mac vim, vim scripts, vim commands, gvim"/>
@@ -15,12 +15,21 @@
 
     <body>
         <div class="container">
-            <section id="top-row">
-                {{>articles}} 
-            </section> 
+            <header>
+                <nav id="link-wrapper">
+                    <a href="/articles">Articles</a>
+                    <a href="/screencasts">Screencasts</a>
+                    <a href="/scripts">Scripts</a>
+                    <a href="/about">About</a>
+                    <a href="submit">Submit</a> 
+                </nav>
 
-            <section id="bottom-row">
-            </section>
+            	<div id="logo-wrapper"></div>
+            </header>
+
+            <div class="content">
+                {{> articles}} 
+            </div>
         </div>
 
         <div class="overlay"></div>

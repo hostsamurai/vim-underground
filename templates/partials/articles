@@ -1,19 +1,18 @@
-<ul id="articles">
-    {{#articles}}
-    <li>
-        <date datetime="{{posted_on}}">{{posted_on}}</date>
+<section id="articles">
+    <h1>Latest Articles</h1>
 
-        <a href="{{link}}">
-            <h4>{{title}}</h4>
-        </a>
+    {{#rows}}
+        <ul class="row">
+            {{#articles}}
+                <li class="article">
+                    <date datetime="{{posted_on}}">{{posted_on}}</date>
+                    <a href="{{link}}">
+                        <h4>{{title}}</h4>
+                    </a> 
 
-        {{#summary}}
-            <p>{{summary}}</p>
-        {{/summary}}
-
-        {{#thumbnail}}
-            <img src="" alt="{{title}}"/>
-        {{/thumbnail}}
-    </li>
-    {{/articles}}
-</ul>
+                    <p>{{summary}}</p>
+                </li>
+            {{/articles}}
+        </ul>
+    {{/rows}}
+</section>
