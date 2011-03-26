@@ -4,7 +4,7 @@
         {{#blurbs}}
             <li class="article">
                 <date datetime="{{posted_on}}">{{short_date}}</date>
-                <a href="{{link}}">
+                <a href="{{link}}" title="{{alt}}">
                     <h4>{{title}}</h4>
                 </a> 
 
@@ -19,3 +19,5 @@
         {{/blurbs}}
     </ul>
 {{/rows}}
+
+<a href="/{{type}}" class="more">See more &rarr;</a>

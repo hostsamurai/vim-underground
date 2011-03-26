@@ -13721,6 +13721,7 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                 var db = this.db.name,
                     defaults = {
                         descending: true,
+                        type: sel.replace(/^\.|#/g, ''),
                         success: function(json) {
                             $(sel).append(json.body);
                         }
@@ -13743,8 +13744,8 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
 
             // load scripts on the homepage
             ctx.loadBlurbs('script_fragment', '#scripts', {
-                limit: 9,
-                rows: 3,
+                limit: 12,
+                rows: 4,
                 cols: 3,
                 heading: 'Latest Script Activity'
             });
@@ -13754,6 +13755,7 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                 limit: 6,
                 rows: 3,
                 cols: 2,
+                trlen: 28,
                 heading: 'Latest Screencasts'
             });
         });

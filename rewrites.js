@@ -12,6 +12,7 @@
             "rows": 3,
             "cols": 5,
             "heading": "Latest Articles",
+            "type": "articles",
             "page": "index"
         }
     },

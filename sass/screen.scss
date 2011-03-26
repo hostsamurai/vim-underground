@@ -109,10 +109,7 @@ $base-line-height: 13px * 1.5;
 
     a {
         @include link-colors($dry-dark-gray, $red, $dry-dark-gray);
-
-        h4 {
-            @include trailer;
-        }
+        h4 { @include trailer; }
     }
 
     p {
@@ -124,6 +121,7 @@ $base-line-height: 13px * 1.5;
 
     img {
         display: block; margin: auto;
+        width: 175px; height: 117px;
     }
 }
 
@@ -201,7 +199,10 @@ header {
 // ------------------------------
 section .row:last-of-type { border-bottom: none; }
 
-#articles h1::after { @include after-right("X", "Notice Second"); }
+#articles {
+    h1::after { @include after-right("X", "Notice Second"); }
+    .article { height: 255px; }
+}
 
 #scripts {
     @include grid(15);
@@ -214,8 +215,11 @@ section .row:last-of-type { border-bottom: none; }
         &::after { @include after-right("O", "Notice Second"); }
     }
 
-    // fix for .article
-    .article { @include grid(8.2); margin: 20px 20px 20px 0; }
+    .article {
+        // fix for .article
+        @include grid(8.2); margin: 20px 20px 20px 0;
+        height: 117px;
+    }
 }
 
 #screencasts {

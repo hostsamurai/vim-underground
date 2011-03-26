@@ -5,6 +5,7 @@ function(head, req) {
     function list(format) {
         var mustache = require('lib/mustache'),
             utils = require('lib/utils'),
+            len = req.query.trlen,
             blurbs = [],
             rows = [],
             i = 0,
@@ -16,7 +17,8 @@ function(head, req) {
         while (row = getRow()) {
             blurb = row.value;
             b = {
-                title:      utils.truncateTitle(blurb.title),
+                title:      utils.truncateTitle(blurb.title, len),
+                alt:        blurb.title,
                 summary:    utils.truncateDesc(blurb.summary),
                 thumbnail:  blurb.thumb_url,
                 link:       blurb.link,
@@ -37,6 +39,7 @@ function(head, req) {
         stash = {
             heading: req.query.heading,
             rows: rows,
+            type: req.query.type,
             key: key,
             older: function () { return path.older(key); }
         };
