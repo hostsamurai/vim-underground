@@ -85,11 +85,12 @@
 
             // load scripts on the homepage
             $.couch.db(db)
-                .list(db + '/scripts', 'script_fragment', {
+                .list(db + '/blurbs', 'script_fragment', {
                     descending: true,
                     limit: 9,
                     rows: 3,
                     cols: 3,
+                    heading: 'Latest Script Activity',
                     success: function(json) {
                         $('#scripts').append(json.body);
                     }

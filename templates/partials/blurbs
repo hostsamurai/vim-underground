@@ -1,6 +1,7 @@
+<h1>{{heading}}</h1>
 {{#rows}}
     <ul class="row">
-        {{#articles}}
+        {{#blurbs}}
             <li class="article">
                 <date datetime="{{posted_on}}">{{short_date}}</date>
                 <a href="{{link}}">
@@ -9,6 +10,6 @@
 
                 <p>{{summary}}</p>
             </li>
-        {{/articles}}
+        {{/blurbs}}
     </ul>
 {{/rows}}
