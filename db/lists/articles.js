@@ -4,6 +4,7 @@ function(head, req) {
 
     provides("html", function () {
         var mustache = require('lib/mustache'),
+            utils = require('lib/utils'),
             articles = [],
             rows = [],
             i = 0,
@@ -14,10 +15,11 @@ function(head, req) {
         while (row = getRow()) {
             article = row.value,
                 a = {
-                    title:     article.title,
-                    summary:   article.summary,
-                    link:      article.link,
-                    posted_on: article.posted_on
+                    title:      utils.truncateTitle(article.title),
+                    summary:    utils.truncateDesc(article.summary),
+                    link:       article.link,
+                    posted_on:  article.posted_on,
+                    short_date: utils.shortDate(article.posted_on)
                 };
 
             articles.push(a);
