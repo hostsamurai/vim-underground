@@ -3,10 +3,10 @@
 **/
 [
     { // rewriting / to index.html
-        "from":"/",
-        "to":"_list/blurbs/latest_articles",
-        "method":"GET",
-        "query":{
+        "from": "/",
+        "to": "_list/blurbs/latest_articles",
+        "method": "GET",
+        "query": {
             "descending": true,
             "limit": 15,
             "rows": 3,
@@ -17,7 +17,7 @@
     },
 
     { // keeping relative urls sane
-        "from":"/*",
-        "to":"/*"
+        "from": "/*",
+        "to": "/*"
     }
 ]

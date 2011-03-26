@@ -38,38 +38,17 @@
                 return results.rows[i].value;
             },
 
-            paginationHandler: function(obj) {
-                var ref   = obj.ref,
-                    $elem = obj['$elem'],
-                    ctx   = this;
-
-                return ctx.paginate(obj.fun, obj.options)
-                   .then(function(res) {
-                        switch (ref) {
-                        case "articles": case "screencasts":
-                            if ($('#' + ref + ' .more-' + ref).length === 0) {
-                                $('#' + ref).append('<ul class="more-' + ref + '"></ul>');
-                            }
-
-                            if (ctx.pagination(ref).nextKey !== null) {
-                                $('#' + ref + ' > .more-' + ref + ':last').after($elem.parent());
-                            } else {
-                                $('#' + ref + ' .show-more-wrapper').remove();
-                            }
-
-                            break;
-                        case "scripts_updated": case "scripts_popular":
-                            $.extend(res, { "class": obj.css_class });
-                            $elem.parent().remove();
-                            break;
+            loadBlurbs: function(view, sel, options) {
+                var db = this.db.name,
+                    defaults = {
+                        descending: true,
+                        success: function(json) {
+                            $(sel).append(json.body);
                         }
+                    };
 
-                        return res;
-                   })
-                   .render(obj.template)
-                   .appendTo(obj.parent)
-                   .then('fancyDates')
-                   .then('prettyDates');
+                $.extend(options, defaults);
+                $.couch.db(db).list(db + '/blurbs', view, options);
             }
         });
 
@@ -84,17 +63,20 @@
                 db = this.db.name;
 
             // load scripts on the homepage
-            $.couch.db(db)
-                .list(db + '/blurbs', 'script_fragment', {
-                    descending: true,
-                    limit: 9,
-                    rows: 3,
-                    cols: 3,
-                    heading: 'Latest Script Activity',
-                    success: function(json) {
-                        $('#scripts').append(json.body);
-                    }
-                });
+            ctx.loadBlurbs('script_fragment', '#scripts', {
+                limit: 9,
+                rows: 3,
+                cols: 3,
+                heading: 'Latest Script Activity'
+            });
+
+            // load screencasts on the homepage
+            ctx.loadBlurbs('latest_screencasts', '#screencasts', {
+                limit: 6,
+                rows: 3,
+                cols: 2,
+                heading: 'Latest Screencasts'
+            });
         });
 
         this.post('#/new', function () {

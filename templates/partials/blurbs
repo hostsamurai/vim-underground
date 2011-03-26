@@ -8,7 +8,13 @@
                     <h4>{{title}}</h4>
                 </a> 
 
-                <p>{{summary}}</p>
+                {{#summary}}
+                    <p>{{summary}}</p>
+                {{/summary}}
+
+                {{#thumbnail}}
+                    <img src="{{thumbnail}}" alt="{{title}}" />
+                {{/thumbnail}}
             </li>
         {{/blurbs}}
     </ul>

@@ -18,6 +18,7 @@ function(head, req) {
             b = {
                 title:      utils.truncateTitle(blurb.title),
                 summary:    utils.truncateDesc(blurb.summary),
+                thumbnail:  blurb.thumb_url,
                 link:       blurb.link,
                 posted_on:  blurb.posted_on,
                 short_date: utils.shortDate(blurb.posted_on)
@@ -40,11 +41,9 @@ function(head, req) {
             older: function () { return path.older(key); }
         };
 
-        if (req.query.page === "index") {
-            return mustache.to_html(ddoc.templates["index.html"], stash, ddoc.templates.partials);
-        }
-
-        return mustache.to_html(ddoc.templates.partials.blurbs, stash);
+        return req.query.page === "index" ?
+            mustache.to_html(ddoc.templates["index.html"], stash, ddoc.templates.partials) :
+            mustache.to_html(ddoc.templates.partials.blurbs, stash);
     }
 
     provides("html", function () {
