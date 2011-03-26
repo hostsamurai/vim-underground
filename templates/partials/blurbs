@@ -9,7 +9,7 @@
                 </a> 
 
                 {{#summary}}
-                    <p>{{summary}}</p>
+                    <p class="hyphenate">{{summary}}</p>
                 {{/summary}}
 
                 {{#thumbnail}}
