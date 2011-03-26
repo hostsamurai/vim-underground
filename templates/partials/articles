@@ -1,18 +1,14 @@
-<section id="articles">
-    <h1>Latest Articles</h1>
+{{#rows}}
+    <ul class="row">
+        {{#articles}}
+            <li class="article">
+                <date datetime="{{posted_on}}">{{short_date}}</date>
+                <a href="{{link}}">
+                    <h4>{{title}}</h4>
+                </a> 
 
-    {{#rows}}
-        <ul class="row">
-            {{#articles}}
-                <li class="article">
-                    <date datetime="{{posted_on}}">{{short_date}}</date>
-                    <a href="{{link}}">
-                        <h4>{{title}}</h4>
-                    </a> 
-
-                    <p>{{summary}}</p>
-                </li>
-            {{/articles}}
-        </ul>
-    {{/rows}}
-</section>
+                <p>{{summary}}</p>
+            </li>
+        {{/articles}}
+    </ul>
+{{/rows}}

@@ -1,16 +1,15 @@
 ;(function($) {
 
     var app = $.sammy('body', function() {
-        this.use('JSON')
-            .use('Handlebars', 'hb')
+        this.use('Handlebars', 'hb')
             .use('Couch')
-            .use('Storage')
             .use('FormValidator')
             .use('Paginator', 'paginate');
+
         this.raise_errors = true;
 
         // Initialize storage
-        this.store('pagination');
+        //this.store('pagination');
 
         // Helpers
         this.helpers({
@@ -71,69 +70,30 @@
                    .appendTo(obj.parent)
                    .then('fancyDates')
                    .then('prettyDates');
-            },
-
-            loadArticles: function(view, ref) {
-                var ctx = this,
-                    articles = {},
-                    options = { startkey: ctx.pagination(ref).nextKey,
-                                startkey_docid: ctx.pagination(ref).nextKeyID,
-                                limit: 7,
-                                reference: ref };
-
-                return this.paginate(Article[view], options)
-                           .then(function(res) {
-                               var latest = res.rows.shift();
-                               articles = res;
-                               return latest;
-                           })
-                           .render('templates/articles/most_recent.hb')
-                           .appendTo('#' + ref + ' .most-recent')
-                           .then(function () {
-                               if (ref === "screencasts") {
-                                   $('#video iframe').attr({ width: 575, height: 300 })
-                               }
-
-                               return articles;
-                           })
-                           .render('templates/' + ref + '/snippet.hb')
-                           .appendTo('#' + ref + ' .latest')
-                           .render('templates/show_more_wrapper.hb', { subject: ref })
-                           .appendTo('#' + ref + ' .latest')
-                           .then('fancyDates');
-            },
-
-            loadScriptListings: function(view, ref, css_class, parent) {
-                var ctx = this,
-                    options = { startkey:       ctx.pagination(ref).nextKey,
-                                startkey_docid: ctx.pagination(ref).nextKeyID,
-                                limit:          10,
-                                reference:      ref };
-
-                return ctx.paginate(Script[view], options)
-                          .then(function(res) {
-                              $.extend(res, { "class": css_class });
-                              return res;
-                          })
-                          .render('templates/scripts/snippet.hb')
-                          .appendTo(parent)
-                          .then('prettyDates');
             }
         });
 
 
         this.before('#/', function() {
-            this.pagination('articles', { nextKey: ["a", "a"], nextKeyID: "a" });
-            this.pagination('screencasts', { nextKey: ["a", "a"], nextKeyID: "a" });
-            this.pagination('scripts_popular', { nextKey: [ 100000, "a" ], nextKeyID: "a" });
-            this.pagination('scripts_updated', { nextKey: [ "z", "a" ], nextKeyID: "a" });
-        });
 
+        });
 
         // Routes
         this.get('#/', function () {
-            var ctx = this;
+            var ctx = this,
+                db = this.db.name;
 
+            // load scripts on the homepage
+            $.couch.db(db)
+                .list(db + '/scripts', 'script_fragment', {
+                    descending: true,
+                    limit: 9,
+                    rows: 3,
+                    cols: 3,
+                    success: function(json) {
+                        $('#scripts').append(json.body);
+                    }
+                });
         });
 
         this.post('#/new', function () {

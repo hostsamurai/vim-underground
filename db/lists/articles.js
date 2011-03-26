@@ -9,18 +9,19 @@ function(head, req) {
             rows = [],
             i = 0,
             article,
+            a,
             row,
             stash;
 
         while (row = getRow()) {
-            article = row.value,
-                a = {
-                    title:      utils.truncateTitle(article.title),
-                    summary:    utils.truncateDesc(article.summary),
-                    link:       article.link,
-                    posted_on:  article.posted_on,
-                    short_date: utils.shortDate(article.posted_on)
-                };
+            article = row.value;
+            a = {
+                title:      utils.truncateTitle(article.title),
+                summary:    utils.truncateDesc(article.summary),
+                link:       article.link,
+                posted_on:  article.posted_on,
+                short_date: utils.shortDate(article.posted_on)
+            };
 
             articles.push(a);
             key = row.key;
