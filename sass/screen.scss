@@ -8,11 +8,14 @@
 
 // ---- General styles ----
 $red:           #C51016;
+$reddish-pink:  #F2457E;
 $gray:          #d2d2d2;
 $light-gray:    #bdbdbd;
 $dark-gray:     #4E4E4E;
 $darker-gray:   #bababa;
 $dry-dark-gray: #282323;
+$cloudy-gray:   #E7E7E7;
+$dry-black:     #1D1B1C;
 
 body {
     @extend .sans;
@@ -83,6 +86,8 @@ $base-line-height: 13px * 1.5;
 // ------------------------------
 // Objects
 // ------------------------------
+@import "form";
+
 @mixin after-right($content, $font) {
     @include adjust-font-size-to(19.5px,1,13px);
     font-family: $font;

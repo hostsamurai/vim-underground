@@ -1,0 +1,113 @@
+/**
+ *
+ * Form styles: Styles for article submission form
+ *
+ */
+
+@mixin circle($diameter, $color) {
+    @include border-radius($diameter);
+    @include inline-block;
+
+    background-color: $color;
+    height: $diameter; width: $diameter;
+    text-align: center;
+}
+
+
+.overlay {
+    background: rgba($dry-dark-gray, 0.8);
+    display: none;
+    height: 100%; width: 100%;
+
+    position: fixed;
+    left: 0; top: 0;
+
+    z-index: 130;
+}
+
+.form-container {
+    @include grid(8);
+    @include adjust-font-size-to(14px);
+    height: inherit; margin: auto;
+    float: none;
+
+    h2 {
+        @include adjust-font-size-to(26px,1,14px);
+        @include padding-leader;
+        @include padding-trailer;
+        @include leading-border(2px,1,14px);
+        @include trailing-border(1px,0.75,14px,dotted);
+        @include trailer;
+        color: white;
+        border-color: $light-gray;
+        text-transform: lowercase;
+    }
+}
+
+.textinput {
+    @include adjust-font-size-to(14px,1,14px);
+    @include apply-side-rhythm-border(left,2px,0.25,14px);
+    @include trailer(1.5);
+    @include border-radius(2px);
+    @include box-sizing(border-box);
+    background-color: $cloudy-gray;
+    border-color: $reddish-pink;
+    border: { bottom: none; top: none; right: none }
+    color: $dry-black;
+    width: 100%;
+    height: $base-line-height / 14px * 1.5em;
+}
+
+.close {
+    @include link-colors(white, white, white);
+    @include adjust-font-size-to(30px,1,14px);
+    font-family: "Notice Std";
+    text-decoration: none;
+    position: absolute; top: -7px; right: 7px;
+}
+
+form {
+    @include display-box;
+    @include box-orient(horizontal);
+    @include box-pack(center);
+    @include box-align(center);
+    background: $dry-black;
+    display: block;
+    padding: 30px;
+    position: relative; top: 20%;
+
+    label {
+        color: white;
+        font-weight: bold; letter-spacing: 1px; text-transform: lowercase;
+    }
+}
+
+label[for^="lol"], input[name^="lol"] {
+    position: absolute; left: -99999px; top: -99999px;
+}
+
+textarea { @extend .textinput; }
+
+input {
+    $cloudy-gray: #E7E7E7;
+    &[type=text], &[type=url] {
+        @include margin-trailer(0.5);
+        @extend .textinput;
+    }
+    &[type=submit] {
+        @include margin-leader(0.5);
+        @include adjust-font-size-to(14px,1,14px);
+        @include circle(70px,$cloudy-gray);
+        border: none;
+        position: relative; left: 313px;
+        letter-spacing: 1px; text-transform: lowercase;
+
+        &:hover {
+            background-color: $gray;
+        }
+    }
+}
+
+textarea {
+    height: 100px;
+}

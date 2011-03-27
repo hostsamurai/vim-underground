@@ -85,10 +85,6 @@
 
         });
 
-        this.post('#/contact', function () {
-            this.trigger('email', { params: this.params, form: this.target });
-        });
-
 
         // Custom Events
         this.bind('add-article', function(e, data) {
@@ -153,68 +149,6 @@
             });
         });
 
-        this.bind('show-help', function(e, data) {
-            if (!$('.overlay').is(':visible')) {
-                this.render('templates/help/help.hb')
-                    .appendTo('.overlay')
-                    .then(function () {
-                        $('.overlay').toggle();
-                    });
-            }
-        });
-
-        this.bind('close-popup', function(e, data) {
-            var $elem = data['$this'];
-
-            $elem.parents('.overlay').toggle();
-
-            if ($elem.parents('#help').length !== 0) {
-                $('#help').remove();
-            } else if ($elem.parents('.abs-form-container').length !== 0) {
-                $('.abs-form-container').remove();
-            }
-        });
-
-        this.bind('show-form', function(e, data) {
-            var $overlay = data["$overlay"],
-                $form = data["$form"],
-                $this = data["$this"],
-                template,
-                append_class,
-                ctx = this;
-
-            if (!$overlay.is(':visible')) {
-                $overlay.toggle();
-
-                if ($form.length === 0) {
-                    append_class = ".overlay";
-
-                    if ($this.is(':nth-child(2)')) {
-                        template = 'templates/forms/article.hb';
-                    } else if ($this.is(':last-child')) {
-                        template = 'templates/forms/contact.hb';
-                    }
-
-                } else {
-                    append_class = ".abs-form-container";
-
-                    if ($this.is(':first-child') && $form.attr('id') === "contact") {
-                        $form.remove();
-                        template = 'templates/forms/article.hb';
-                    } else if ($this.is(':last-child') && $form.attr('id') === "new-article") {
-                        $form.remove();
-                        template = 'templates/forms/contact.hb';
-                    }
-                }
-
-                if (template) {
-                    ctx.render(template)
-                       .appendTo(append_class)
-                       .trigger('load-validation', { form: '.overlay form' });
-                }
-            }
-        });
-
         this.bind('load-validation', function(e, data) {
             var $form = $(data.form);
 
@@ -233,14 +167,13 @@
             var ctx = this;
 
 
-            // ---- Form validation bindings ----
+            // ---- Article Form ----
             ctx.trigger('load-validation', { form: 'form' });
 
-            $('#extra > a:nth(1), #extra > a:last').live('click', function(e) {
+            $('#submit').live('click', function(e) {
                 e.preventDefault();
-                ctx.trigger('show-form', { "$overlay": $('.overlay'),
-                                           "$form": $('.overlay').find('form'),
-                                           "$this": $(this) });
+                $('.overlay').toggle();
+                // TODO: if no validation has been added to form, add it, otherwise leave it alone
             });
 
             $('input:not([type=submit]), textarea', $(this).parent('form')[0])
@@ -248,16 +181,9 @@
                     ctx.validate(this);
             });
 
-            $('.abs-form a, #help a').live('click', function(e) {
+            $('.close').live('click', function(e) {
                 e.preventDefault();
-                ctx.trigger('close-popup', { '$this': $(this) });
-            });
-
-
-            // ---- Help pop-up ----
-            $('#extra > a:first').live('click', function(e) {
-                e.preventDefault();
-                ctx.trigger('show-help');
+                $('.overlay').toggle();
             });
         });
     });
