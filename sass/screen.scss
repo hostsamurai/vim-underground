@@ -19,7 +19,7 @@ $dry-black:     #1D1B1C;
 
 body {
     @extend .sans;
-    background-color: $gray;
+    background: white inline-image('bg_pat.png') repeat scroll;
     color: $dry-dark-gray;
 }
 
