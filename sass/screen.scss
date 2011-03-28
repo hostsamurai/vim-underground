@@ -28,6 +28,8 @@ section {
     position: relative;
 }
 
+a { outline: 0; text-decoration: none; }
+
 
 // ------------------------------
 // Grid Setup
@@ -98,6 +100,57 @@ $base-line-height: 13px * 1.5;
     padding-left: 13px;
 }
 
+@mixin triangle($top, $right, $bottom, $left, $style: solid, $color: white) {
+    border-width: $top $right $bottom $left;
+    border-style: $style;
+
+    display: inline;
+    height: 0; width: 0;
+    content: " ";
+    position: relative;
+}
+
+@mixin upward-facing-triangle($height, $width, $style: solid, $color: white) {
+    @include triangle(0, $width, $height, $width, $style, $color);
+    border-color: transparent transparent $color transparent;
+}
+
+@mixin downward-facing-triangle($height, $width, $style: solid, $color: white) {
+    @include triangle($height, $width, 0, $width, $style, $color);
+    border-color: $color transparent transparent transparent;
+}
+
+@mixin pointer($direction: "down") {
+    &::before {
+        @if $direction == "up" {
+            @include upward-facing-triangle(5px,5px);
+            position: relative; top: -9px;
+        } @else if $direction == "down" {
+            @include downward-facing-triangle(5px,5px);
+            position: relative; top: 11px;
+        }
+        margin-right: 7px;
+    }
+}
+
+
+.link-colors {
+    @include link-colors($dry-dark-gray, $red, $dry-dark-gray);
+}
+
+.light-link-colors {
+    @include link-colors(white, $red, white);
+}
+
+.more {
+    @extend .link-colors;
+    @include trailing-border(1px, 0.1, $base-font-size, dotted);
+    font-weight: bold;
+    text-align: right;
+    text-decoration: none;
+    position: absolute;
+    right: 0;
+}
 
 .article {
     @include grid(5);
@@ -113,7 +166,7 @@ $base-line-height: 13px * 1.5;
     }
 
     a {
-        @include link-colors($dry-dark-gray, $red, $dry-dark-gray);
+        @extend .link-colors;
         h4 { @include trailer; }
     }
 
@@ -147,16 +200,6 @@ $base-line-height: 13px * 1.5;
 
 .bottom-row-obj { @include leader(3.3); @include padding-trailer(6); }
 
-.more {
-    @include link-colors($dry-dark-gray, $red, $dry-dark-gray);
-    @include trailing-border(1px, 0.1, $base-font-size, dotted);
-    font-weight: bold;
-    text-align: right;
-    text-decoration: none;
-    position: absolute;
-    right: 0;
-}
-
 .header-obj {
     background-color: rgba($dry-dark-gray, 0.95);
     color: white;
@@ -167,7 +210,7 @@ $base-line-height: 13px * 1.5;
 }
 
 header {
-    position: absolute; top: 0; right: -3px;
+    position: absolute; top: -50px; right: -3px;
     width: 400px;
     z-index: 120;
 
@@ -183,18 +226,25 @@ header {
         text-transform: uppercase;
 
         a {
-            @include link-colors(white, $red, white);
+            @extend .light-link-colors;
             margin: { left: $side-margin; right: $side-margin; }
             letter-spacing: -0.3px;
             text-decoration: none;
         }
     }
 
-    #logo-wrapper {
+    #menu-link {
         @extend .header-obj;
         margin: { left: auto; right: auto; }
-        height: 50px; width: 90px;
+        height: 20px; width: 90px;
         text-align: center;
+
+        a {
+            @extend .light-link-colors;
+            font-weight: bold;
+            &.up { @include pointer("up"); }
+            &.down { @include pointer("down"); }
+        }
     }
 }
 

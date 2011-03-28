@@ -13062,7 +13062,9 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
 
 
         this.before('#/', function() {
-
+            console.log( "before: ", document );
+            // TODO: if no path follows url
+            // redirect to #!/index
         });
 
         // Routes
@@ -13173,6 +13175,20 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
         this.bind('run', function() {
             var ctx = this;
 
+            // ---- Menu Links ----
+            $('#menu-link a', 'header').bind('click', function () {
+                var $parent = $(this).parents('header'),
+                    $menu = $(this),
+                    endpoint = parseInt( $parent.css('top') ) < 0 ? 0 : -50;
+
+                $parent.animate({ top: endpoint }, "fast", function () {
+                    if ($menu.hasClass('up')) {
+                        $menu.removeClass('up').addClass('down');
+                    } else if ($menu.hasClass('down')) {
+                        $menu.removeClass('down').addClass('up'); 
+                    }
+                });
+            });
 
             // ---- Article Form ----
             ctx.trigger('load-validation', { form: 'form' });
