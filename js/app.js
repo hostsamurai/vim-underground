@@ -180,7 +180,7 @@
                     if ($menu.hasClass('up')) {
                         $menu.removeClass('up').addClass('down');
                     } else if ($menu.hasClass('down')) {
-                        $menu.removeClass('down').addClass('up'); 
+                        $menu.removeClass('down').addClass('up');
                     }
                 });
             });
@@ -188,7 +188,7 @@
             // ---- Article Form ----
             ctx.trigger('load-validation', { form: 'form' });
 
-            $('#submit').live('click', function(e) {
+            $('.submit').live('click', function(e) {
                 e.preventDefault();
                 $('.overlay').toggle();
                 // TODO: if no validation has been added to form, add it, otherwise leave it alone

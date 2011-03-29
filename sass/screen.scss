@@ -249,6 +249,35 @@ header {
     }
 }
 
+footer {
+    @include inline-block;
+    width: 100%;
+
+    nav {
+        @include grid(3);
+        @include leading-border(5px,0.3,12px,solid);
+        @include padding-leader;
+        @include adjust-font-size-to(12px,1,13px);
+        font-weight: bold;
+
+        a {
+            @include trailing-border(1px,0.15,12px,dotted);
+            @extend .link-colors;
+            display: block;
+
+            &:nth-of-type(n+1) {
+                @include padding-leader(0.15);
+            }
+        }
+    }
+
+    #legal {
+        @include grid(5);
+        @include leading-border(5px,0.3,12px,solid);
+        @include padding-leader;
+    }
+}
+
 
 // ------------------------------
 // Layout
