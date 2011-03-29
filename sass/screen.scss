@@ -133,6 +133,10 @@ $base-line-height: 13px * 1.5;
     }
 }
 
+@mixin header-symbol($letter, $font: "Notice Second") {
+    @include after-right($letter, $font);
+}
+
 
 .link-colors {
     @include link-colors($dry-dark-gray, $red, $dry-dark-gray);
@@ -152,7 +156,7 @@ $base-line-height: 13px * 1.5;
     right: 0;
 }
 
-.article {
+.blurb {
     @include grid(5);
     margin: 20px;
     padding-left: 20px;
@@ -199,6 +203,11 @@ $base-line-height: 13px * 1.5;
 }
 
 .bottom-row-obj { @include leader(3.3); @include padding-trailer(6); }
+.top-row-obj { @include padding-trailer(4); }
+.specific-listing {
+    @extend .top-row-obj;
+    .blurb { height: 255px; }
+}
 
 .header-obj {
     background-color: rgba($dry-dark-gray, 0.95);
@@ -251,6 +260,7 @@ header {
 
 footer {
     @include inline-block;
+    @include padding-leader(2);
     width: 100%;
 
     nav {
@@ -265,9 +275,7 @@ footer {
             @extend .link-colors;
             display: block;
 
-            &:nth-of-type(n+1) {
-                @include padding-leader(0.15);
-            }
+            &:nth-of-type(n+1) { @include padding-leader(0.15); }
         }
     }
 
@@ -275,6 +283,7 @@ footer {
         @include grid(5);
         @include leading-border(5px,0.3,12px,solid);
         @include padding-leader;
+        img { display: block; margin: auto; }
     }
 }
 
@@ -284,9 +293,19 @@ footer {
 // ------------------------------
 section .row:last-of-type { border-bottom: none; }
 
+#articles, #t-screencasts { @extend .specific-listing; }
+
 #articles {
-    h1::after { @include after-right("X", "Notice Second"); }
-    .article { height: 255px; }
+    h1::after { @include header-symbol("X"); }
+}
+
+#t-screencasts {
+    h1::after { @include header-symbol("P"); }
+    .blurb { height: 215px; }
+}
+
+#t-scripts {
+    h1::after { @include header-symbol("O"); }
 }
 
 #scripts {
@@ -297,11 +316,11 @@ section .row:last-of-type { border-bottom: none; }
 
     h1 {
         @extend .heading-deco;
-        &::after { @include after-right("O", "Notice Second"); }
+        &::after { @include header-symbol("O"); }
     }
 
-    .article {
-        // fix for .article
+    .blurb {
+        // fix for .blurb
         @include grid(8.2); margin: 20px 20px 20px 0;
         height: 117px;
     }
@@ -316,11 +335,11 @@ section .row:last-of-type { border-bottom: none; }
 
     h1 {
         @extend .heading-deco;
-        &::after { @include after-right("P", "Notice Second"); }
+        &::after { @include header-symbol("P"); }
     }
 
-    // fix for .article
-    .article {
+    // fix for .blurb
+    .blurb {
         @include grid(11);
         &:first-of-type { margin-left: 24px; padding-right: 28px; }
         &:last-of-type  { margin-left: 20px; }

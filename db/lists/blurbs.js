@@ -41,6 +41,7 @@ function(head, req) {
             rows: rows,
             type: req.query.type,
             key: key,
+            bottom_row: req.query.bottomRow,
             older: function () { return path.older(key); }
         };
 

@@ -33,12 +33,14 @@
             </header>
 
             <div class="content">
-                <section id="articles">
+                <section id="{{type}}">
                     {{> blurbs}} 
                 </section>
-                
-                <section id="scripts"></section>
-                <section id="screencasts"></section>
+
+                {{#bottom_row}} 
+                    <section id="scripts"></section>
+                    <section id="screencasts"></section>
+                {{/bottom_row}} 
 
                 <footer>
                     <div id="legal">

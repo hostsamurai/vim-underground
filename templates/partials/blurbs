@@ -2,7 +2,7 @@
 {{#rows}}
     <ul class="row">
         {{#blurbs}}
-            <li class="article">
+            <li class="blurb">
                 <date datetime="{{posted_on}}">{{short_date}}</date>
                 <a href="{{link}}" title="{{alt}}">
                     <h4>{{title}}</h4>
