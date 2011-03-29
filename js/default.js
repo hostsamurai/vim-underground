@@ -13176,7 +13176,9 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
             var ctx = this;
 
             // ---- Menu Links ----
-            $('#menu-link a', 'header').bind('click', function () {
+            $('#menu-link a', 'header').bind('click', function(e) {
+                e.preventDefault();
+
                 var $parent = $(this).parents('header'),
                     $menu = $(this),
                     endpoint = parseInt( $parent.css('top') ) < 0 ? 0 : -50;

@@ -210,8 +210,8 @@ $base-line-height: 13px * 1.5;
 }
 
 header {
-    position: absolute; top: -50px; right: -3px;
-    width: 400px;
+    position: fixed; top: -50px; right: 62px;
+    width: 530px;
     z-index: 120;
 
     #link-wrapper {
@@ -230,6 +230,7 @@ header {
             margin: { left: $side-margin; right: $side-margin; }
             letter-spacing: -0.3px;
             text-decoration: none;
+            img { vertical-align: middle; }
         }
     }
 
