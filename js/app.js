@@ -35,6 +35,10 @@
                 return results.rows[i].value;
             },
 
+            onHomepage: function () {
+                return !/(articles|screencasts|scripts)$/.test(document.location.pathname);
+            },
+
             /**
              *  Load blurbs from a couchdb list and update the data attribute
              *  in $('.container') for pagination purposes.
@@ -54,9 +58,7 @@
                         descending: true,
                         type: sel.replace(/^\.|#/g, ''),
                         success: function(json) {
-                            //ctx.log( "Response: ", json );
                             $(sel).append(json.body)
-                                  .parents('.content')
                                   .data('last-key', json.key);
 
                             // Hyphenate new blurbs
@@ -73,12 +75,12 @@
 
 
         // Routes
-        this.get('#/', function () {
+        this.get('#!/', function () {
             var ctx = this,
                 db = this.db.name;
 
             // load scripts and screencasts on the homepage
-            if (!/(articles|screencasts|scripts)$/.test(document.location.pathname)) {
+            if (ctx.onHomepage()) {
                 ctx.loadBlurbs('script_fragment', '#scripts', {
                     limit: 12,
                     rows: 4,
@@ -96,7 +98,7 @@
             }
 
             // load scripts by rating on scripts page
-            if (/scripts*$/.test(document.location.pathname)) {
+            if (/scripts$/.test(document.location.pathname)) {
                 ctx.loadBlurbs('by_rating', '#by-rating', {
                     limit: 14,
                     rows: 7,
@@ -146,18 +148,19 @@
         this.bind('show-more', function(e, data) {
             var ctx = this,
                 $parent = data.parent,
-                view = data.view,
                 sel = data.selector,
-                lastKey = $parent.data('last-key');
+                options = data.options,
+                view = options.view,
+                lastKey = $parent.data('last-key'),
+                settings = {
+                    limit: options.limit || 15,
+                    rows: options.rows || 3,
+                    cols: options.cols || 5,
+                    startkey: typeof lastKey === "string" ? lastKey.split(',', 2) : lastKey,
+                    skip: 1
+                };
 
-            var s = ctx.loadBlurbs(view, sel, {
-                limit: 15,
-                rows: 3,
-                cols: 5,
-                startkey: typeof lastKey === "string" ? lastKey.split(',', 2) : lastKey,
-                skip: 1
-            });
-            ctx.log( s );
+            ctx.loadBlurbs(view, sel, settings);
         });
 
         this.bind('add-article', function(e, data) {
@@ -289,28 +292,42 @@
 
             // ---- Show More links ----
             $('.more').live('click', function(e) {
-                e.preventDefault();
+                if (!ctx.onHomepage()) {
+                    e.preventDefault();
 
-                var $parent = $(this).parents('.content'),
-                    selector,
-                    match,
-                    view;
+                    var $parent = $(this).parent('section'),
+                        selector,
+                        match,
+                        view,
+                        options;
 
-                selector = '#' + $(this).parent('section').attr('id');
-                match = /(articles|screencasts|scripts)$/.exec(selector);
-                view = 'latest_' + match[1];
+                    selector = '#' + $parent.attr('id');
+                    mappings = {
+                        "articles":      { view: 'latest_articles' },
+                        "t-screencasts": { view: 'latest_screencasts' },
+                        "t-scripts":     { view: 'script_fragment', limit: 21, rows: 7, cols: 3 },
+                        "by-rating":     { view: 'by_rating', limit: 14, rows: 7, cols: 2 }
+                    };
 
-                $(this).remove();
-                // TODO: show loading gif
+                    options = mappings[selector.replace('#', '')];
 
-                ctx.trigger('show-more', { parent: $parent, selector: selector, view: view });
+                    $(this).remove();
+                    // TODO: show loading gif
+
+                    ctx.trigger('show-more', {
+                        parent:   $parent,
+                        selector: selector,
+                        view:     view,
+                        options:  options
+                    });
+                }
             });
         });
     });
 
 
     $(function() {
-        app.run('#/');
+        app.run('#!/');
     });
 
 })(jQuery);

@@ -32,13 +32,13 @@
                 </div>
             </header>
 
-            <div class="content" {{#key}}data-last-key="{{key}}"{{/key}}>
-                <section id="{{type}}">
+            <div class="content">
+                <section id="{{type}}" {{#key}}data-last-key="{{key}}"{{/key}}>
                     {{> blurbs}} 
                 </section>
 
                 {{#scripts}}
-                    <section id="by-rating"></section>
+                    <section id="by-rating" {{#key}}data-last-key="{{key}}"{{/key}}></section>
                 {{/scripts}}
 
                 {{#bottom_row}} 
