@@ -13543,9 +13543,6 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
 
         this.raise_errors = true;
 
-        // Initialize storage
-        //this.store('pagination');
-
         // Helpers
         this.helpers({
             fancyDates: function () {
@@ -13634,7 +13631,6 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
             }
         });
 
-
         this.post('#/new', function(ctx) {
             var form = ctx.target,
                 data = ctx.params,
@@ -13675,10 +13671,11 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
         this.bind('show-more', function(e, data) {
             var ctx = this,
                 $parent = data.parent,
+                view = data.view,
+                sel = data.selector,
                 lastKey = $parent.data('last-key');
-                //keys = $parent.data('last-key').split(',', 2);
 
-            var s = ctx.loadBlurbs('latest_articles', '#articles', {
+            var s = ctx.loadBlurbs(view, sel, {
                 limit: 15,
                 rows: 3,
                 cols: 5,
@@ -13819,10 +13816,19 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
             $('.more').live('click', function(e) {
                 e.preventDefault();
 
-                var $parent = $(this).parents('.content');
+                var $parent = $(this).parents('.content'),
+                    selector,
+                    match,
+                    view;
+
+                selector = '#' + $(this).parent('section').attr('id');
+                match = /(articles|screencasts|scripts)$/.exec(selector);
+                view = 'latest_' + match[1];
+
                 $(this).remove();
                 // TODO: show loading gif
-                ctx.trigger('show-more', { parent: $parent });
+
+                ctx.trigger('show-more', { parent: $parent, selector: selector, view: view });
             });
         });
     });
