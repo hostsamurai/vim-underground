@@ -31,31 +31,35 @@ function(head, req) {
         }
 
         // split blurbs into an array of arrays representing rows
-        while (i < req.query.rows) {
-            rows.push({ blurbs: blurbs.splice(0,req.query.cols) });
-            i += 1;
+        if (blurbs.length > 0) {
+            while (i < req.query.rows) {
+                rows.push({ blurbs: blurbs.splice(0,req.query.cols) });
+                i += 1;
+            }
+
+            stash = {
+                heading: req.query.heading,
+                rows: rows,
+                type: req.query.type,
+                key: key,
+                bottom_row: req.query.bottomRow,
+                older: function () { return path.older(key); }
+            };
+
+            return req.query.page === "index" ?
+                mustache.to_html(ddoc.templates["index.html"], stash, ddoc.templates.partials) :
+                { body: mustache.to_html(ddoc.templates.partials.blurbs, stash), key: stash.key };
+        } else {
+            return req.query.page === "index" ? '' : { body: '', key: '' };
         }
-
-        stash = {
-            heading: req.query.heading,
-            rows: rows,
-            type: req.query.type,
-            key: key,
-            bottom_row: req.query.bottomRow,
-            older: function () { return path.older(key); }
-        };
-
-        return req.query.page === "index" ?
-            mustache.to_html(ddoc.templates["index.html"], stash, ddoc.templates.partials) :
-            mustache.to_html(ddoc.templates.partials.blurbs, stash);
     }
 
     provides("html", function () {
-        return list("html");
+        return list();
     });
 
     // for access from jquery.couch
     provides("json", function () {
-        return toJSON({ body: list("json") });
+        return toJSON(list());
     });
 }

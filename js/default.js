@@ -13573,50 +13573,67 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                 return results.rows[i].value;
             },
 
+            /**
+             *  Load blurbs from a couchdb list and update the data attribute
+             *  in $('.container') for pagination purposes.
+             *
+             *  @param {String} view The name of the view to access from the list
+             *
+             *  @param {String} sel A jQuery selector acting as the container for the results
+             *
+             *  @param {Object} options Additional options to pass to the list function
+             *
+             *  @returns {Object} Sammy.EventContext
+             */
             loadBlurbs: function(view, sel, options) {
-                var db = this.db.name,
+                var ctx = this,
+                    db = this.db.name,
                     defaults = {
                         descending: true,
                         type: sel.replace(/^\.|#/g, ''),
                         success: function(json) {
-                            $(sel).append(json.body);
+                            //ctx.log( "Response: ", json );
+                            $(sel).append(json.body)
+                                  .parents('.content')
+                                  .data('last-key', json.key);
+
+                            // Hyphenate new blurbs
+                            Hyphenator.run();
                         }
                     };
 
                 $.extend(options, defaults);
                 $.couch.db(db).list(db + '/blurbs', view, options);
+
+                return this;
             }
         });
 
-
-        this.before('#/', function() {
-            console.log( "before: ", document );
-            // TODO: if no path follows url
-            // redirect to #!/index
-        });
 
         // Routes
         this.get('#/', function () {
             var ctx = this,
                 db = this.db.name;
 
-            // load scripts on the homepage
-            ctx.loadBlurbs('script_fragment', '#scripts', {
-                limit: 12,
-                rows: 4,
-                cols: 3,
-                heading: 'Latest Script Activity'
-            });
+            // load scripts and screencasts on the homepage
+            if (!/(articles|screencasts|scripts)*$/.test(document.location.pathname)) {
+                ctx.loadBlurbs('script_fragment', '#scripts', {
+                    limit: 12,
+                    rows: 4,
+                    cols: 3,
+                    heading: 'Latest Script Activity'
+                });
 
-            // load screencasts on the homepage
-            ctx.loadBlurbs('latest_screencasts', '#screencasts', {
-                limit: 6,
-                rows: 3,
-                cols: 2,
-                trlen: 28,
-                heading: 'Latest Screencasts'
-            });
+                ctx.loadBlurbs('latest_screencasts', '#screencasts', {
+                    limit: 6,
+                    rows: 3,
+                    cols: 2,
+                    trlen: 28,
+                    heading: 'Latest Screencasts'
+                });
+            }
         });
+
 
         this.post('#/new', function(ctx) {
             var form = ctx.target,
@@ -13655,6 +13672,22 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
 
 
         // Custom Events
+        this.bind('show-more', function(e, data) {
+            var ctx = this,
+                $parent = data.parent,
+                lastKey = $parent.data('last-key');
+                //keys = $parent.data('last-key').split(',', 2);
+
+            var s = ctx.loadBlurbs('latest_articles', '#articles', {
+                limit: 15,
+                rows: 3,
+                cols: 5,
+                startkey: typeof lastKey === "string" ? lastKey.split(',', 2) : lastKey,
+                skip: 1
+            });
+            ctx.log( s );
+        });
+
         this.bind('add-article', function(e, data) {
             var ctx = this,
                 form = data.target,
@@ -13731,12 +13764,21 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                 keyup: true,
                 errorClass: 'input-error',
                 validClass: 'input-valid',
-                debug: true
+                debug: false
             }).bind('submit', function(e) { e.preventDefault(); });
         });
 
         this.bind('run', function () {
             var ctx = this;
+
+            // Hyphenation
+            var hyphenatorSettings = {
+                enableCache: true,
+                onhyphenationdonecallback: function () {
+                    // Prevent re-hyphenating hyphenated results when paginating
+                    $('.hyphenate').removeClass('hyphenate');
+                }
+            }
 
             // ---- Menu Links ----
             $('#menu-link a', 'header').bind('click', function(e) {
@@ -13771,6 +13813,16 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
             $('.close').live('click', function(e) {
                 e.preventDefault();
                 $('.overlay').fadeOut('fast');
+            });
+
+            // ---- Show More links ----
+            $('.more').live('click', function(e) {
+                e.preventDefault();
+
+                var $parent = $(this).parents('.content');
+                $(this).remove();
+                // TODO: show loading gif
+                ctx.trigger('show-more', { parent: $parent });
             });
         });
     });
