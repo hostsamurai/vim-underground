@@ -38,12 +38,13 @@ function(head, req) {
             }
 
             stash = {
-                heading: req.query.heading,
-                rows: rows,
-                type: req.query.type,
-                key: key,
+                heading:    req.query.heading,
+                rows:       rows,
+                type:       req.query.type,
+                key:        key,
+                scripts:    req.query.type === "t-scripts" ? true : false,
                 bottom_row: req.query.bottomRow,
-                older: function () { return path.older(key); }
+                older:      function ()  { return path.older(key); }
             };
 
             return req.query.page === "index" ?

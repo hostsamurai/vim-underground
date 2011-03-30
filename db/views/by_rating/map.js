@@ -1,10 +1,11 @@
 function(doc) {
-    if (doc.type === "script" && doc.rating > 0) {
+    if (doc.type === "script" && (doc.homepage || doc.url)) {
         emit([doc.rating, doc._id], {
-            script:       doc.name,
-            link:         doc.url,
-            desc:         doc.description,
-            last_updated: doc.pushed_at.slice(0, -6)
+            title:     doc.name,
+            summary:   doc.description,
+            link:      doc.homepage || doc.url,
+            rating:    doc.rating,
+            posted_on: doc.pushed_at
         });
     }
 }

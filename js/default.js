@@ -13613,7 +13613,7 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                 db = this.db.name;
 
             // load scripts and screencasts on the homepage
-            if (!/(articles|screencasts|scripts)*$/.test(document.location.pathname)) {
+            if (!/(articles|screencasts|scripts)$/.test(document.location.pathname)) {
                 ctx.loadBlurbs('script_fragment', '#scripts', {
                     limit: 12,
                     rows: 4,
@@ -13627,6 +13627,16 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                     cols: 2,
                     trlen: 28,
                     heading: 'Latest Screencasts'
+                });
+            }
+
+            // load scripts by rating on scripts page
+            if (/scripts*$/.test(document.location.pathname)) {
+                ctx.loadBlurbs('by_rating', '#by-rating', {
+                    limit: 14,
+                    rows: 7,
+                    cols: 2,
+                    heading: 'Popular Scripts'
                 });
             }
         });

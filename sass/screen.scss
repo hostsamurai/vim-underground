@@ -203,11 +203,44 @@ $base-line-height: 13px * 1.5;
     }
 }
 
-.bottom-row-obj { @include leader(3.3); @include padding-trailer(6); }
+.bottom-row-obj {
+    @include leader(3.3); @include padding-trailer(6);
+    h1 { @extend .heading-deco; }
+}
+
 .top-row-obj { @include padding-trailer(4); }
+
 .specific-listing {
     @extend .top-row-obj;
     .blurb { height: 255px; }
+}
+
+.cols2 {
+    @include grid(10);
+    @include prepend(1);
+    @extend .bottom-row-obj;
+    @include float-right;
+
+    .blurb {
+        @include grid(11);
+        &:first-of-type { margin-left: 24px; padding-right: 28px; }
+        &:last-of-type  { margin-left: 20px; }
+    }
+}
+
+.cols3 {
+    @include grid(15);
+    @extend .bottom-row-obj;
+    @include inline-block;
+    float: none;
+
+    h1 { @extend .heading-deco; }
+
+    .blurb {
+        // fix for .blurb
+        @include grid(8.2); margin: 20px 20px 20px 0;
+        height: 117px;
+    }
 }
 
 .header-obj {
@@ -306,45 +339,30 @@ section .row:last-of-type { border-bottom: none; }
 }
 
 #t-scripts {
+    @extend .cols3;
     h1::after { @include header-symbol("O"); }
 }
 
 #scripts {
-    @include grid(15);
-    @extend .bottom-row-obj;
+    @extend .cols3;
+    h1::after { @include header-symbol("O"); }
+}
+
+#by-rating {
+    @extend .cols2;
     @include inline-block;
-    float: none;
 
-    h1 {
-        @extend .heading-deco;
-        &::after { @include header-symbol("O"); }
-    }
+    h1::after { @include header-symbol("P"); }
 
-    .blurb {
-        // fix for .blurb
-        @include grid(8.2); margin: 20px 20px 20px 0;
-        height: 117px;
-    }
+    .blurb { height: 117px; }
 }
 
 #screencasts {
-    @include grid(10);
-    @include prepend(1);
-    @include float-right;
-    @extend .bottom-row-obj;
+    @extend .cols2;
+    @include inline-block;
     padding-left: 4em;
 
-    h1 {
-        @extend .heading-deco;
-        &::after { @include header-symbol("P"); }
-    }
-
-    // fix for .blurb
-    .blurb {
-        @include grid(11);
-        &:first-of-type { margin-left: 24px; padding-right: 28px; }
-        &:last-of-type  { margin-left: 20px; }
-    }
+    h1::after { @include header-symbol("P"); }
 
     .row { margin: { left: auto; right: auto; } }
 }

@@ -48,6 +48,21 @@
         }
     },
 
+    { // /scripts
+        "from": "/scripts",
+        "to": "_list/blurbs/script_fragment",
+        "method": "GET",
+        "query": {
+            "descending": true,
+            "limit": 21,
+            "rows": 7,
+            "cols": 3,
+            "heading": "Latest Script Updates",
+            "type": "t-scripts",
+            "page": "index"
+        }
+    },
+
     { // keeping relative urls sane
         "from": "/*",
         "to": "/*"
