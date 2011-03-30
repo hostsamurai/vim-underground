@@ -10002,6 +10002,451 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 
 })(jQuery, window.Sammy);
 
+(function($) {
+
+if (!window.Mustache) {
+
+  /*
+    mustache.js — Logic-less templates in JavaScript
+
+    See http://mustache.github.com/ for more info.
+  */
+
+  var Mustache = function() {
+    var Renderer = function() {};
+
+    Renderer.prototype = {
+      otag: "{{",
+      ctag: "}}",
+      pragmas: {},
+      buffer: [],
+      pragmas_implemented: {
+        "IMPLICIT-ITERATOR": true
+      },
+      context: {},
+
+      render: function(template, context, partials, in_recursion) {
+        // reset buffer & set context
+        if(!in_recursion) {
+          this.context = context;
+          this.buffer = []; // TODO: make this non-lazy
+        }
+
+        // fail fast
+        if(!this.includes("", template)) {
+          if(in_recursion) {
+            return template;
+          } else {
+            this.send(template);
+            return;
+          }
+        }
+
+        template = this.render_pragmas(template);
+        var html = this.render_section(template, context, partials);
+        if(in_recursion) {
+          return this.render_tags(html, context, partials, in_recursion);
+        }
+
+        this.render_tags(html, context, partials, in_recursion);
+      },
+
+      /*
+        Sends parsed lines
+      */
+      send: function(line) {
+        if(line != "") {
+          this.buffer.push(line);
+        }
+      },
+
+      /*
+        Looks for %PRAGMAS
+      */
+      render_pragmas: function(template) {
+        // no pragmas
+        if(!this.includes("%", template)) {
+          return template;
+        }
+
+        var that = this;
+        var regex = new RegExp(this.otag + "%([\\w-]+) ?([\\w]+=[\\w]+)?" +
+              this.ctag);
+        return template.replace(regex, function(match, pragma, options) {
+          if(!that.pragmas_implemented[pragma]) {
+            throw({message:
+              "This implementation of mustache doesn't understand the '" +
+              pragma + "' pragma"});
+          }
+          that.pragmas[pragma] = {};
+          if(options) {
+            var opts = options.split("=");
+            that.pragmas[pragma][opts[0]] = opts[1];
+          }
+          return "";
+          // ignore unknown pragmas silently
+        });
+      },
+
+      /*
+        Tries to find a partial in the curent scope and render it
+      */
+      render_partial: function(name, context, partials) {
+        name = this.trim(name);
+        if(!partials || partials[name] === undefined) {
+          throw({message: "unknown_partial '" + name + "'"});
+        }
+        if(typeof(context[name]) != "object") {
+          return this.render(partials[name], context, partials, true);
+        }
+        return this.render(partials[name], context[name], partials, true);
+      },
+
+      /*
+        Renders inverted (^) and normal (#) sections
+      */
+      render_section: function(template, context, partials) {
+        if(!this.includes("#", template) && !this.includes("^", template)) {
+          return template;
+        }
+
+        var that = this;
+        // CSW - Added "+?" so it finds the tighest bound, not the widest
+        var regex = new RegExp(this.otag + "(\\^|\\#)\\s*(.+)\\s*" + this.ctag +
+                "\n*([\\s\\S]+?)" + this.otag + "\\/\\s*\\2\\s*" + this.ctag +
+                "\\s*", "mg");
+
+        // for each {{#foo}}{{/foo}} section do...
+        return template.replace(regex, function(match, type, name, content) {
+          var value = that.find(name, context);
+          if(type == "^") { // inverted section
+            if(!value || that.is_array(value) && value.length === 0) {
+              // false or empty list, render it
+              return that.render(content, context, partials, true);
+            } else {
+              return "";
+            }
+          } else if(type == "#") { // normal section
+            if(that.is_array(value)) { // Enumerable, Let's loop!
+              return that.map(value, function(row) {
+                return that.render(content, that.create_context(row),
+                  partials, true);
+              }).join("");
+            } else if(that.is_object(value)) { // Object, Use it as subcontext!
+              return that.render(content, that.create_context(value),
+                partials, true);
+            } else if(typeof value === "function") {
+              // higher order section
+              return value.call(context, content, function(text) {
+                return that.render(text, context, partials, true);
+              });
+            } else if(value) { // boolean section
+              return that.render(content, context, partials, true);
+            } else {
+              return "";
+            }
+          }
+        });
+      },
+
+      /*
+        Replace {{foo}} and friends with values from our view
+      */
+      render_tags: function(template, context, partials, in_recursion) {
+        // tit for tat
+        var that = this;
+
+        var new_regex = function() {
+          return new RegExp(that.otag + "(=|!|>|\\{|%)?([^\\/#\\^]+?)\\1?" +
+            that.ctag + "+", "g");
+        };
+
+        var regex = new_regex();
+        var tag_replace_callback = function(match, operator, name) {
+          switch(operator) {
+          case "!": // ignore comments
+            return "";
+          case "=": // set new delimiters, rebuild the replace regexp
+            that.set_delimiters(name);
+            regex = new_regex();
+            return "";
+          case ">": // render partial
+            return that.render_partial(name, context, partials);
+          case "{": // the triple mustache is unescaped
+            return that.find(name, context);
+          default: // escape the value
+            return that.escape(that.find(name, context));
+          }
+        };
+        var lines = template.split("\n");
+        for(var i = 0; i < lines.length; i++) {
+          lines[i] = lines[i].replace(regex, tag_replace_callback, this);
+          if(!in_recursion) {
+            this.send(lines[i]);
+          }
+        }
+
+        if(in_recursion) {
+          return lines.join("\n");
+        }
+      },
+
+      set_delimiters: function(delimiters) {
+        var dels = delimiters.split(" ");
+        this.otag = this.escape_regex(dels[0]);
+        this.ctag = this.escape_regex(dels[1]);
+      },
+
+      escape_regex: function(text) {
+        // thank you Simon Willison
+        if(!arguments.callee.sRE) {
+          var specials = [
+            '/', '.', '*', '+', '?', '|',
+            '(', ')', '[', ']', '{', '}', '\\'
+          ];
+          arguments.callee.sRE = new RegExp(
+            '(\\' + specials.join('|\\') + ')', 'g'
+          );
+        }
+        return text.replace(arguments.callee.sRE, '\\$1');
+      },
+
+      /*
+        find `name` in current `context`. That is find me a value
+        from the view object
+      */
+      find: function(name, context) {
+        name = this.trim(name);
+
+        // Checks whether a value is thruthy or false or 0
+        function is_kinda_truthy(bool) {
+          return bool === false || bool === 0 || bool;
+        }
+
+        var value;
+        if(is_kinda_truthy(context[name])) {
+          value = context[name];
+        } else if(is_kinda_truthy(this.context[name])) {
+          value = this.context[name];
+        }
+
+        if(typeof value === "function") {
+          return value.apply(context);
+        }
+        if(value !== undefined) {
+          return value;
+        }
+        // silently ignore unkown variables
+        return "";
+      },
+
+      // Utility methods
+
+      /* includes tag */
+      includes: function(needle, haystack) {
+        return haystack.indexOf(this.otag + needle) != -1;
+      },
+
+      /*
+        Does away with nasty characters
+      */
+      escape: function(s) {
+        s = String(s === null ? "" : s);
+        return s.replace(/&(?!\w+;)|["<>\\]/g, function(s) {
+          switch(s) {
+          case "&": return "&amp;";
+          case "\\": return "\\\\";
+          case '"': return '\"';
+          case "<": return "&lt;";
+          case ">": return "&gt;";
+          default: return s;
+          }
+        });
+      },
+
+      // by @langalex, support for arrays of strings
+      create_context: function(_context) {
+        if(this.is_object(_context)) {
+          return _context;
+        } else {
+          var iterator = ".";
+          if(this.pragmas["IMPLICIT-ITERATOR"]) {
+            iterator = this.pragmas["IMPLICIT-ITERATOR"].iterator;
+          }
+          var ctx = {};
+          ctx[iterator] = _context;
+          return ctx;
+        }
+      },
+
+      is_object: function(a) {
+        return a && typeof a == "object";
+      },
+
+      is_array: function(a) {
+        return Object.prototype.toString.call(a) === '[object Array]';
+      },
+
+      /*
+        Gets rid of leading and trailing whitespace
+      */
+      trim: function(s) {
+        return s.replace(/^\s*|\s*$/g, "");
+      },
+
+      /*
+        Why, why, why? Because IE. Cry, cry cry.
+      */
+      map: function(array, fn) {
+        if (typeof array.map == "function") {
+          return array.map(fn);
+        } else {
+          var r = [];
+          var l = array.length;
+          for(var i = 0; i < l; i++) {
+            r.push(fn(array[i]));
+          }
+          return r;
+        }
+      }
+    };
+
+    return({
+      name: "mustache.js",
+      version: "0.3.1-dev",
+
+      /*
+        Turns a template and view into HTML
+      */
+      to_html: function(template, view, partials, send_fun) {
+        var renderer = new Renderer();
+        if(send_fun) {
+          renderer.send = send_fun;
+        }
+        renderer.render(template, view, partials);
+        if(!send_fun) {
+          return renderer.buffer.join("\n");
+        }
+      }
+    });
+  }();
+
+} // Ensure Mustache
+
+  Sammy = Sammy || {};
+
+  // <tt>Sammy.Mustache</tt> provides a quick way of using mustache style templates in your app.
+  // The plugin itself includes the awesome mustache.js lib created and maintained by Jan Lehnardt
+  // at http://github.com/janl/mustache.js
+  //
+  // Mustache is a clever templating system that relys on double brackets {{}} for interpolation.
+  // For full details on syntax check out the original Ruby implementation created by Chris Wanstrath at
+  // http://github.com/defunkt/mustache
+  //
+  // By default using Sammy.Mustache in your app adds the <tt>mustache()</tt> method to the EventContext
+  // prototype. However, just like <tt>Sammy.Template</tt> you can change the default name of the method
+  // by passing a second argument (e.g. you could use the ms() as the method alias so that all the template
+  // files could be in the form file.ms instead of file.mustache)
+  //
+  // ### Example #1
+  //
+  // The template (mytemplate.ms):
+  //
+  //       <h1>\{\{title\}\}<h1>
+  //
+  //       Hey, {{name}}! Welcome to Mustache!
+  //
+  // The app:
+  //
+  //       var $.app = $.sammy(function() {
+  //         // include the plugin and alias mustache() to ms()
+  //         this.use(Sammy.Mustache, 'ms');
+  //
+  //         this.get('#/hello/:name', function() {
+  //           // set local vars
+  //           this.title = 'Hello!'
+  //           this.name = this.params.name;
+  //           // render the template and pass it through mustache
+  //           this.partial('mytemplate.ms');
+  //         });
+  //
+  //       });
+  //
+  // If I go to #/hello/AQ in the browser, Sammy will render this to the <tt>body</tt>:
+  //
+  //       <h1>Hello!</h1>
+  //
+  //       Hey, AQ! Welcome to Mustache!
+  //
+  //
+  // ### Example #2 - Mustache partials
+  //
+  // The template (mytemplate.ms)
+  //
+  //       Hey, {{name}}! {{>hello_friend}}
+  //
+  //
+  // The partial (mypartial.ms)
+  //
+  //       Say hello to your friend {{friend}}!
+  //
+  // The app:
+  //
+  //       var $.app = $.sammy(function() {
+  //         // include the plugin and alias mustache() to ms()
+  //         this.use(Sammy.Mustache, 'ms');
+  //
+  //         this.get('#/hello/:name/to/:friend', function() {
+  //           var context = this;
+  //
+  //           // fetch mustache-partial first
+  //           $.get('mypartial.ms', function(response){
+  //             context.partials = response;
+  //
+  //             // set local vars
+  //             context.name = this.params.name;
+  //             context.hello_friend = {name: this.params.friend};
+  //
+  //             // render the template and pass it through mustache
+  //             context.partial('mytemplate.ms');
+  //           });
+  //         });
+  //
+  //       });
+  //
+  // If I go to #/hello/AQ/to/dP in the browser, Sammy will render this to the <tt>body</tt>:
+  //
+  //       Hey, AQ! Say hello to your friend dP!
+  //
+  // Note: You dont have to include the mustache.js file on top of the plugin as the plugin
+  // includes the full source.
+  //
+  Sammy.Mustache = function(app, method_alias) {
+
+    // *Helper* Uses Mustache.js to parse a template and interpolate and work with the passed data
+    //
+    // ### Arguments
+    //
+    // * `template` A String template. {{}} Tags are evaluated and interpolated by Mustache.js
+    // * `data` An Object containing the replacement values for the template.
+    //   data is extended with the <tt>EventContext</tt> allowing you to call its methods within the template.
+    // * `partials` An Object containing one or more partials (String templates
+    //   that are called from the main template).
+    //
+    var mustache = function(template, data, partials) {
+      data     = $.extend({}, this, data);
+      partials = $.extend({}, data.partials, partials);
+      return Mustache.to_html(template, data, partials);
+    };
+
+    // set the default method name/extension
+    if (!method_alias) method_alias = 'mustache';
+    app.helper(method_alias, mustache);
+
+  };
+
+})(jQuery);
+
 /*
  * Embedly JQuery v2.0.0
  * ==============
@@ -10356,13 +10801,15 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 
 /**
  * h5Validate
- * @version v0.3.3
+ * @version v0.5.0
  * Using semantic versioning: http://semver.org/
  * @author Eric Hamilton dilvie@dilvie.com
  * @copyright 2010 Eric Hamilton
- * @license MIT http://www.opensource.org/licenses/mit-license.html
- * 
- * Developed under the sponsorship of Zumba.com and MyRentalToolbox
+ * Dual licensed under the MIT and GPL licenses:
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.gnu.org/licenses/gpl.html
+ *
+ * Developed under the sponsorship of Zumba Fitness, LLC, and Rese Property Management
  */
 
 /*global jQuery window */
@@ -10370,18 +10817,18 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 (function ($) {
 	var h5 = { // Public API
 			defaults : {
-				debug: true,
+				debug: false,
 
 				// HTML5-compatible validation pattern library that can be extended and/or overriden.
 				patternLibrary : { //** TODO: Test the new regex patterns. Should I apply these to the new input types?
-					// **TODO: url, password
+					// **TODO: password
 					phone: /([\+][0-9]{1,3}([ \.\-])?)?([\(]{1}[0-9]{3}[\)])?([0-9A-Z \.\-]{1,32})((x|ext|extension)?[0-9]{1,4}?)/,
 
 					// Shamelessly lifted from Scott Gonzalez via the Bassistance Validation plugin http://projects.scottsplayground.com/email_address_validation/
-					email: /((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?/,
+					email: /((([a-zA-Z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-zA-Z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?/,
 
 					// Shamelessly lifted from Scott Gonzalez via the Bassistance Validation plugin http://projects.scottsplayground.com/iri/
-					url: /(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?/,
+					url: /(https?|ftp):\/\/(((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-zA-Z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?/,
 
 					// Number, including positive, negative, and floating decimal. Credit: bassistance
 					number: /-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?/,
@@ -10389,7 +10836,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 					// Date in ISO format. Credit: bassistance
 					dateISO: /\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}/,
 					
-					alpha: /[a-z]+/,
+					alpha: /[a-zA-Z]+/,
 					alphaNumeric: /\w+/,
 					integer: /-?\d+/
 				},
@@ -10398,25 +10845,38 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 					invalid: 'Please correct this field.'
 				},
 
-				errorClass: 'ui-state-error',
-				validClass: 'ui-state-valid',
-
-				// The prefix to use to trigger pattern-library validation.
+				// The prefix to use for dynamically-created class names.
 				classPrefix: 'h5-',
 
+				errorClass: 'ui-state-error', // No prefix for these.
+				validClass: 'ui-state-valid', // "
+				activeClass: 'active', // Prefix will get prepended.
+				requiredClass: 'required',
+				requiredAttribute: 'required',
+				patternAttribute: 'pattern',
+
 				// Attribute which stores the ID of the error container element (without the hash).
-				errorAttribute: 'data-errorID',
+				errorAttribute: 'data-h5-errorid',
 
 				// Setup KB event delegation.
 				kbSelectors: ':text, :password, select, textarea',
 				focusout: true,
 				focusin: false,
-				change: false,
-				keyup: true,
+				change: true,
+				keyup: false,
 
 				// Setup mouse event delegation.
 				mSelectors: ':radio, :checkbox, select, option',
 				click: true,
+				
+				activeKeyup: true,
+
+				// What do we name the required .data variable?
+				requiredVar: 'h5-required',
+				
+				// What do we name the pattern .data variable?
+				patternVar: 'h5-pattern',
+				stripMarkup: true,
 
 				// Validate on submit?
 				// **TODO: This isn't implemented, yet.
@@ -10426,29 +10886,40 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 				// ** TODO: Highlight labels
 				// ** TODO: Implement setCustomValidity as per the spec:
 				// http://www.whatwg.org/specs/web-apps/current-work/multipage/association-of-controls-and-forms.html#dom-cva-setcustomvalidity
-				markInvalid: function (element, reason, errorClass, validClass, errorID) {
-					var $element = $(element),
-						$errorID = $(errorID);
-					$element.addClass(errorClass).removeClass(validClass);
-					$element.find("#" + element.id).addClass(errorClass);
-					if ($errorID) {
+				markInvalid: function (options) { 
+					var $element = $(options.element),
+						$errorID = $(options.errorID);
+					$element.addClass(options.errorClass).removeClass(options.validClass);
+
+					// User needs help. Enable active validation.
+					$element.addClass(options.settings.activeClass);
+
+					if ($errorID.length) { // These ifs are technically not needed, but improve server-side performance 
+						if ($element.attr('title')) {
+							$errorID.text($element.attr('title'));
+						}
 						$errorID.show();
 					}
 					return $element;
 		        },
 
 				// Mark field valid.
-				markValid: function (element, errorClass, validClass, errorID) {
-					var $element = $(element);
-					$element.addClass(validClass).removeClass(errorClass);
+				markValid: function (options) {
+					var $element = $(options.element),
+						$errorID = $(options.errorID);
+
+					$element.addClass(options.validClass).removeClass(options.errorClass);
+					if ($errorID.length) {
+						$errorID.hide();
+					}
 					return $element;
 				},
 
 				// Unmark field
-				unmark: function (element, errorClass, validClass, errorID) {
-					var $element = $(element);
-					$element.removeClass(errorClass).removeClass(validClass);
-					$element.form.find("#" + element.id).removeClass(errorClass).removeClass(validClass);
+				unmark: function (options) {
+					var $element = $(options.element);
+					$element.removeClass(options.errorClass).removeClass(options.validClass);
+					$element.form.find("#" + options.element.id).removeClass(options.errorClass).removeClass(options.validClass);
 					return $element;
 				}	
 			}
@@ -10460,46 +10931,49 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 
 		methods = {
 			validate: function (settings) {
-				// Get the HTML5 pattern attribute if it exists.
-				// ** TODO: If a pattern class exists, grab the pattern from the patternLibrary, but the pattern attrib should override that value.
 				var $this = $(this),
-					pattern = $this.filter('[pattern]')[0] ? $this.attr('pattern') : false,
-
-				// The pattern attribute must match the whole value, not just a subset:
-				// "...as if it implied a ^(?: at the start of the pattern and a )$ at the end."
-				re = new RegExp('^(?:' + pattern + ')$'),
+				re = $this.data(settings.patternVar),
 				value = $this.val(),
 				errorClass = settings.errorClass,
 				validClass = settings.validClass,
 				errorIDbare = $this.attr(settings.errorAttribute) || false, // Get the ID of the error element.
 				errorID = errorIDbare ? '#' + errorIDbare : false, // Add the hash for convenience. This is done in two steps to avoid two attribute lookups.
-				required = false,
-				$checkRequired = $('<input required>');
-
-				/*	If the required attribute exists, set it required to true, unless it's set 'false'.
-				*	This is a minor deviation from the spec, but it seems some browsers have falsey 
-				*	required values if the attribute is empty (should be true). The more conformant 
-				*	version of this failed sanity checking in the browser environment.
-				*	This plugin is meant to be practical, not ideologically married to the spec.
-				*/
-				// Feature fork
-				if ($checkRequired.filter('[required]') && $checkRequired.filter('[required]').length) {
-					required = ($this.filter('[required]').length && $this.attr('required') !== 'false') ? true : false;
-				} else {
-					required = ($this.attr('required') !== undefined) ? true : false;
-				}
+				required = $this.data(settings.requiredVar),
+				isValid = true,
+				reason = '';
 
 				if (settings.debug && window.console) {
 					console.log('Validate called on "' + value + '" with regex "' + re + '". Required: ' + required); // **DEBUG
-					console.log('Regex test: ' + re.test(value) + ', Pattern: ' + pattern); // **DEBUG
+					if (re) {
+						console.log('Regex test: ' + re.test(value) + ', Regex: ' + re); // **DEBUG
+					}
 				}
 
 				if (required && !value) {
-					settings.markInvalid(this, 'required', errorClass, validClass, errorID);
-				} else if (pattern && !re.test(value) && value) {
-					settings.markInvalid(this, 'pattern', errorClass, validClass, errorID);
+					isValid = false;
+					reason = 'required';
+				} else if (re && !re.test(value) && value) {
+					isValid = false;
+					reason = 'pattern';
 				} else {
-					settings.markValid(this, errorClass, validClass, errorID);
+					isValid = true;
+					settings.markValid({
+						element: this,
+						errorClass: errorClass, 
+						validClass: validClass, 
+						errorID: errorID
+					});
+				}
+
+				if (!isValid) {
+					settings.markInvalid({
+						element: this,
+						reason: reason,
+						errorClass: errorClass,
+						validClass: validClass,
+						errorID: errorID,
+						settings: settings
+					});
 				}
 			},
 
@@ -10515,7 +10989,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 				var events = [],
 					key = 0,
 					validate = function () {
-						methods.validate.call(this, settings);
+						settings.validate.call(this, settings);
 					};
 				$.each(eventFlags, function (key, value) {
 					if (value) {
@@ -10525,9 +10999,6 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 				key=0;
 				for (key in events) {
 					if (events.hasOwnProperty(key)) {
-						if (settings.debug && window.console) {
-							console.log(events[key] + ', ' + selectors); //**DEBUG
-						}
 						$(element).delegate(selectors, events[key] + '.h5Validate', validate);
 					}
 				}
@@ -10544,12 +11015,12 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 			bindDelegation: function (settings) {
 				// Attach patterns from the library to elements.
 				$.each(patternLibrary, function (key, value) {
-					var pattern = value.toString();
+					// ** TODO: Inline patterns should take precedence over the patternLibrary.
+					var pattern = value.toString(),
+						re;
 					pattern = pattern.substring(1, pattern.length-1);
-					if (settings.debug && window.console) {
-						console.log('.' + settings.classPrefix + key + ' : ' + pattern);
-					}
-					$('.' + settings.classPrefix + key).attr('pattern', pattern);
+					re = new RegExp('^(?:' + pattern + ')$');
+					$('.' + settings.classPrefix + key).data(settings.patternVar, re);
 				});
 				return this.each(function () {
 					var kbEvents = {
@@ -10560,10 +11031,14 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 						},
 						mEvents = {
 							click: settings.click
+						},
+						activeEvents = {
+							keyup:settings.activeKeyup
 						};
 
-					methods.delegateEvents(settings.kbSelectors, kbEvents, this, settings);
-					methods.delegateEvents(settings.mSelectors, mEvents, this, settings);
+					settings.delegateEvents(settings.kbSelectors, kbEvents, this, settings);
+					settings.delegateEvents(settings.mSelectors, mEvents, this, settings);
+					settings.delegateEvents(settings.activeClassSelector, activeEvents, this, settings);
 				});
 			}
 		};
@@ -10578,20 +11053,17 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 		 * @param {Object} patterns A map of pattern names and HTML5 compatible
 		 * regular expressions.
 		 * 
-		 * @returns {Object} this
+		 * @returns {Object} patternLibrary The modified pattern library
 		 */
-		addPatterns : function (patterns) {
+		addPatterns: function (patterns) {
 			var patternLibrary = defaults.patternLibrary,
 				key;
 			for (key in patterns) {
 				if (patterns.hasOwnProperty(key)) {
 					patternLibrary[key] = patterns[key];
-					if (defaults.debug && window.console) {
-						console.log(patternLibrary[key]);
-					}
 				}
 			}
-			return this;
+			return patternLibrary;
 		},
 		/**
 		 * Take a valid jQuery selector, and a list of valid values to
@@ -10603,25 +11075,78 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 		 * @param {Array} values A list of valid values to validate selected 
 		 * fields against.
 		 */
-		validValues : function (selector, values) {
+		validValues: function (selector, values) {
 			var i = 0,
 				ln = values.length,
-				pattern = '';
+				pattern = '',
+				re;
 			// Build regex pattern
 			for (i = 0; i < ln; i++) {
 				pattern = pattern ? pattern + '|' + values[i] : values[i];
 			}
-			$(selector).attr('pattern', pattern);
+			re = new RegExp('^(?:' + pattern + ')$');
+			$(selector).data('regex', re);
+		},
+		getRules: function (options) {
+			var $checkRequired = $('<input required>').filter('[required]'),
+				$container = (options.container) ? $(options.container) : $(this),
+				requiredAttribute = options.requiredAttribute,
+				patternAttribute = options.patternAttribute;
+
+			$container.find('input, textarea, select').each(function () {
+				var $this = $(this),
+					required;
+
+				if ($checkRequired && $checkRequired.length) {
+					required = !!($this.filter('[' + requiredAttribute + ']').length && $this.attr(requiredAttribute) !== 'false');
+				} else {
+					required = !!($this.attr(requiredAttribute) !== undefined);
+				}
+
+				if ((required || required === false) && !$this.data(options.requiredVar)) {
+					$this.addClass(options.requiredClass).data(options.requiredVar, required);
+				}
+
+				$this.filter('[' + patternAttribute + ']').each(function () {
+					var $this = $(this),
+						pattern = $this.attr(patternAttribute),
+						// The pattern attribute must match the whole value, not just a subset:
+						// "...as if it implied a ^(?: at the start of the pattern and a )$ at the end."
+						re = new RegExp('^(?:' + pattern + ')$');
+
+					if (pattern && !$this.data(options.patternVar)) {
+						$this.data(options.patternVar, re);
+					}
+					return $this;
+				});
+
+				if (options.stripMarkup) {
+					$this.removeAttr(patternAttribute).removeAttr(requiredAttribute);
+				}
+
+				return $this;
+			});
 		}
 	};
 
 	$.fn.h5Validate = function (options) {
 		// Combine defaults and options to get current settings.
-		var settings = $.extend({}, defaults, options);
+		var settings = $.extend({}, defaults, options, methods),
+			activeClass = settings.classPrefix + settings.activeClass;
+
+		$.extend(settings, {
+			activeClass: activeClass,
+			activeClassSelector: '.' + activeClass,
+			requiredClass: settings.classPrefix + settings.requiredClass
+		});
+
 		settings.messages = messages;
 
 		// Expose public API.
 		$.extend($.fn.h5Validate, h5);
+
+		// Override defaults
+		$.h5Validate.getRules.call(this, settings);
 
 		// Returning the jQuery object allows for method chaining.
 		return methods.bindDelegation.call(this, settings);
@@ -12817,7 +13342,9 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
     Sammy = Sammy || {};
 
     Sammy.FormValidator = function(app) {
-        var hb = app.context_prototype.prototype.hb; // Handlebars
+        app.use('Mustache', 'mustache');
+
+        var ms = app.context_prototype.prototype.mustache;
 
         var FormValidator = {
             MESSAGES: {
@@ -12832,9 +13359,9 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                     $input = $(input),
                     attrs = ['required', 'maxlength', 'pattern'];
 
-                if ($input.hasClass('input-error')) {
+                if ($input.hasClass('input-error') || !($input.hasClass('input-valid'))) {
                     $.each(attrs, function(index) {
-                        if ($input.is('[' + attrs[index] + ']')) {
+                        if ($input.data('h5-' + attrs[index])) {
                             ctx.Messenger.appendErrorMessage(attrs[index], $input);
                         }
                     });
@@ -12855,7 +13382,7 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                        .remove()
                        .end()
                        .find('input[type=submit]')
-                       .after(hb(template, tempData));
+                       .after(ms(template, tempData));
             },
 
             appendErrorMessage: function(attr, $input) {
@@ -12877,9 +13404,7 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                     }
                     break;
                 case 'pattern':
-                    re = "^" + $input.attr('pattern') + "$";
-
-                    if (RegExp('^' + re + '$', 'i').test(value) === false) {
+                    if ($input.data('h5-pattern').test(value) === false) {
                         if($input.hasClass('h5-minLength')) {
                             ctx.showInputError($input, FormValidator.MESSAGES.minlength);
                         } else if ($input.hasClass('h5-email')) {
@@ -12889,7 +13414,6 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                         }
                         return false;
                     } else {
-                        // URL matching needs ignoreCase to work properly
                         $input.removeClass('input-error');
                     }
                     break;
@@ -12897,8 +13421,8 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
             },
 
             showInputError: function($input, msg) {
-                var template = '<div class="error-msg"><span>L</span>{{msg}}</div>',
-                    result = hb(template, { msg: msg }),
+                var template = '<div class="error-msg">{{msg}}</div>',
+                    result = ms(template, { msg: msg }),
                     ctx = this;
 
                 if ($input.prev('.error-msg').length !== 0) {
@@ -12947,6 +13471,10 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
 
             unSuccessfulSubmission: function(form, template, data) {
                 FormValidator.Submitter.processSubmission(false, form, template, data);
+            },
+
+            clearForm: function(form) {
+                FormValidator.Submitter.clearForm($(form));
             }
         });
     };
@@ -13008,7 +13536,7 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
 ;(function($) {
 
     var app = $.sammy('body', function() {
-        this.use('Handlebars', 'hb')
+        this.use('Mustache', 'ms')
             .use('Couch')
             .use('FormValidator')
             .use('Paginator', 'paginate');
@@ -13029,7 +13557,7 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                         mnt_yr = date.strftime('%m.%y'),
                         template = '<span class="day">{{day}}</span> {{mnt_yr}}';
 
-                    $(this).html(ctx.hb(template, { day: day, mnt_yr: mnt_yr }));
+                    $(this).html(ctx.ms(template, { day: day, mnt_yr: mnt_yr }));
                 });
             },
 
@@ -13090,8 +13618,39 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
             });
         });
 
-        this.post('#/new', function () {
+        this.post('#/new', function(ctx) {
+            var form = ctx.target,
+                data = ctx.params,
+                template = '<div class="{{submitClass}} hyphenate">{{msg}}</div>',
+                msg,
+                doc;
 
+            // check params
+            if (data.lol1 || data.lol2) {
+                throw new Error("Nice try.");
+            }
+
+            if ($('.input-valid').length < 3) {
+                $.each(['.h5-url', '.h5-minLength', 'textarea'], function(i,val) {
+                    ctx.validate(val);
+                });
+
+                msg = {
+                    msg: "Sorry, your submission didn't go through. Make sure you " +
+                         "have filled in all inputs correctly and try again.",
+                    submitClass: 'submit-error'
+                };
+
+                ctx.unSuccessfulSubmission(form, template, msg);
+                return;
+            }
+
+            /*
+             * TODO: create doc obj
+             *       check whether a new doc is an article or screencast
+             *       upload to couchdb
+             *
+             */
         });
 
 
@@ -13153,26 +13712,30 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
                     var error = $.parseJSON(XMLHttpRequest.responseText),
                         template = '<div class="submit-error">Sorry, but your email could not be sent. You can try again or use your <a href="mailto:your@email.com">email client</a> to send the message.</div>';
-                    $(form).find('input[type=submit]').after(ctx.hb(template, {}));
+                    $(form).find('input[type=submit]').after(ctx.ms(template, {}));
                 }
             });
         });
 
         this.bind('load-validation', function(e, data) {
-            var $form = $(data.form);
+            var ctx = this,
+                $form = $(data.form);
 
             $.h5Validate.addPatterns({
                 minLength: /^(\w.*){5,}$/,
                 url: /(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?/
             });
 
-            $form.h5Validate({ errorClass: 'input-error', validClass: 'input-valid', debug: false })
-                 .bind('submit', function(e) {
-                     e.preventDefault();
-                 });
+            $form.h5Validate({
+                kbSelectors: '[name=title], [type=url], textarea',
+                keyup: true,
+                errorClass: 'input-error',
+                validClass: 'input-valid',
+                debug: true
+            }).bind('submit', function(e) { e.preventDefault(); });
         });
 
-        this.bind('run', function() {
+        this.bind('run', function () {
             var ctx = this;
 
             // ---- Menu Links ----
@@ -13197,8 +13760,7 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
 
             $('.submit').live('click', function(e) {
                 e.preventDefault();
-                $('.overlay').toggle();
-                // TODO: if no validation has been added to form, add it, otherwise leave it alone
+                $('.overlay').fadeIn('fast');
             });
 
             $('input:not([type=submit]), textarea', $(this).parent('form')[0])
@@ -13208,7 +13770,7 @@ Hyphenator.languages['en-us'] = Hyphenator.languages['en'] = {
 
             $('.close').live('click', function(e) {
                 e.preventDefault();
-                $('.overlay').toggle();
+                $('.overlay').fadeOut('fast');
             });
         });
     });

@@ -1,7 +1,7 @@
 ;(function($) {
 
     var app = $.sammy('body', function() {
-        this.use('Handlebars', 'hb')
+        this.use('Mustache', 'ms')
             .use('Couch')
             .use('FormValidator')
             .use('Paginator', 'paginate');
@@ -22,7 +22,7 @@
                         mnt_yr = date.strftime('%m.%y'),
                         template = '<span class="day">{{day}}</span> {{mnt_yr}}';
 
-                    $(this).html(ctx.hb(template, { day: day, mnt_yr: mnt_yr }));
+                    $(this).html(ctx.ms(template, { day: day, mnt_yr: mnt_yr }));
                 });
             },
 
@@ -83,8 +83,39 @@
             });
         });
 
-        this.post('#/new', function () {
+        this.post('#/new', function(ctx) {
+            var form = ctx.target,
+                data = ctx.params,
+                template = '<div class="{{submitClass}} hyphenate">{{msg}}</div>',
+                msg,
+                doc;
 
+            // check params
+            if (data.lol1 || data.lol2) {
+                throw new Error("Nice try.");
+            }
+
+            if ($('.input-valid').length < 3) {
+                $.each(['.h5-url', '.h5-minLength', 'textarea'], function(i,val) {
+                    ctx.validate(val);
+                });
+
+                msg = {
+                    msg: "Sorry, your submission didn't go through. Make sure you " +
+                         "have filled in all inputs correctly and try again.",
+                    submitClass: 'submit-error'
+                };
+
+                ctx.unSuccessfulSubmission(form, template, msg);
+                return;
+            }
+
+            /*
+             * TODO: create doc obj
+             *       check whether a new doc is an article or screencast
+             *       upload to couchdb
+             *
+             */
         });
 
 
@@ -146,26 +177,30 @@
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
                     var error = $.parseJSON(XMLHttpRequest.responseText),
                         template = '<div class="submit-error">Sorry, but your email could not be sent. You can try again or use your <a href="mailto:your@email.com">email client</a> to send the message.</div>';
-                    $(form).find('input[type=submit]').after(ctx.hb(template, {}));
+                    $(form).find('input[type=submit]').after(ctx.ms(template, {}));
                 }
             });
         });
 
         this.bind('load-validation', function(e, data) {
-            var $form = $(data.form);
+            var ctx = this,
+                $form = $(data.form);
 
             $.h5Validate.addPatterns({
                 minLength: /^(\w.*){5,}$/,
                 url: /(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?/
             });
 
-            $form.h5Validate({ errorClass: 'input-error', validClass: 'input-valid', debug: false })
-                 .bind('submit', function(e) {
-                     e.preventDefault();
-                 });
+            $form.h5Validate({
+                kbSelectors: '[name=title], [type=url], textarea',
+                keyup: true,
+                errorClass: 'input-error',
+                validClass: 'input-valid',
+                debug: true
+            }).bind('submit', function(e) { e.preventDefault(); });
         });
 
-        this.bind('run', function() {
+        this.bind('run', function () {
             var ctx = this;
 
             // ---- Menu Links ----
@@ -190,8 +225,7 @@
 
             $('.submit').live('click', function(e) {
                 e.preventDefault();
-                $('.overlay').toggle();
-                // TODO: if no validation has been added to form, add it, otherwise leave it alone
+                $('.overlay').fadeIn('fast');
             });
 
             $('input:not([type=submit]), textarea', $(this).parent('form')[0])
@@ -201,7 +235,7 @@
 
             $('.close').live('click', function(e) {
                 e.preventDefault();
-                $('.overlay').toggle();
+                $('.overlay').fadeOut('fast');
             });
         });
     });

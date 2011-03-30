@@ -3,7 +3,9 @@
     Sammy = Sammy || {};
 
     Sammy.FormValidator = function(app) {
-        var hb = app.context_prototype.prototype.hb; // Handlebars
+        app.use('Mustache', 'mustache');
+
+        var ms = app.context_prototype.prototype.mustache;
 
         var FormValidator = {
             MESSAGES: {
@@ -18,9 +20,9 @@
                     $input = $(input),
                     attrs = ['required', 'maxlength', 'pattern'];
 
-                if ($input.hasClass('input-error')) {
+                if ($input.hasClass('input-error') || !($input.hasClass('input-valid'))) {
                     $.each(attrs, function(index) {
-                        if ($input.is('[' + attrs[index] + ']')) {
+                        if ($input.data('h5-' + attrs[index])) {
                             ctx.Messenger.appendErrorMessage(attrs[index], $input);
                         }
                     });
@@ -41,7 +43,7 @@
                        .remove()
                        .end()
                        .find('input[type=submit]')
-                       .after(hb(template, tempData));
+                       .after(ms(template, tempData));
             },
 
             appendErrorMessage: function(attr, $input) {
@@ -63,9 +65,7 @@
                     }
                     break;
                 case 'pattern':
-                    re = "^" + $input.attr('pattern') + "$";
-
-                    if (RegExp('^' + re + '$', 'i').test(value) === false) {
+                    if ($input.data('h5-pattern').test(value) === false) {
                         if($input.hasClass('h5-minLength')) {
                             ctx.showInputError($input, FormValidator.MESSAGES.minlength);
                         } else if ($input.hasClass('h5-email')) {
@@ -75,7 +75,6 @@
                         }
                         return false;
                     } else {
-                        // URL matching needs ignoreCase to work properly
                         $input.removeClass('input-error');
                     }
                     break;
@@ -83,8 +82,8 @@
             },
 
             showInputError: function($input, msg) {
-                var template = '<div class="error-msg"><span>L</span>{{msg}}</div>',
-                    result = hb(template, { msg: msg }),
+                var template = '<div class="error-msg">{{msg}}</div>',
+                    result = ms(template, { msg: msg }),
                     ctx = this;
 
                 if ($input.prev('.error-msg').length !== 0) {
@@ -133,6 +132,10 @@
 
             unSuccessfulSubmission: function(form, template, data) {
                 FormValidator.Submitter.processSubmission(false, form, template, data);
+            },
+
+            clearForm: function(form) {
+                FormValidator.Submitter.clearForm($(form));
             }
         });
     };
