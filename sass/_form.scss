@@ -81,13 +81,24 @@
     text-align: right;
 }
 
-.submit-error { 
+.submit-msg {
     @include adjust-font-size-to(12px,1,14px);
+    @include apply-side-rhythm-border(left,4px,0.25,14px);
     letter-spacing: 1px;
     color: white;
-
+    padding-left: 0.63em;
     position: absolute; bottom: $base-line-height * 2;
     width: 262px;
+}
+
+.submit-error {
+    @extend .submit-msg;
+    border-color: $dark-red;
+}
+
+.submit-success {
+    @extend .submit-msg;
+    border-color: green;
 }
 
 

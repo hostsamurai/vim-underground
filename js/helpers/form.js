@@ -65,7 +65,7 @@
                     }
                     break;
                 case 'pattern':
-                    if ($input.data('h5-pattern').test(value) === false) {
+                    if ($input.data('h5-pattern').test(value.toLowerCase()) === false) {
                         if($input.hasClass('h5-minLength')) {
                             ctx.showInputError($input, FormValidator.MESSAGES.minlength);
                         } else if ($input.hasClass('h5-email')) {

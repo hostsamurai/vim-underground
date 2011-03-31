@@ -70,6 +70,34 @@
                 $.couch.db(db).list(db + '/blurbs', view, options);
 
                 return this;
+            },
+
+            validateInputs: function(params, form, callback) {
+                var ctx = this,
+                    template = '<p class="{{submitClass}} hyphenate">{{msg}}</p>',
+                    form,
+                    msg;
+
+                if (params.lol1 || params.lol2) {
+                    throw new Error("Nice try.");
+                }
+
+                if ($('.input-valid').length < 3) {
+                    $.each(['.h5-url', '.h5-minLength', 'textarea'], function(i,val) {
+                        ctx.validate(val);
+                    });
+
+                    msg = {
+                        msg: "Sorry, your submission didn't go through. Make sure you " +
+                             "have filled in all inputs correctly and try again.",
+                        submitClass: 'submit-error'
+                    };
+
+                    ctx.unSuccessfulSubmission(form, template, msg);
+                    return;
+                } else {
+                    callback();
+                }
             }
         });
 
@@ -109,38 +137,14 @@
         });
 
         this.post('#/new', function(ctx) {
-            var form = ctx.target,
-                data = ctx.params,
-                template = '<div class="{{submitClass}} hyphenate">{{msg}}</div>',
-                msg,
+            var ctx = this,
                 doc;
 
-            // check params
-            if (data.lol1 || data.lol2) {
-                throw new Error("Nice try.");
-            }
+            ctx.validateInputs(ctx.params, ctx.target, function () {
+                ctx.send(Article.processNewDoc, ctx.params, ctx.target);
+            });
 
-            if ($('.input-valid').length < 3) {
-                $.each(['.h5-url', '.h5-minLength', 'textarea'], function(i,val) {
-                    ctx.validate(val);
-                });
-
-                msg = {
-                    msg: "Sorry, your submission didn't go through. Make sure you " +
-                         "have filled in all inputs correctly and try again.",
-                    submitClass: 'submit-error'
-                };
-
-                ctx.unSuccessfulSubmission(form, template, msg);
-                return;
-            }
-
-            /*
-             * TODO: create doc obj
-             *       check whether a new doc is an article or screencast
-             *       upload to couchdb
-             *
-             */
+            // send email from updates feed
         });
 
 
@@ -166,32 +170,29 @@
         this.bind('add-article', function(e, data) {
             var ctx = this,
                 form = data.target,
-                record = data.record;
+                doc = data.doc,
+                model = doc.type,
+                template = '<p class="{{klass}}">{{msg}}</p>',
+                msg;
 
-            Article.save(record, {
+            Article.save(doc, {
                 success: function () {
-                    var template = '<div class="submit-success">{{model}} successfully created!</div>',
-                        model = record.type;
+                    msg = model.capitalize() + " successfully submitted! It will appear alongside " +
+                          "other " + model.pluralize() + " after being reviewed.";
 
-                    // trigger this instead
-                    ctx.successfulSubmission(form, template, { model: model });
+                    ctx.successfulSubmission(form, template, { klass: "submit-success", msg: msg });
                 },
                 error: function (e, resp, reason) {
-                    var template = '<div class="submit-error">{{msg}}</div>',
-                        model = record.type;
-
                     if (/Document update conflict/.test(reason)) {
-                        msg = "An article or screencast already exists with that name! " +
-                              "Please make sure that your submission hasn't already been published " +
-                              "on this site.";
+                        var indefArt = model === "article" ? "An " : "A ";
+                        msg = indefArt + model + " with the same URL already exists.";
                     } else {
-                        msg = record.type + " not created! Please make sure all form fields are " +
-                              "filled out and valid and try again. If the problem persists, feel " +
-                              "free to contact me.";
+                        msg = model.capitalize() + " not created! Please make sure you have" +
+                              "filled out all input fields and that they're valid before " +
+                              "trying again. If the problem persists, feel free to contact me.";
                     }
 
-                    // trigger this instead
-                    ctx.unSuccessfulSubmission(form, template, { msg: msg });
+                    ctx.unSuccessfulSubmission(form, template, { klass: "submit-error", msg: msg });
                 }
             });
         });
@@ -227,11 +228,20 @@
 
         this.bind('load-validation', function(e, data) {
             var ctx = this,
-                $form = $(data.form);
+                $form = $(data.form),
+                // shamelessly stolen from dojox:
+                // https://github.com/dojo/dojox/blob/master/validate/regexp.js
+                protocolRE = "(https?|ftps?)\\://",
+                domainLabelRE = "(?:[\\da-zA-Z](?:[-\\da-zA-Z]{0,61}[\\da-zA-Z])?)",
+                domainNameRE = "(?:[a-zA-Z](?:[-\\da-zA-Z]{0,6}[\\da-zA-Z])?)",
+                portRE = "(\\:\\d+)?",
+                hostnameRE = "((?:" + domainLabelRE + "\\.)+" + domainNameRE + "\\.?)",
+                pathRE = "(/(?:[^?#\\s/]+/)*(?:[^?#\\s/]+(?:\\?[^?#\\s/]*)?(?:#[A-Za-z][\\w.:-]*)?)?)?",
+                urlRE = protocolRE + "(" + hostnameRE + ")" + portRE + pathRE;
 
             $.h5Validate.addPatterns({
                 minLength: /^(\w.*){5,}$/,
-                url: /(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?/
+                url: new RegExp(urlRE)
             });
 
             $form.h5Validate({

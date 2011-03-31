@@ -11,8 +11,9 @@ Article.extend({
         return regex.test(url);
     },
 
-    processRecord: function(newRcd, params, form) {
-        var ctx = Sammy('body');
+    processNewDoc: function(params, form) {
+        var ctx = Sammy('body'),
+            newDoc = {};
 
         if (params.lol1 || params.lol2) {
             throw new Error("Looks like you're a bot. Epic fail.");
@@ -20,28 +21,28 @@ Article.extend({
 
         for (key in params) {
             if (!/^lol\d$/.test(key)) {
-                newRcd[key] = params[key];
+                newDoc[key] = params[key];
             }
         }
 
-        newRcd.posted_on = Date();
-        newRcd.approved = false;
+        newDoc.posted_on = Date();
+        newDoc.approved = false;
 
         if (Article.isScreencast(params.link)) {
             $.embedly(params.link, {
                 urlRe:   Article.getScreenCastRegex(),
                 success: function(oembed, dict) {
-                    newRcd.html           = oembed.html;
-                    newRcd.thumb_url      = oembed.thumbnail_url;
-                    newRcd.author         = oembed.author;
-                    newRcd.author_website = oembed.author_website;
-                    newRcd.type           = "screencast";
-                    ctx.trigger('add-article', { record: newRcd, target: form });
+                    newDoc.html           = oembed.html;
+                    newDoc.thumb_url      = oembed.thumbnail_url;
+                    newDoc.author         = oembed.author;
+                    newDoc.author_website = oembed.author_website;
+                    newDoc.type           = "screencast";
+                    ctx.trigger('add-article', { doc: newDoc, target: form });
                 }
             });
         } else {
-            newRcd.type = "article";
-            ctx.trigger('add-article', { record: newRcd, target: form });
+            newDoc.type = "article";
+            ctx.trigger('add-article', { doc: newDoc, target: form });
         }
     },
 
@@ -51,23 +52,5 @@ Article.extend({
             delete doc.link;
         }
         return doc;
-    },
-
-    viewLatestArticles: function(options, callback) {
-        return Article.view('latest_articles', $.extend({
-            startkey: options.startkey,
-            startkey_docid: options.startkey_docid,
-            limit: options.limit || 10,
-            descending: true
-        }, options || {}), callback);
-    },
-
-    viewLatestScreencasts: function(options, callback) {
-        return Article.view('latest_screencasts', $.extend({
-            startkey: options.startkey,
-            startkey_docid: options.startkey_docid,
-            limit: options.limit || 10,
-            descending: true
-        }, options || {}), callback);
     }
 });
