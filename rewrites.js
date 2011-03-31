@@ -63,6 +63,30 @@
         }
     },
 
+    { // articles feed
+        "from": "/articles-feed",
+        "to": "_list/blurbs/latest_articles",
+        "method": "GET",
+        "query": {
+            "descending": true,
+            "limit": 20,
+            "format": "atom",
+            "title": "Articles Feed"
+        }
+    },
+
+    { // screencasts feed
+        "from": "/screencasts-feed",
+        "to": "_list/blurbs/latest_screencasts",
+        "method": "GET",
+        "query": {
+            "descending": true,
+            "limit": 20,
+            "format": "atom",
+            "title": "Screencasts Feed"
+        }
+    },
+
     { // keeping relative urls sane
         "from": "/*",
         "to": "/*"

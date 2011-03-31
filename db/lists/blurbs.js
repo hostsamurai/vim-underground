@@ -1,10 +1,10 @@
 function(head, req) {
-    var path = require('lib/path'),
+    var path = require('lib/path').init(req),
+        utils = require('lib/utils'),
         ddoc = this;
 
     function list(format) {
         var mustache = require('lib/mustache'),
-            utils = require('lib/utils'),
             len = req.query.trlen,
             blurbs = [],
             rows = [],
@@ -62,5 +62,37 @@ function(head, req) {
     // for access from jquery.couch
     provides("json", function () {
         return toJSON(list());
+    });
+
+    provides("atom", function () {
+        var atom = require('lib/atom'),
+            row = getRow(),
+            type = /(\w+)/.exec(req.query.title)[0].toLowerCase(),
+            feedHeader = atom.header({
+                updated: (row ? new Date(row.value.posted_on) : new Date()),
+                title:  "Vim Underground " + req.query.title,
+                feed_id:  path.absolute('/articles'),
+                feed_link: path.absolute('/articles-feed')
+            });
+
+        send(feedHeader);
+
+        if (row) {
+            do {
+                var validDate = utils.getParsableDate(row.value.posted_on),
+                    feedEntry = atom.entry({
+                        entry_id:  encodeURIComponent(row.id),
+                        title:     row.value.title,
+                        author:    row.value.author,
+                        content:   row.value.summary || "<img src=" + row.value.thumb_url + "></img>",
+                        updated:   new Date(validDate),
+                        alternate: row.id
+                    });
+
+                send(feedEntry);
+            } while (row = getRow());
+        }
+
+        return '</feed>';
     });
 }
