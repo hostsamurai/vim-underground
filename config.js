@@ -2,7 +2,7 @@
     "id": "underground-git",
     "mapDirectories": {
         "config.js":      "config",
-        "index.html":     "_attachments/index.html",
+        "about.html":     "_attachments/about.html",
         "favicon.ico":    "_attachments/favicon.ico",
         "css":            "_attachments/css",
         "images":         "_attachments/images",

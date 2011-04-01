@@ -44,6 +44,8 @@
         border-color: $light-gray;
         text-transform: lowercase;
     }
+
+    input[type=submit] { position: relative; left: 313px; }
 }
 
 .textinput {
@@ -123,11 +125,10 @@ label[for^="lol"], input[name^="lol"] {
     position: absolute; left: -99999px; top: -99999px;
 }
 
-textarea { @extend .textinput; }
+textarea { @extend .textinput; height: 105px; }
 
 input {
-    $cloudy-gray: #E7E7E7;
-    &[type=text], &[type=url] {
+    &[type=text], &[type=url], &[type=email] {
         @include margin-trailer(0.5);
         @extend .textinput;
     }
@@ -136,15 +137,31 @@ input {
         @include adjust-font-size-to(14px,1,14px);
         @include circle(70px,$cloudy-gray);
         border: none;
-        position: relative; left: 313px;
         letter-spacing: 1px; text-transform: lowercase;
 
-        &:hover {
-            background-color: $gray;
-        }
+        &:hover { background-color: $gray; }
     }
 }
 
-textarea {
-    height: 100px;
+
+// ------------------------------
+// Overrides for contact form
+// ------------------------------
+#contact form {
+    background-color: white;
+    padding: 0 30px;
+
+    label { color: black; }
+    input:not([type=submit]), textarea {
+        @include apply-side-rhythm-border(left,4px,0.25,14px);
+        @include trailing-border(1px,1,14px,dashed);
+        background-color: white;
+        border-bottom-color: black;
+    }
+    textarea {
+        @include margin-trailer(0.5);
+    }
+    input[type=submit] {
+        position: absolute; right: 27px;
+    }
 }

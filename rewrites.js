@@ -87,6 +87,13 @@
         }
     },
 
+    { // about page
+        "from": "/about",
+        "to": "about.html",
+        "method": "GET",
+        "query": {}
+    },
+
     { // keeping relative urls sane
         "from": "/*",
         "to": "/*"
