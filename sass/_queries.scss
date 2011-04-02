@@ -1,0 +1,162 @@
+/**
+ *
+ * Media Queries
+ *
+ */
+@mixin footer-fix($nav-width, $logo-width) {
+    footer {
+        nav { @include grid($nav-width); }
+        #legal { @include grid($logo-width); }
+    }
+}
+
+@mixin listings-fix($width, $blurb-height) {
+    .specific-listing {
+        .blurb { @include grid($width); height: $blurb-height; }
+    }
+}
+
+@mixin screencast-fix() {
+    #t-screencasts .blurb { height: 205px; }
+}
+
+@media screen and (min-width: 1367px) and (max-width: 1440px) {
+    .container { max-width: 1366px; }
+
+    header { right: 12px; }
+
+    // Blurbs
+    @include listings-fix(5.2, 265px);
+
+    // Forms
+    .form-container { width: 446px; }
+
+    // by page
+    @include screencast-fix;
+}
+
+@media screen and (min-width: 1281px) and (max-width: 1366px) {
+    body { max-width: 1366px; }
+    .container { max-width: 1280px; }
+
+    header { right: 46px; }
+    @include footer-fix(4,6);
+
+    // Blurbs
+    @include listings-fix(5.2, 275px);
+
+    // Forms
+    .form-container { width: 446px; }
+
+    // by page
+    @include screencast-fix;
+    #t-scripts, #scripts {
+        @include grid(16);
+    }
+
+    .cols2 {
+        @include grid(10); @include prepend(0); @include float-right;
+    }
+    #screencasts {
+        padding-left: 0;
+        .row .blurb:first-of-type { padding-right: 41px; }
+    }
+}
+
+@media screen and (min-width: 1025px) and (max-width: 1280px) {
+    body { max-width: 1280px; }
+
+    header { right: 9px; }
+    @include footer-fix(4,6);
+
+    // Blurbs
+    @include listings-fix(5.2, 285px);
+
+    // Forms
+    .form-container { width: 446px; }
+
+    // by page
+    @include screencast-fix;
+    #t-scripts, #scripts {
+        @include grid(16.5);
+    }
+    .cols2 {
+        @include grid(10); @include prepend(0); @include float-right;
+    }
+    #screencasts {
+        padding-left: 0;
+        .row .blurb:first-of-type { padding-right: 43px; margin-left: 9px; }
+    }
+}
+
+// Sorry 1024x768 users, you get a shitty layout
+@media screen and (max-width: 1024px) {
+    body { max-width: 1024px; }
+
+    header { right: 8px; }
+    @include footer-fix(4,8);
+    footer { @include leader(4); }
+
+    // Blurbs
+    @include listings-fix(25, 255px);
+    .blurb {
+        margin-bottom: 0;
+        img { @include margin-trailer(1,11px); padding: { left: 52px; right: 52px; } }
+    }
+
+    // Rows
+    // anything other than #t-scripts, #by-rating, .cols2+3
+    #articles, #t-screencasts {
+        .row {
+            @include float-left;
+            width: 33%;
+
+            li {
+                img, p { @include trailing-border(1px,1,11px); border-color: $darker-gray  }
+
+                p { height: 66%; }
+
+                &:first-child { padding-left: 5px; }
+                &:last-of-type {
+                    @include apply-side-rhythm-border(right,1px,1,13px); border-color: $darker-gray;
+                }
+            }
+
+            &:not(:last-of-type) { border-bottom: none; }
+            &:nth-of-type(3n) li { border-right: none; }
+        }
+    }
+
+    .more { position: relative; }
+
+    // Forms
+    .form-container { width: 446px; }
+
+    // by page
+    @include screencast-fix;
+    .cols2 {
+        @include grid(14);
+        @include float-right;
+        .blurb {
+            &:first-of-type { margin-left: 26px; }
+            img { padding: { left: 0; right: 0; } }
+        }
+    }
+
+    #t-scripts, #scripts {
+        @include grid(22);
+        .more { position: absolute; }
+    }
+
+    #by-rating {
+        .blurb { margin-bottom: 20px; }
+        .more { position: absolute; }
+    }
+
+    .bottom-row-obj { @include padding-trailer(2); }
+
+    #screencasts {
+        margin-bottom: 0;
+        .more { position: absolute; }
+    }
+}

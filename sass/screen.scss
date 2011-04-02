@@ -372,7 +372,7 @@ section .row:last-of-type { border-bottom: none; }
     @extend .bottom-row-obj;
 
     h1::after { @include header-symbol("_"); }
-    p { 
+    p {
         @include margin-trailer;
         @include column-count(2);
         @include column-gap($base-line-height);
@@ -385,3 +385,9 @@ section .row:last-of-type { border-bottom: none; }
     @extend .bottom-row-obj;
     h1::after { @include header-symbol("?"); }
 }
+
+
+// ------------------------------
+// Media Queries
+// ------------------------------
+@import "queries";
