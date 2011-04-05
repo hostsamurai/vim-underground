@@ -151,12 +151,18 @@ input {
     background-color: white;
     padding: 0 30px;
 
+    .submit-msg {
+        color: black;
+        width: 332px; bottom: -58.5px;
+    }
+
     label { color: black; }
     input:not([type=submit]), textarea {
         @include apply-side-rhythm-border(left,4px,0.25,14px);
         @include trailing-border(1px,1,14px,dashed);
         background-color: white;
         border-bottom-color: black;
+        padding-bottom: 0;
     }
     textarea {
         @include margin-trailer(0.5);

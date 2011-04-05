@@ -1,3 +1,4 @@
 .couchapprc
 .rvmrc
 .sass-cache/**
+external/mailer/node_modules

@@ -94,6 +94,19 @@
         "query": {}
     },
 
+    { // contact page emails
+        "from": "/mail",
+        "to": "../../_mailer",
+        "method": "POST",
+        "query": {}
+    },
+
+    { // for accessing lists from jquery.couch
+        "from": "*/_design/*/_list/*",
+        "to": "_list/*",
+        "method": "GET"
+    },
+
     { // keeping relative urls sane
         "from": "/*",
         "to": "/*"

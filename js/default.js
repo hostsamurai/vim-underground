@@ -9879,129 +9879,6 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 
 })(jQuery, window);
 
-(function($, Sammy) {
-
-  Sammy = Sammy || {};
-
-  Sammy.Couch = function(app, dbname) {
-
-    // set the default dbname form the URL
-    dbname = dbname || window.location.pathname.split('/')[1];
-
-    var db = function() {
-      if (!dbname) {
-        throw("Please define a db to load from");
-      }
-      return this._db = this._db || $.couch.db(dbname);
-    };
-
-    var timestamp = function() {
-      return new Date().getTime();
-    };
-
-    this.db = db();
-
-    this.createModel = function(type, options) {
-      options = $.extend({
-        defaultDocument: function() {
-          return {
-            type: type,
-            updated_at: timestamp()
-          };
-        },
-        errorHandler: function(response) {
-          app.trigger('error.' + type, {error: response});
-        }
-      }, options || {});
-
-      var mergeCallbacks = function(callback) {
-        var base = {error: options.errorHandler};
-        if ($.isFunction(callback)) {
-          return $.extend(base, {success: callback});
-        } else {
-          return $.extend(base, callback || {});
-        }
-      };
-
-      var mergeDefaultDocument = function(doc) {
-        return $.extend({}, options.defaultDocument(), doc);
-      };
-
-      var model = {
-        timestamp: timestamp,
-
-        extend: function(obj) {
-          $.extend(model, obj);
-        },
-
-        all: function(callback) {
-          return app.db.allDocs($.extend(mergeCallbacks(callback), {
-            include_docs: true
-          }));
-        },
-
-        get: function(id, options, callback) {
-          if ($.isFunction(options)) {
-            callback = options;
-            options  = {};
-          }
-          return app.db.openDoc(id, $.extend(mergeCallbacks(callback), options));
-        },
-
-        create: function(doc, callback) {
-          return model.save(mergeDefaultDocument(doc), callback);
-        },
-
-        save: function(doc, callback) {
-          if ($.isFunction(model.beforeSave)) {
-            doc = model.beforeSave(doc);
-          }
-          return app.db.saveDoc(doc, mergeCallbacks(callback));
-        },
-
-        update: function(id, doc, callback) {
-          model.get(id, function(original_doc) {
-            doc = $.extend(original_doc, doc);
-            model.save(doc, callback);
-          });
-        },
-
-        view: function(name, options, callback) {
-          if ($.isFunction(options)) {
-            callback = options;
-            options  = {};
-          }
-          return app.db.view([dbname, name].join('/'), $.extend(mergeCallbacks(callback), options));
-        },
-
-        viewDocs: function(name, options, callback) {
-          if ($.isFunction(options)) {
-            callback = options;
-            options  = {};
-          }
-          var wrapped_callback = function(json) {
-            var docs = [];
-            for (var i=0;i<json['rows'].length;i++) {
-              docs.push(json['rows'][i]['doc']);
-            }
-            callback(docs);
-          };
-          options = $.extend({
-            include_docs: true
-          }, mergeCallbacks(wrapped_callback), options);
-          return app.db.view([dbname, name].join('/'), options);
-        }
-      };
-      return model;
-    };
-
-    this.helpers({
-      db: db()
-    });
-  };
-
-})(jQuery, window.Sammy);
-
 (function($) {
 
 if (!window.Mustache) {
@@ -10446,6 +10323,129 @@ if (!window.Mustache) {
   };
 
 })(jQuery);
+
+(function($, Sammy) {
+
+  Sammy = Sammy || {};
+
+  Sammy.Couch = function(app, dbname) {
+
+    // set the default dbname form the URL
+    dbname = dbname || window.location.pathname.split('/')[1];
+
+    var db = function() {
+      if (!dbname) {
+        throw("Please define a db to load from");
+      }
+      return this._db = this._db || $.couch.db(dbname);
+    };
+
+    var timestamp = function() {
+      return new Date().getTime();
+    };
+
+    this.db = db();
+
+    this.createModel = function(type, options) {
+      options = $.extend({
+        defaultDocument: function() {
+          return {
+            type: type,
+            updated_at: timestamp()
+          };
+        },
+        errorHandler: function(response) {
+          app.trigger('error.' + type, {error: response});
+        }
+      }, options || {});
+
+      var mergeCallbacks = function(callback) {
+        var base = {error: options.errorHandler};
+        if ($.isFunction(callback)) {
+          return $.extend(base, {success: callback});
+        } else {
+          return $.extend(base, callback || {});
+        }
+      };
+
+      var mergeDefaultDocument = function(doc) {
+        return $.extend({}, options.defaultDocument(), doc);
+      };
+
+      var model = {
+        timestamp: timestamp,
+
+        extend: function(obj) {
+          $.extend(model, obj);
+        },
+
+        all: function(callback) {
+          return app.db.allDocs($.extend(mergeCallbacks(callback), {
+            include_docs: true
+          }));
+        },
+
+        get: function(id, options, callback) {
+          if ($.isFunction(options)) {
+            callback = options;
+            options  = {};
+          }
+          return app.db.openDoc(id, $.extend(mergeCallbacks(callback), options));
+        },
+
+        create: function(doc, callback) {
+          return model.save(mergeDefaultDocument(doc), callback);
+        },
+
+        save: function(doc, callback) {
+          if ($.isFunction(model.beforeSave)) {
+            doc = model.beforeSave(doc);
+          }
+          return app.db.saveDoc(doc, mergeCallbacks(callback));
+        },
+
+        update: function(id, doc, callback) {
+          model.get(id, function(original_doc) {
+            doc = $.extend(original_doc, doc);
+            model.save(doc, callback);
+          });
+        },
+
+        view: function(name, options, callback) {
+          if ($.isFunction(options)) {
+            callback = options;
+            options  = {};
+          }
+          return app.db.view([dbname, name].join('/'), $.extend(mergeCallbacks(callback), options));
+        },
+
+        viewDocs: function(name, options, callback) {
+          if ($.isFunction(options)) {
+            callback = options;
+            options  = {};
+          }
+          var wrapped_callback = function(json) {
+            var docs = [];
+            for (var i=0;i<json['rows'].length;i++) {
+              docs.push(json['rows'][i]['doc']);
+            }
+            callback(docs);
+          };
+          options = $.extend({
+            include_docs: true
+          }, mergeCallbacks(wrapped_callback), options);
+          return app.db.view([dbname, name].join('/'), options);
+        }
+      };
+      return model;
+    };
+
+    this.helpers({
+      db: db()
+    });
+  };
+
+})(jQuery, window.Sammy);
 
 /*
  * Embedly JQuery v2.0.0
@@ -14193,8 +14193,10 @@ if (!String.prototype.ordinalize)
 ;(function($) {
 
     var app = $.sammy('body', function() {
+        const dbname = 'underground-git';
+
         this.use('Mustache', 'ms')
-            .use('Couch')
+            .use('Couch', dbname)
             .use('FormValidator')
             .use('Paginator', 'paginate');
 
@@ -14228,7 +14230,7 @@ if (!String.prototype.ordinalize)
             },
 
             onHomepage: function () {
-                return !/(articles|screencasts|scripts)$/.test(document.location.pathname);
+                return !/(articles|screencasts|scripts|about)$/.test(document.location.pathname);
             },
 
             /**
@@ -14236,11 +14238,8 @@ if (!String.prototype.ordinalize)
              *  in $('.container') for pagination purposes.
              *
              *  @param {String} view The name of the view to access from the list
-             *
              *  @param {String} sel A jQuery selector acting as the container for the results
-             *
              *  @param {Object} options Additional options to pass to the list function
-             *
              *  @returns {Object} Sammy.EventContext
              */
             loadBlurbs: function(view, sel, options) {
@@ -14295,7 +14294,7 @@ if (!String.prototype.ordinalize)
 
 
         // Routes
-        this.get('#!/', function () {
+        this.get('#/', function () {
             var ctx = this,
                 db = this.db.name;
 
@@ -14329,14 +14328,40 @@ if (!String.prototype.ordinalize)
         });
 
         this.post('#/new', function(ctx) {
-            var ctx = this,
-                doc;
-
             ctx.validateInputs(ctx.params, ctx.target, function () {
                 ctx.send(Article.processNewDoc, ctx.params, ctx.target);
             });
+        });
 
-            // send email from updates feed
+        this.post('#/contact', function(ctx) {
+            var form = ctx.target,
+                params = {
+                    sender: ctx.params.name,
+                    email: ctx.params.email,
+                    subject: "Vim Underground Inquiry",
+                    message: ctx.params.message
+                },
+                template = '<p class="{{klass}}">{{{msg}}}</p>',
+                msg;
+
+            $.ajax({
+                type: 'POST',
+                url: '/mail',
+                data: params,
+                dataType: 'json',
+                success: function(resp) {
+                    msg = "Message sent! Thank you for your inquiry!";
+                    ctx.successfulSubmission(form, template, { klass: "submit-success", msg: msg });
+                },
+                error: function(request, textStatus, errorThrown) {
+                    msg = 'Sorry, but your email could not be sent. You can try again ' +
+                          'or use your <a href="mailto:your@email.com">email client</a> ' +
+                          'to send the message.';
+
+                    ctx.unSuccessfulSubmission(form, template, { klass: "submit-error", msg: msg });
+                }
+            });
+
         });
 
 
@@ -14389,35 +14414,6 @@ if (!String.prototype.ordinalize)
             });
         });
 
-        this.bind('email', function(e, data) {
-            var ctx = this,
-                form = data.form,
-                params = {
-                    name: data.params.name,
-                    email: data.params.email,
-                    message: data.params.message
-                };
-
-            if (data.params.lol1 || data.params.lol2) {
-                throw new Error("Looks like you're a bot. Epic fail.");
-            }
-
-            $.ajax({
-                type: 'POST',
-                url: 'http://localhost:5984/underground/_emailer',
-                data: params,
-                dataType: 'json',
-                success: function(json) {
-                    // TODO: implement me
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    var error = $.parseJSON(XMLHttpRequest.responseText),
-                        template = '<div class="submit-error">Sorry, but your email could not be sent. You can try again or use your <a href="mailto:your@email.com">email client</a> to send the message.</div>';
-                    $(form).find('input[type=submit]').after(ctx.ms(template, {}));
-                }
-            });
-        });
-
         this.bind('load-validation', function(e, data) {
             var ctx = this,
                 $form = $(data.form),
@@ -14437,7 +14433,7 @@ if (!String.prototype.ordinalize)
             });
 
             $form.h5Validate({
-                kbSelectors: '[name=title], [type=url], textarea',
+                kbSelectors: '[name=title], [type=url], [type=email], [name=name], textarea',
                 keyup: true,
                 errorClass: 'input-error',
                 validClass: 'input-valid',
@@ -14529,7 +14525,7 @@ if (!String.prototype.ordinalize)
 
 
     $(function() {
-        app.run('#!/');
+        app.run('#/');
     });
 
 })(jQuery);
