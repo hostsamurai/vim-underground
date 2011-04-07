@@ -34,7 +34,7 @@ class Seed < Thor
                 :type => :boolean,
                 :aliases => "-p",
                 :banner => "Push docs to couchdb after docifying"
-  def docify(file = 'data/vim-scripts.json')
+  def docify(file = 'data/scripts.json')
     puts "Docifying..."
     system "sed -r -f data/scripts_to_doc.sed -i #{file}"
     puts "DONE!"

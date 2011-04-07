@@ -31,51 +31,49 @@ function checkArgs() {
 
 
 function setup(user, pass) {
-    db = new(cradle.Connection)({
-        auth: { user: user, pass: pass }, raw: true
-    }).database('underground');
+    db = new(cradle.Connection)('127.0.1.1', '5984', {
+        auth: { username: user, password: pass }, raw: true
+    }).database('underground-git');
 }
 
 //
-// Retrieve rating and # of downloads for 1000 scripts at a time
+// Retrieve rating and # of downloads for 500 scripts at a time
 //
 function scrape(docs, callback) {
-    var baseURL = 'http://vim.sourceforge.net/scripts/script_search_results.php',
+    var url = 'http://vim.sourceforge.net/scripts/script_search_results.php' +
+              '?order_by=rating&show_me=500&result_ptr=' + offset,
         processed = 0;
 
-    scraper(
-        baseURL + '?order_by=rating&show_me=1000&result_ptr=' + offset
-        , function(err, $, urlInfo) {
-            if (err) throw err;
+    scraper(url, function(err, $) {
+        if (err) throw err;
 
-            var script_id,
-                script;
+        var script_id,
+            script;
 
-            sys.puts("================================================");
-            sys.puts("Currently scraping: " + urlInfo.href);
-            sys.puts("================================================");
+        sys.puts("================================================");
+        sys.puts("Currently scraping: " + url);
+        sys.puts("================================================");
 
-            $('table:nth(6) tr:gt(1)').each(function(i) {
-                $sel = $(this);
+        $('table:nth(6) tr:gt(1)').each(function(i) {
+            $sel = $(this);
 
-                if ($sel.find('td').length > 2) {
-                    script_id = /script_id=(\d+)$/.exec($sel.find('td:first a').attr('href'))[1];
-                    script = $sel.find('td:first a').text();
-                    processed += 1;
+            if ($sel.find('td').length > 2) {
+                script_id = /script_id=(\d+)$/.exec($sel.find('td:first a').attr('href'))[1];
+                script = $sel.find('td:first a').text();
+                processed += 1;
 
-                    if (docs[script_id]) {
-                        docs[script_id].rating = parseInt($sel.find('td:nth-child(3)').text());
-                        docs[script_id].downloads = parseInt($sel.find('td:nth-child(4)').text());
-                    }
+                if (docs[script_id]) {
+                    docs[script_id].rating = parseInt($sel.find('td:nth-child(3)').text());
+                    docs[script_id].downloads = parseInt($sel.find('td:nth-child(4)').text());
                 }
+            }
 
-                // Look ahead to the next table row on the page.
-                // If the row contains less than 5 columns, it means we're looking
-                // at the last row on the table, containing no script data
-                if ($(this).next('tr').find('td').length < 5) callback(docs);
-            });
-        }
-    );
+            // Look ahead to the next table row on the page.
+            // If the row contains less than 5 columns, it means we're looking
+            // at the last row on the table, containing no script data
+            if ($(this).next('tr').find('td').length < 5) callback(docs);
+        });
+    });
 }
 
 
@@ -105,7 +103,7 @@ function bulkUpdate(d) {
 checkArgs();
 
 
-db.view('underground/all_scripts', function(err, res) {
+db.view('underground-git/all_scripts', function(err, res) {
     if (err) throw err;
 
     var results_length = res.rows.length,
