@@ -1,5 +1,4 @@
 function(doc, req) {
-    log( "Request body: ", req.body );
     feed = JSON.parse(req.body);
 
     doc['updated_at'] = new Date().getTime();
