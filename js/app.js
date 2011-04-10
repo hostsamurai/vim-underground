@@ -9,6 +9,7 @@
             .use('Paginator', 'paginate');
 
         this.raise_errors = true;
+        this.debug = false;
 
         // Helpers
         this.helpers({

@@ -17,6 +17,7 @@
         "external":       false,
         "Jimfile":        false,
         "hooks":          false,
-        "data":           false
+        "data":           false,
+        "test":           false
     }
 }
