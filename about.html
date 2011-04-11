@@ -18,9 +18,7 @@
         <div class="container">
             <header>
                 <nav id="link-wrapper">
-                    <a href="/">
-                        <img src="images/light_logo_small.png" alt="Home" />
-                    </a>
+                    <a href="/">Home</a>
                     <a href="/articles">Articles</a>
                     <a href="/screencasts">Screencasts</a>
                     <a href="/scripts">Scripts</a>
@@ -114,6 +112,13 @@
             </div>
         </div>
 
-        <script src="js/default.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/vendor/yepnope-1.0.1-min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+            yepnope({
+                load: ['js/core.js', 'js/plugins.js', 'js/application.js'],
+                test: window.webkitNotifications,
+                yep: 'css/webkit.css'
+            });
+        </script>
     </body>
 </html>

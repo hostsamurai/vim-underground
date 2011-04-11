@@ -1,7 +1,7 @@
 ;(function($) {
 
     var app = $.sammy('body', function() {
-        const dbname = 'underground-git';
+        var dbname = 'underground-git';
 
         this.use('Mustache', 'ms')
             .use('Couch', dbname)
@@ -175,6 +175,20 @@
 
 
         // Custom Events
+        this.bind('show-hide-header', function(e, data) {
+            var $parent = data["$parent"],
+                $menu = data["$menu"],
+                endpoint = parseInt( $parent.css('top') ) < 0 ? 0 : -50;
+
+            $parent.animate({ top: endpoint }, "fast", function () {
+                if ($menu.hasClass('up')) {
+                    $menu.removeClass('up').addClass('down');
+                } else if ($menu.hasClass('down')) {
+                    $menu.removeClass('down').addClass('up');
+                }
+            });
+        });
+
         this.bind('show-more', function(e, data) {
             var ctx = this,
                 $parent = data.parent,
@@ -253,29 +267,13 @@
         this.bind('run', function () {
             var ctx = this;
 
-            // Hyphenation
-            var hyphenatorSettings = {
-                enableCache: true,
-                onhyphenationdonecallback: function () {
-                    // Prevent re-hyphenating hyphenated results when paginating
-                    $('.hyphenate').removeClass('hyphenate');
-                }
-            }
 
             // ---- Menu Links ----
             $('#menu-link a', 'header').bind('click', function(e) {
                 e.preventDefault();
-
-                var $parent = $(this).parents('header'),
-                    $menu = $(this),
-                    endpoint = parseInt( $parent.css('top') ) < 0 ? 0 : -50;
-
-                $parent.animate({ top: endpoint }, "fast", function () {
-                    if ($menu.hasClass('up')) {
-                        $menu.removeClass('up').addClass('down');
-                    } else if ($menu.hasClass('down')) {
-                        $menu.removeClass('down').addClass('up');
-                    }
+                ctx.trigger('show-hide-header', {
+                    "$parent": $(this).parents('header'),
+                    "$menu": $(this)
                 });
             });
 
@@ -284,11 +282,21 @@
 
             $('.submit').live('click', function(e) {
                 e.preventDefault();
+
+                var $menu = $('#menu-link a');
+
                 $('.overlay').fadeIn('fast');
+
+                if ($(this).parents('header').length > 0) {
+                    ctx.trigger('show-hide-header', {
+                        "$parent": $menu.parents('header'),
+                        "$menu": $menu
+                    });
+                }
             });
 
             $('input:not([type=submit]), textarea', $(this).parent('form')[0])
-                .live('focusout keydown', function(e) {
+                .live('keydown', function(e) {
                     ctx.validate(this);
             });
 

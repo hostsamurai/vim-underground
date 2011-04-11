@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>{{page_title}} Vim Underground</title>
+        <title>{{page_title}} :: Vim Underground</title>
 
         <meta name="description" content="The latest user-generated VIM news and articles"/>
         <meta name="keywords" content="vim news, linux vim, mac vim, vim scripts, vim commands, gvim"/>
@@ -18,9 +18,7 @@
         <div class="container">
             <header>
                 <nav id="link-wrapper">
-                    <a href="/">
-                        <img src="images/light_logo_small.png" alt="Home" />
-                    </a>
+                    <a href="/">Home</a>
                     <a href="/articles">Articles</a>
                     <a href="/screencasts">Screencasts</a>
                     <a href="/scripts">Scripts</a>
@@ -84,7 +82,7 @@
                     <input type="text" name="lol2"/>
 
                     <label for="url">URL</label>
-                    <input class="h5-url" autofocus="true" type="url" name="link" placeholder="http://" required maxlength="100" />
+                    <input class="h5-url" type="url" name="link" required maxlength="100" />
 
                     <label for="title">Title</label>
                     <input class="h5-minLength" type="text" name="title" required maxlength="140" />
@@ -97,6 +95,15 @@
             </div>
         </div>
 
-        <script src="js/default.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/vendor/hyphenator-3.3.0.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/vendor/yepnope-1.0.1-min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+            yepnope({
+                load: [ "js/core.js", "js/plugins.js", "js/application.js" ],
+                complete: function () { 
+                    if (window.webkitNotifications) yepnope('css/webkit.css');
+                }
+            });
+        </script>
     </body>
 </html>

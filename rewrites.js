@@ -14,6 +14,7 @@
             "heading": "Latest Articles",
             "type": "articles",
             "bottomRow": "true",
+            "pageTitle": "Home",
             "page": "index"
         }
     },
@@ -29,6 +30,7 @@
             "cols": 5,
             "heading": "Latest Articles",
             "type": "articles",
+            "pageTitle": "Articles",
             "page": "index"
         }
     },
@@ -44,6 +46,7 @@
             "cols": 5,
             "heading": "Latest Screencasts",
             "type": "t-screencasts",
+            "pageTitle": "Screencasts",
             "page": "index"
         }
     },
@@ -59,6 +62,7 @@
             "cols": 3,
             "heading": "Latest Script Updates",
             "type": "t-scripts",
+            "pageTitle": "Scripts",
             "page": "index"
         }
     },

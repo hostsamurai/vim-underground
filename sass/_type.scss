@@ -1,49 +1,31 @@
-@include font-face("Notice Std",
-         font-files("NoticeStd-webfont.woff", woff,
-                    "NoticeStd-webfont.ttf", truetype,
-                    "NoticeStd-webfont.svg#webfontTm26TXR9", svg),
-         eot("NoticeStd-webfont.eot"));
+    @include font-face("Notice Std",
+             font-files("NoticeStd-webfont.woff", woff,
+                        "NoticeStd-webfont.ttf", truetype,
+                        "NoticeStd-webfont.svg#webfontTm26TXR9", svg),
+             eot("NoticeStd-webfont.eot"));
 
-@include font-face("Notice Second",
-         font-files("Notice2Std-webfont.woff", woff,
-                    "Notice2Std-webfont.ttf", truetype,
-                    "Notice2Std-webfont.svg#webfontrEW32TJz", svg),
-         eot("Notice2Std-webfont.eot"));
+    @include font-face("Notice Second",
+             font-files("Notice2Std-webfont.woff", woff,
+                        "Notice2Std-webfont.ttf", truetype,
+                        "Notice2Std-webfont.svg#webfontrEW32TJz", svg),
+             eot("Notice2Std-webfont.eot"));
 
-@include font-face("Notice Third",
-         font-files("Notice3Std-webfont.woff", woff,
-                    "Notice3Std-webfont.ttf", truetype,
-                    "Notice3Std-webfont.svg#webfontrNqMzmZm", svg),
-         eot("Notice3Std-webfont.eot"));
-
-
-@include font-face("Symbol Signs",
-         font-files("symbol-signs-webfont.woff", woff,
-                    "symbol-signs-webfont.ttf", truetype,
-                    "symbol-signs-webfont.svg#webfont1U3YPa2J", svg),
-         eot("symbol-signs-webfont.eot"));
+    @include font-face("Notice Third",
+             font-files("Notice3Std-webfont.woff", woff,
+                        "Notice3Std-webfont.ttf", truetype,
+                        "Notice3Std-webfont.svg#webfontrNqMzmZm", svg),
+             eot("Notice3Std-webfont.eot"));
 
 
-@include font-face("Iconic Stroke",
-         font-files("iconic_stroke.ttf", truetype,
-                    "iconic_stroke.otf", opentype,
-                    "iconic_stroke.svg#iconic", svg),
-         eot("iconic_stroke.eot"));
+    @include font-face("Symbol Signs",
+             font-files("symbol-signs-webfont.woff", woff,
+                        "symbol-signs-webfont.ttf", truetype,
+                        "symbol-signs-webfont.svg#webfont1U3YPa2J", svg),
+             eot("symbol-signs-webfont.eot"));
 
-@include font-face("Yanone Kaffeesatz Thin",
-         font-files("YanoneKaffeesatz-Thin-webfont.woff", woff,
-                    "YanoneKaffeesatz-Thin-webfont.ttf", truetype,
-                    "YanoneKaffeesatz-Thin-webfont.svg#webfontqNXvboGd", svg),
-         eot("YanoneKaffeesatz-Thin-webfont.eot"));
 
-@include font-face("Yanone Kaffeesatz Light",
-         font-files("YanoneKaffeesatz-Light-webfont.woff", woff,
-                    "YanoneKaffeesatz-Light-webfont.ttf", truetype,
-                    "YanoneKaffeesatz-Light-webfont.svg#webfontYOdwQTAS", svg),
-         eot("YanoneKaffeesatz-Light-webfont.eot"));
-
-@include font-face("Yanone Kaffeesatz Regular",
-         font-files("YanoneKaffeesatz-Regular-webfont.woff", woff,
-                    "YanoneKaffeesatz-Regular-webfont.ttf", truetype,
-                    "YanoneKaffeesatz-Regular-webfont.svg#webfontaLGwOw5o", svg),
-         eot('YanoneKaffeesatz-Regular-webfont.eot'));
+    @include font-face("Iconic Stroke",
+             font-files("iconic_stroke.ttf", truetype,
+                        "iconic_stroke.otf", opentype,
+                        "iconic_stroke.svg#iconic", svg),
+             eot("iconic_stroke.eot"));

@@ -22,6 +22,7 @@ body {
     @extend .sans;
     background: white inline-image('bg_pat.png') repeat scroll;
     color: $dry-dark-gray;
+    overflow: auto;
 }
 
 section {
@@ -93,9 +94,10 @@ $base-line-height: 13px * 1.5;
 
 @mixin after-right($content, $font) {
     @include adjust-font-size-to(19.5px,1,13px);
+    content: $content;
     font-family: $font;
     font-weight: normal;
-    content: $content;
+    text-shadow: $dark-gray 0 0 2px;
 
     position: relative; top: 19.5/2.0 * 1px;
     padding-left: 13px;
@@ -105,7 +107,7 @@ $base-line-height: 13px * 1.5;
     border-width: $top $right $bottom $left;
     border-style: $style;
 
-    display: inline;
+    @include inline-block;
     height: 0; width: 0;
     content: " ";
     position: relative;
@@ -125,11 +127,10 @@ $base-line-height: 13px * 1.5;
     &::before {
         @if $direction == "up" {
             @include upward-facing-triangle(5px,5px);
-            position: relative; top: -9px;
         } @else if $direction == "down" {
             @include downward-facing-triangle(5px,5px);
-            position: relative; top: 11px;
         }
+        position: relative; top: 0;
         margin-right: 7px;
     }
 }
@@ -253,7 +254,7 @@ $base-line-height: 13px * 1.5;
 }
 
 header {
-    position: fixed; top: -50px; right: 62px;
+    position: fixed; top: -50px; right: 50px;
     width: 530px;
     z-index: 120;
 
@@ -281,6 +282,7 @@ header {
         @extend .header-obj;
         margin: { left: auto; right: auto; }
         height: 20px; width: 90px;
+        position: relative; right: 42px;
         text-align: center;
 
         a {
@@ -293,8 +295,8 @@ header {
 }
 
 footer {
-    @include inline-block;
     @include padding-leader(2);
+    display: table; // fixes annoying blank space issue in Chrome/Safari
     width: 100%;
 
     nav {
@@ -352,7 +354,7 @@ section .row:last-of-type { border-bottom: none; }
     @extend .cols2;
     @include inline-block;
 
-    h1::after { @include header-symbol("P"); }
+    h1::after { @include header-symbol("C", "Notice Std"); }
 
     .blurb { height: 117px; }
 }

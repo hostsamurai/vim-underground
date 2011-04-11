@@ -48,6 +48,8 @@ Article.extend({
 
     beforeSave: function(doc) {
         if (!doc._id) {
+            if (!/^https?:\/\//.test(doc.link))
+                doc.link = 'http://' + doc.link;
             doc._id = doc.link;
             delete doc.link;
         }

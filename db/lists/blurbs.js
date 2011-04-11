@@ -43,6 +43,7 @@ function(head, req) {
                 type:       req.query.type,
                 key:        key,
                 scripts:    req.query.type === "t-scripts" ? true : false,
+                page_title: req.query.pageTitle,
                 bottom_row: req.query.bottomRow,
                 older:      function ()  { return path.older(key); }
             };
