@@ -9,5 +9,6 @@ header #menu-link a.up::before {
 #contact form input:not([type=submit]), #contact form textarea { 
     border-bottom-width: 1px !important;
 }
+#contact form .submit-success { left: 30px; }
 
 /* ------ Media queries ------ */

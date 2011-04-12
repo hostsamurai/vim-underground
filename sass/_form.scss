@@ -88,9 +88,9 @@
     @include apply-side-rhythm-border(left,4px,0.25,14px);
     letter-spacing: 1px;
     color: white;
-    padding-left: 0.63em;
     position: absolute; bottom: $base-line-height * 2;
     width: 262px;
+    padding-left: 0.63em;
 }
 
 .submit-error {

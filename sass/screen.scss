@@ -241,7 +241,9 @@ $base-line-height: 13px * 1.5;
         // fix for .blurb
         @include grid(8.2); margin: 20px 20px 20px 0;
         height: 117px;
+        &:last-child { margin-right: 0; }
     }
+
 }
 
 .header-obj {
@@ -255,7 +257,7 @@ $base-line-height: 13px * 1.5;
 
 header {
     position: fixed; top: -50px; right: 50px;
-    width: 530px;
+    width: 460px;
     z-index: 120;
 
     #link-wrapper {
@@ -282,7 +284,6 @@ header {
         @extend .header-obj;
         margin: { left: auto; right: auto; }
         height: 20px; width: 90px;
-        position: relative; right: 42px;
         text-align: center;
 
         a {
