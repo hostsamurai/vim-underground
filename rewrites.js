@@ -105,6 +105,20 @@
         "query": {}
     },
 
+    { // update script feeds
+        "from": "/feeds/:feed",
+        "to": "_update/entries/:feed",
+        "method": "POST",
+        "query": {}
+    },
+
+    {
+        "from": "/feeds/:feed",
+        "to": "_show/challenge",
+        "method": "GET",
+        "query": {}
+    },
+
     { // for accessing lists from jquery.couch
         "from": "*/_design/*/_list/*",
         "to": "_list/*",

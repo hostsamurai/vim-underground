@@ -13,7 +13,6 @@
         "README.textile": false,
         "Thorfile":       false,
         "Gemfile":        false,
-        "config":         false,
         "external":       false,
         "Jimfile":        false,
         "hooks":          false,
