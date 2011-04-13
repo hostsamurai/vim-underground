@@ -54,6 +54,8 @@ $base-line-height: 13px * 1.5;
     h#{$i} { font-weight: bold; }
 }
 
+p { margin-bottom: $base-line-height; }
+
 .sans { font-family: "Helvetica Neue", Arial, sans-sarif; }
 
 
@@ -67,7 +69,7 @@ $base-line-height: 13px * 1.5;
     padding: 30px;
     z-index: 10;
 
-    h1 {
+    h2 {
         @include adjust-font-size-to(34px,1,13px);
         @include trailer(0.4);
         letter-spacing: -1px;
@@ -206,7 +208,7 @@ $base-line-height: 13px * 1.5;
 
 .bottom-row-obj {
     @include leader(3.3); @include padding-trailer(6);
-    h1 { @extend .heading-deco; }
+    h2 { @extend .heading-deco; }
 }
 
 .top-row-obj { @include padding-trailer(4); }
@@ -235,7 +237,7 @@ $base-line-height: 13px * 1.5;
     @include inline-block;
     float: none;
 
-    h1 { @extend .heading-deco; }
+    h2 { @extend .heading-deco; }
 
     .blurb {
         // fix for .blurb
@@ -333,29 +335,29 @@ section .row:last-of-type { border-bottom: none; }
 #articles, #t-screencasts { @extend .specific-listing; }
 
 #articles {
-    h1::after { @include header-symbol("X"); }
+    h2::after { @include header-symbol("X"); }
 }
 
 #t-screencasts {
-    h1::after { @include header-symbol("P"); }
+    h2::after { @include header-symbol("P"); }
     .blurb { height: 215px; }
 }
 
 #t-scripts {
     @extend .cols3;
-    h1::after { @include header-symbol("O"); }
+    h2::after { @include header-symbol("O"); }
 }
 
 #scripts {
     @extend .cols3;
-    h1::after { @include header-symbol("O"); }
+    h2::after { @include header-symbol("O"); }
 }
 
 #by-rating {
     @extend .cols2;
     @include inline-block;
 
-    h1::after { @include header-symbol("C", "Notice Std"); }
+    h2::after { @include header-symbol("C", "Notice Std"); }
 
     .blurb { height: 117px; }
 }
@@ -365,7 +367,7 @@ section .row:last-of-type { border-bottom: none; }
     @include inline-block;
     padding-left: 4em;
 
-    h1::after { @include header-symbol("P"); }
+    h2::after { @include header-symbol("P"); }
 
     .row { margin: { left: auto; right: auto; } }
 }
@@ -373,12 +375,12 @@ section .row:last-of-type { border-bottom: none; }
 #about {
     @include grid(14);
     @extend .bottom-row-obj;
+    @include margin-trailer;
 
-    h1::after { @include header-symbol("_"); }
-    p {
-        @include margin-trailer;
+    h2::after { @include header-symbol("_"); }
+    #column-wrapper {
         @include column-count(2);
-        @include column-gap($base-line-height);
+        @include column-gap($base-line-height * 2);
     }
 }
 
@@ -386,7 +388,7 @@ section .row:last-of-type { border-bottom: none; }
     @include grid(12);
     @include float-right; // why doesn't omega work here?
     @extend .bottom-row-obj;
-    h1::after { @include header-symbol("?"); }
+    h2::after { @include header-symbol("?"); }
 }
 
 

@@ -33,15 +33,17 @@
 
             <div class="content">
                 <section id="about">
-                    <h1>About Vim Underground</h1>  
+                    <h2>About Vim Underground</h2>  
 
-                    <p class="hyphenate">Lorizzle gangsta dolor sit amizzle, daahng dawg adipiscing gangster. Shizzle my nizzle crocodizzle sapien velit, da bomb volutpat, suscipizzle quis, vizzle, arcu. Pellentesque crackalackin tortizzle. Sizzle erizzle. izzle dolor dapibus brizzle tempizzle yippiyo. Away pellentesque nibh hizzle turpizzle. Vestibulum izzle tortor. Pellentesque shut the shizzle up rhoncizzle crazy. In hac ma nizzle own yo' things. Donec dapibizzle. Nizzle tellus mah nizzle, hizzle crazy, pimpin' my shizz, eleifend vitae, nunc. Doggy suscipizzle. Integizzle sempizzle velit sizzle purus.</p>
+                    <div id="column-wrapper">
+                        <p class="hyphenate">Lorizzle gangsta dolor sit amizzle, daahng dawg adipiscing gangster. Shizzle my nizzle crocodizzle sapien velit, da bomb volutpat, suscipizzle quis, vizzle, arcu. Pellentesque crackalackin tortizzle. Sizzle erizzle. izzle dolor dapibus brizzle tempizzle yippiyo. Away pellentesque nibh hizzle turpizzle. Vestibulum izzle tortor. Pellentesque shut the shizzle up rhoncizzle crazy. In hac ma nizzle own yo' things. Donec dapibizzle. Nizzle tellus mah nizzle, hizzle crazy, pimpin' my shizz, eleifend vitae, nunc. Doggy suscipizzle. Integizzle sempizzle velit sizzle purus.</p>
 
-                    <p class="hyphenate">Fo shizzle nec mauris eget nisi funky fresh daahng dawg. For sure sit ghetto dope. Nizzle eu doggy rizzle rizzle auctizzle you son of a bizzle. Praesent suscipit viverra ipsum. Curabitizzle in arcu. Nizzle enim brizzle, auctor shizzlin dizzle, congue eu, sizzle hizzle, libero. Sure shizzlin dizzle boofron non erizzle posuere pharetra. Quisque shizznit check it out, congue gizzle, ass fo, mollizzle sit amizzle, erizzle. Mammasay mammasa mamma oo sa izzle dui. Daahng dawg rizzle go to hizzle, fizzle consectetizzle, phat izzle, boom shackalack imperdizzle, check out this. Quisque boom shackalack fizzle eu mi owned vehicula. Check it out accumsizzle sagittis ipsizzle. Tellivizzle habitant brizzle tristique dang izzle izzle malesuada famizzle ac crackalackin mammasay mammasa mamma oo sa. In est. Curabitizzle fo shizzle mah nizzle fo rizzle, mah home g-dizzle. Ut uhuh ... yih! felizzle, the bizzle quis, suscipizzle izzle, dope pulvinizzle, nisl. Break it down that's the shizzle gravida dope.</p>
+                        <p class="hyphenate">Fo shizzle nec mauris eget nisi funky fresh daahng dawg. For sure sit ghetto dope. Nizzle eu doggy rizzle rizzle auctizzle you son of a bizzle. Praesent suscipit viverra ipsum. Curabitizzle in arcu. Nizzle enim brizzle, auctor shizzlin dizzle, congue eu, sizzle hizzle, libero. Sure shizzlin dizzle boofron non erizzle posuere pharetra. Quisque shizznit check it out, congue gizzle, ass fo, mollizzle sit amizzle, erizzle. Mammasay mammasa mamma oo sa izzle dui. Daahng dawg rizzle go to hizzle, fizzle consectetizzle, phat izzle, boom shackalack imperdizzle, check out this. Quisque boom shackalack fizzle eu mi owned vehicula. Check it out accumsizzle sagittis ipsizzle. Tellivizzle habitant brizzle tristique dang izzle izzle malesuada famizzle ac crackalackin mammasay mammasa mamma oo sa. In est. Curabitizzle fo shizzle mah nizzle fo rizzle, mah home g-dizzle. Ut uhuh ... yih! felizzle, the bizzle quis, suscipizzle izzle, dope pulvinizzle, nisl. Break it down that's the shizzle gravida dope.</p>
+                    </div>
                 </section>
 
                 <div id="contact">
-                    <h1>:w To Me</h1>  
+                    <h2>:w To Me</h2>  
 
                     <form method="post" action="#/contact">
                         <label for="lol1">LOL</label>
@@ -91,7 +93,7 @@
                 <form id="new-blurb" method="post" action="#/new">
                     <a class="close" href="#">L</a>
 
-                    <h2>Submit an Article</h2>
+                    <h3>Submit an Article</h3>
 
                     <label for="lol1">LOL</label>
                     <input type="text" name="lol1"/>
@@ -112,12 +114,14 @@
             </div>
         </div>
 
+        <script src="js/vendor/hyphenator-3.3.0.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/vendor/yepnope-1.0.1-min.js" type="text/javascript" charset="utf-8"></script>
         <script type="text/javascript">
             yepnope({
-                load: ['js/core.js', 'js/plugins.js', 'js/application.js'],
-                test: window.webkitNotifications,
-                yep: 'css/webkit.css'
+                load: [ "js/core.js", "js/plugins.js", "js/application.js" ],
+                complete: function () { 
+                    if (window.webkitNotifications) yepnope('css/webkit.css');
+                }
             });
         </script>
     </body>

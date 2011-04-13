@@ -33,7 +33,7 @@
     float: none;
     position: relative;
 
-    h2 {
+    h3 {
         @include adjust-font-size-to(26px,1,14px);
         @include padding-leader;
         @include padding-trailer;
@@ -60,6 +60,7 @@
     color: $dry-black;
     width: 100%;
     height: $base-line-height / 14px * 1.5em;
+    font-family: Verdana, Geneva, sans-serif;
 }
 
 .close {

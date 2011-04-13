@@ -1,14 +1,18 @@
 /* ------ Header ------ */
-header { right: -6px !important; }
+header { right: 25px; }
 header #menu-link { right: 37px !important; }
 header #menu-link a.up::before {
     top: -1px !important;
 }
 
 /* ------ Contact Form ------ */
+form input, form textarea { outline: none; }
 #contact form input:not([type=submit]), #contact form textarea { 
     border-bottom-width: 1px !important;
 }
 #contact form .submit-success { left: 30px; }
 
 /* ------ Media queries ------ */
+@media screen and (min-width: 1281px) and (max-width: 1366px) { 
+    header { right: 31px; }
+}
