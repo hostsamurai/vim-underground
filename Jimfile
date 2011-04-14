@@ -3,17 +3,20 @@
   "compressed_suffix": ".min",
   "vendor_dir": "js/vendor",
   "bundles": {
-    "default": [
+    "core": [
       "sha1",
       [ "jquery", "1.4.4" ],
       [ "jquery.couch", "0.11" ],
-      [ "sammy", "0.6.3" ],
+      [ "sammy", "0.6.3" ]
+    ],
+    "plugins": [
       [ "sammy.mustache", "0.6.3" ],
       [ "sammy.couch", "0.1.0" ],
       [ "jquery.embedly", "2.0.0" ],
       [ "jquery.h5validate", "0.5.0" ],
-      [ "hyphenator", "3.2.0" ],
-      [ "inflection", "r38" ],
+      [ "inflection", "r38" ]
+    ],
+    "application": [
       "js/helpers/form",
       "js/helpers/paginator",
       "js/app",
