@@ -93,7 +93,7 @@
 
     { // about page
         "from": "/about",
-        "to": "about.html",
+        "to": "_show/about",
         "method": "GET",
         "query": {}
     },
