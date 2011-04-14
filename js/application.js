@@ -209,29 +209,9 @@
 
         // Helpers
         this.helpers({
-            fancyDates: function () {
-                var ctx = this;
-
-                $('.fancy-time').each(function(i, val) {
-                    var date = new Date($(this).attr('datetime')),
-                        day = date.strftime('%d'),
-                        mnt_yr = date.strftime('%m.%y'),
-                        template = '<span class="day">{{day}}</span> {{mnt_yr}}';
-
-                    $(this).html(ctx.ms(template, { day: day, mnt_yr: mnt_yr }));
-                });
-            },
-
-            prettyDates: function () {
-                $('time:not(.fancy-time)').timeago();
-            },
-
-            //
-            // Returns a random row value out of a couchDB response array
-            //
-            chooseAtRandom: function(results) {
-                var i = Math.floor(Math.random() * 25);
-                return results.rows[i].value;
+            hideLoader: function(sel) {
+                $(sel).find('.loader').remove();
+                return this;
             },
 
             onHomepage: function () {
@@ -264,6 +244,8 @@
 
                 $.extend(options, defaults);
                 $.couch.db(db).list(db + '/blurbs', view, options);
+
+                ctx.hideLoader(sel);
 
                 return this;
             },

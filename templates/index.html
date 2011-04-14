@@ -37,12 +37,19 @@
                 </section>
 
                 {{#scripts}}
-                    <section id="by-rating" {{#key}}data-last-key="{{key}}"{{/key}}></section>
+                    <section id="by-rating" {{#key}}data-last-key="{{key}}"{{/key}}>
+                        <img class="loader" src="images/loader.gif" /> 
+                    </section>
                 {{/scripts}}
 
                 {{#bottom_row}} 
-                    <section id="scripts"></section>
-                    <section id="screencasts"></section>
+                    <section id="scripts">
+                        <img class="loader" src="images/loader.gif" />
+                    </section>
+
+                    <section id="screencasts">
+                        <img class="loader" src="images/loader.gif" />
+                    </section>
                 {{/bottom_row}} 
 
                 <footer>

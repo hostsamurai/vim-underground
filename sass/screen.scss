@@ -150,6 +150,10 @@ p { margin-bottom: $base-line-height; }
     @include link-colors(white, $red, white);
 }
 
+.loader {
+    display: block; margin: auto;
+}
+
 .more {
     @extend .link-colors;
     @include trailing-border(1px, 0.1, $base-font-size, dotted);
