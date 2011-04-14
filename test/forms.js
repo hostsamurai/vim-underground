@@ -10,8 +10,6 @@ vows.describe('new article submission form').addBatch({
         topic: function () { return zombie.visit(HOMEPAGE, this.callback); },
 
         'when hidden fields are filled in': function(err, browser) {
-            // NOTE: how to prevent stack trace from showing in the runner's
-            //       output?
             browser.fill("lol1", "i'm a bot").pressButton('Submit', function(err) {
                 assert.ifError(err);
             });
@@ -23,9 +21,12 @@ vows.describe('new article submission form').addBatch({
 
         'should not submit form when no inputs are filled in': function(browser) {
             browser.pressButton('Submit', function (err, b) {
-                assert.match(b.text('.submit-error'),
-                             /Sorry, your submission didn't go through./);
-                console.log( b.text("Error: ", '.submit-error') );
+                assert.match(b.text('.error-msg:first'),  /Not a valid URL/);
+                assert.match(b.text('.error-msg:nth(1)'), /Too short/);
+                assert.match(b.text('.error-msg:last'),   /This field is required/);
+                // FIXME: looks like jsdom doesn't detect appended elements?
+                //assert.match(b.text('.submit-error'),
+                             ///Sorry, your submission didn't go through./);
             });
         }
     },
@@ -34,12 +35,12 @@ vows.describe('new article submission form').addBatch({
         topic: function () { return zombie.visit(HOMEPAGE, this.callback); },
 
         'should submit form when al valid inputs are filled in': function(browser) {
-            browser.fill('link', 'http://example.com')
-                   .fill('title', 'Something Awesome This Way Comes')
-                   .fill('summary', "It's awesome")
+            browser.fill('[name=link]', 'http://example.com')
+                   .fill('[name=title]', 'Something Awesome This Way Comes')
+                   .fill('[name=summary]', "It's awesome")
                    .pressButton('Submit', function (err, b) {
-                assert.match(b.text('.submit-success'),
-                             /Article successfully submitted!/);
+                        assert.match(b.text('.submit-success'),
+                                     /Article successfully submitted!/);
                 });
         }
     },
@@ -52,8 +53,8 @@ vows.describe('new article submission form').addBatch({
                    .fill('title', 'Something Awesome This Way Comes')
                    .fill('summary', "It's awesome")
                    .pressButton('Submit', function (err, b) {
-                assert.match(b.text('.submit-error'),
-                             /An article with the same URL already exists\./);
+                        assert.match(b.text('.submit-error'),
+                                     /An article with the same URL already exists\./);
                 });
         }
     }

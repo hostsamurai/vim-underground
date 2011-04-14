@@ -10,7 +10,7 @@ vows.describe("homepage").addBatch({
         topic: function () {
             var promise = new events.EventEmitter;
 
-            zombie.visit('http://vu.couchdb:5984', function(err, browser, status) {
+            zombie.visit('http://vu.couchdb:5984/', function(err, browser, status) {
                 if (err) promise.emit('error', err);
                 else promise.emit('success', browser);
             });
@@ -22,17 +22,17 @@ vows.describe("homepage").addBatch({
             topic: function(promise) { return promise; },
 
             'articles': function(err, browser) {
-                assert.equal(browser.text('#articles h1'), 'Latest Articles');
+                assert.equal(browser.text('#articles h2'), 'Latest Articles');
                 assert.equal(browser.css('.blurb', browser.querySelector('#articles')).length, 15);
             },
 
             'script updates': function(err, browser) {
-                assert.equal(browser.text('#scripts h1'), 'Latest Script Activity');
+                assert.equal(browser.text('#scripts h2'), 'Latest Script Activity');
                 assert.equal(browser.css('.blurb', browser.querySelector('#scripts')).length, 12);
             },
 
             'screencasts': function(err, browser) {
-                assert.equal(browser.text('#screencasts h1'), 'Latest Screencasts');
+                assert.equal(browser.text('#screencasts h2'), 'Latest Screencasts');
                 assert.equal(browser.css('.blurb', browser.querySelector('#screencasts')).length, 6);
             }
         }
