@@ -13,6 +13,19 @@
 
         // Helpers
         this.helpers({
+            toISODate: function(d) {
+                // taken from:
+                // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Date
+                function pad(n) { return n < 10 ? '0' + n : n };
+
+                return d.getUTCFullYear() + '-'
+                     + pad(d.getUTCMonth() + 1) + '-'
+                     + pad(d.getUTCDate()) + 'T'
+                     + pad(d.getUTCHours()) + ':'
+                     + pad(d.getUTCMinutes()) + ':'
+                     + pad(d.getUTCSeconds()) + 'Z';
+            },
+
             hideLoader: function(sel) {
                 $(sel).find('.loader').remove();
                 return this;
@@ -196,6 +209,8 @@
                 model = doc.type,
                 template = '<p class="{{klass}}">{{msg}}</p>',
                 msg;
+
+            doc.posted_on = ctx.toISODate(new Date());
 
             Article.save(doc, {
                 success: function () {

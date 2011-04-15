@@ -25,7 +25,6 @@ Article.extend({
             }
         }
 
-        newDoc.posted_on = Date();
         newDoc.approved = false;
 
         if (Article.isScreencast(params.link)) {
