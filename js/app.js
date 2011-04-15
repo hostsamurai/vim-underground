@@ -13,6 +13,28 @@
 
         // Helpers
         this.helpers({
+            markNew: function(selectors) {
+                var curTime = new Date(),
+                    minDate = new Date(Date.UTC(curTime.getUTCFullYear(),
+                                                curTime.getUTCMonth(),
+                                                curTime.getUTCDate() - 3)).getTime(),
+                    date,
+                    $sel;
+
+                $.each(selectors, function(i, val) {
+                    $sel = $(val);
+
+                    if ($sel.length > 0) {
+                        $sel.find('.blurb').each(function(j,v) {
+                            date = new Date($(this).find('date').attr('datetime')).getTime();
+
+                            if (date > minDate) $(this).append('<div class="new"></div>');
+                            else return;
+                        });
+                    }
+                });
+            },
+
             toISODate: function(d) {
                 // taken from:
                 // https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Date
@@ -98,6 +120,11 @@
 
 
         // Routes
+        this.after(function () {
+            this.markNew(['#articles', '#screencasts', '#t-screencasts',
+                          '#scripts', '#t-scripts', '#by-rating']);
+        }),
+
         this.get('#/', function () {
             var ctx = this,
                 db = this.db.name;
