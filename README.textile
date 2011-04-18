@@ -1,9 +1,5 @@
 h2. WTH is this?
 
-Why, the source code for "Vim Underground":http://vim-underground.com of course! Well, most of it. There's enough here for anyone to modify the code, make a pull request, and have their changes show up on the actual site.
-
-h2. Grokking the code
-
 Vim Underground is a couchapp, that is, a web application served from "CouchDB":http://couchdb.apache.org/ itself. While most of the application makes use of CouchDB's awesome features, it uses "node.js":http://nodejs.org/ and ruby sparingly to overcome certain limitations of CouchDB and to speed up development.
 
 h3. CouchDB
@@ -26,7 +22,7 @@ VU is a subscriber to the vim-scripts atom feed. To subscribe, follow the instru
 
 h2. TODO
 
-* Mobile layout
+* Layout for mobile
 * Search functionality
 
 h2. License

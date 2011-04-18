@@ -227,7 +227,6 @@ ArticleConsumer.prototype = {
             to:       "me@some-email.com",
             from:     "someone@some-email.com",
             subject:  "New article submitted!",
-            //template: "./external/notifier/templates/email.mustache",
             template: path.join(__dirname, '../notifier/templates/email.mustache'),
             data:     docInfo
         }, function(err, result) {
