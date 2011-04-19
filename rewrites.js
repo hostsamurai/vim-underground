@@ -125,6 +125,13 @@
         "method": "GET"
     },
 
+    { // new articles
+        "from": "/*/:doc",
+        "to": "../../:doc",
+        "method": "PUT",
+        "query": {}
+    },
+
     { // keeping relative urls sane
         "from": "/*",
         "to": "/*"
