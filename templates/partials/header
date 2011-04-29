@@ -1,14 +1,32 @@
 <header>
-    <nav id="link-wrapper">
-        <a href="/">Home</a>
-        <a href="/articles">Articles</a>
-        <a href="/screencasts">Screencasts</a>
-        <a href="/scripts">Scripts</a>
-        <a href="/about">About</a>
-        <a class="submit" href="#">Submit</a> 
-    </nav>
+    <div class="wrapper">
+        <nav id="link-wrapper">
+            <a href="/">Home</a>
+            <a href="/articles">Articles</a>
+            <a href="/screencasts">Screencasts</a>
+            <a href="/scripts">Scripts</a>
+            <a href="/about">About</a>
+            <a class="submit" href="#">Submit</a> 
+        </nav>
 
-    <div id="menu-link">
-        <a class="up" href="#">menu</a>
+        <div class="menu-link">
+            <a class="up" href="#">menu</a>
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <form action="/search" method="post">
+            <input type="search" name="search" placeholder="Search..."/>
+
+            <input type="submit" value="Search"/>
+
+            <label><input type="checkbox" checked="true" value="Articles" />Articles</label>
+            <label><input type="checkbox" checked="true" value="Screencasts" />Screencasts</label>
+            <label><input type="checkbox" checked="true" value="Scripts" />Scripts</label>
+        </form>
+
+        <div class="menu-link">
+            <a class="up" href="#">search</a>
+        </div>
     </div>
 </header>

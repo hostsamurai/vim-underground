@@ -200,7 +200,7 @@
         this.bind('show-hide-header', function(e, data) {
             var $parent = data["$parent"],
                 $menu = data["$menu"],
-                endpoint = parseInt( $parent.css('top') ) < 0 ? 0 : -50;
+                endpoint = parseInt( $parent.css('top') ) < 0 ? 0 : $parent.height() * -1 + 20;
 
             $parent.animate({ top: endpoint }, "fast", function () {
                 if ($menu.hasClass('up')) {
@@ -293,10 +293,10 @@
 
 
             // ---- Menu Links ----
-            $('#menu-link a', 'header').bind('click', function(e) {
+            $('.menu-link a', 'header').bind('click', function(e) {
                 e.preventDefault();
                 ctx.trigger('show-hide-header', {
-                    "$parent": $(this).parents('header'),
+                    "$parent": $(this).parents('header .wrapper'),
                     "$menu": $(this)
                 });
             });
@@ -307,13 +307,14 @@
             $('.submit').live('click', function(e) {
                 e.preventDefault();
 
-                var $menu = $('#menu-link a');
+                var $menu = $(this).parents('.wrapper').find('.menu-link a');
 
                 $('.overlay').fadeIn('fast');
 
-                if ($(this).parents('header').length > 0) {
+                // hide menu after clicking on 'submit'
+                if ($(this).parents('header .wrapper').length > 0) {
                     ctx.trigger('show-hide-header', {
-                        "$parent": $menu.parents('header'),
+                        "$parent": $menu.parents('header .wrapper'),
                         "$menu": $menu
                     });
                 }

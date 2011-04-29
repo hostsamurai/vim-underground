@@ -262,9 +262,19 @@ p { margin-bottom: $base-line-height; }
 }
 
 header {
-    position: fixed; top: -50px; right: 50px;
-    width: 460px;
-    z-index: 120;
+    .wrapper {
+        z-index: 120;
+
+        &:first-of-type {
+            position: fixed; top: -50px; left: 50px;
+            width: 460px;
+        }
+
+        &:last-of-type {
+            position: fixed; top: -126px; right: 50px;
+            width: 500px;
+        }
+    }
 
     #link-wrapper {
         $side-margin: 13/2.0 * 1px;
@@ -286,7 +296,7 @@ header {
         }
     }
 
-    #menu-link {
+    .menu-link {
         @extend .header-obj;
         margin: { left: auto; right: auto; }
         height: 20px; width: 90px;

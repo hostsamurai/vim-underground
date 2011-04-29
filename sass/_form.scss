@@ -129,7 +129,7 @@ label[for^="lol"], input[name^="lol"] {
 textarea { @extend .textinput; height: 105px; }
 
 input {
-    &[type=text], &[type=url], &[type=email] {
+    &[type=text], &[type=url], &[type=email], &[type=search] {
         @include margin-trailer(0.5);
         @extend .textinput;
     }
@@ -171,4 +171,21 @@ input {
     input[type=submit] {
         position: absolute; right: 27px;
     }
+}
+
+
+// ------------------------------
+// Search form
+// ------------------------------
+.wrapper form {
+    @extend .header-obj;
+    padding: 1em;
+
+    label {
+        @include adjust-font-size-to(11px,1,14px);
+        position: relative; top: -16px;
+        [type=checkbox] { margin-bottom: 0; vertical-align: text-bottom; }
+    }
+    [type=search] { width: 80%; }
+    [type=submit] { position: relative; left: 20px; }
 }
