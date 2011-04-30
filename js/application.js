@@ -354,6 +354,16 @@
             }
         });
 
+        this.post('#/search', function(ctx) {
+            ctx.log(ctx.params);
+
+            // load the search template
+            // replace contents of '.content' with template
+            ctx.render('search.mustache')
+                .replace('.content');
+        });
+
+
         this.post('#/new', function(ctx) {
             ctx.validateInputs(ctx.params, ctx.target, function () {
                 ctx.send(Article.processNewDoc, ctx.params, ctx.target);
