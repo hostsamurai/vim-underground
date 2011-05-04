@@ -420,7 +420,9 @@ section .row:last-of-type { border-bottom: none; }
     }
 
     .blurb {
+        @include trailer(2);
         float: none; margin-left: 0; width: 67%;
+        border-bottom: 1px dashed lighten($light-gray, 10%);
     }
 
     .type {

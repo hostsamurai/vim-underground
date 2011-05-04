@@ -253,6 +253,81 @@
                 return !/(articles|screencasts|scripts|about)$/.test(document.location.pathname);
             },
 
+            filterResults: function(results) {
+                var ctx = this,
+                    filtered = [];
+
+                for (var i = 0; i < results.length; i++) {
+                    var blurb = results[i]._source;
+
+                    filtered.push({
+                        title: blurb.title || blurb.name,
+                        type: blurb.type,
+                        desc: blurb.summary || blurb.description,
+                        link: /article|screencast/.test(blurb.type) ?
+                                blurb._id : blurb.url,
+                        short_date: /article|screencast/.test(blurb.type) ?
+                            blurb.posted_on.substr(0,10).replace(/-|\//g, '.') :
+                            blurb.pushed_at.substr(0,10).replace(/-|\//g, '.')
+                    });
+                };
+
+                return filtered;
+            },
+
+            getQueryTypes: function(params) {
+                return [
+                    params.articles,
+                    params.screencasts,
+                    params.scripts
+                ].filter(function(elem) {
+                    if (elem !== null) return elem;
+                }).map(function(elem) {
+                    return elem.toLowerCase();
+                });
+            },
+
+            getQueryFields: function(params) {
+                return (params.articles || params.screencasts ?
+                            ["title^2", "summary"] : []
+                          ).concat( (params.scripts ?
+                            ["name^2", "description"] : []) );
+            },
+
+            /**
+             * Creates the query that we send to elasticsearch.
+             *
+             * @param {Array} fields A list of document attributes to apply the search
+             * @param {String} query The term to search for
+             * @param {Array} types Search all articles and/or screencasts and/or scripts
+             * @returns {Object} The query object to send to elasticsearch
+             */
+            formatQuery: function(fields, query, types) {
+                return {
+                    "from": 0, "size": 100,
+                    "sort": [
+                        { "posted_on": { "order": "desc" } },
+                        "_score"
+                    ],
+                    "query": {
+                        "filtered": {
+                            "query": {
+                                "query_string": {
+                                    "fields": fields,
+                                    "query": query,
+                                    "fuzzy_prefix_length": 2,
+                                    "phrase_slop": 2,
+                                    "use_dis_max": true
+                                }
+                            },
+                            "filter": {
+                                "terms": { "type": types }
+                            }
+                        }
+                    }
+                };
+            },
+
             /**
              *  Load blurbs from a couchdb list and update the data attribute
              *  in $('.container') for pagination purposes.
@@ -355,14 +430,33 @@
         });
 
         this.post('#/search', function(ctx) {
-            ctx.log(ctx.params);
+            var $menu = $('header .wrapper:last .menu-link a'),
+                types = ctx.getQueryTypes(ctx.params),
+                fields = ctx.getQueryFields(ctx.params),
+                query = ctx.formatQuery(fields, ctx.params.search, types);
 
-            // load the search template
-            // replace contents of '.content' with template
-            ctx.render('search.mustache')
-                .replace('.content');
+            var data = {
+                "index": ctx.db.name,
+                "query": query
+            };
+
+            $.post('/search', JSON.stringify(data), function(data) {
+                var results = ctx.filterResults(JSON.parse(data.body).hits.hits),
+                stash = {
+                    search: ctx.params.search,
+                    results: {
+                        blurbs: results
+                    }
+                };
+
+                ctx.render('search.mustache', stash)
+                .replace('.content')
+                .trigger('show-hide-header', {
+                    "$parent": $menu.parents('header .wrapper'),
+                    "$menu": $menu
+                });
+            }, 'json');
         });
-
 
         this.post('#/new', function(ctx) {
             ctx.validateInputs(ctx.params, ctx.target, function () {
@@ -398,7 +492,6 @@
                     ctx.unSuccessfulSubmission(form, template, { klass: "submit-error", msg: msg });
                 }
             });
-
         });
 
 

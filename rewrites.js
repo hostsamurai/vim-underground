@@ -105,6 +105,13 @@
         "query": {}
     },
 
+    { // search
+        "from": "/search",
+        "to": "../../_search",
+        "method": "POST",
+        "query": {}
+    },
+
     { // update script feeds
         "from": "/feeds/:feed",
         "to": "_update/entries/:feed",

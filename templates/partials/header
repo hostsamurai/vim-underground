@@ -20,9 +20,9 @@
 
             <input type="submit" value="Search"/>
 
-            <label><input type="checkbox" checked="true" value="Articles" />Articles</label>
-            <label><input type="checkbox" checked="true" value="Screencasts" />Screencasts</label>
-            <label><input type="checkbox" checked="true" value="Scripts" />Scripts</label>
+            <label><input type="checkbox" checked="checked" name="articles" value="article" />Articles</label>
+            <label><input type="checkbox" checked="checked" name="screencasts" value="screencast" />Screencasts</label>
+            <label><input type="checkbox" checked="checked" name="scripts" value="script" />Scripts</label>
         </form>
 
         <div class="menu-link">

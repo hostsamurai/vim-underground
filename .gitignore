@@ -1,5 +1,5 @@
 .couchapprc
 .rvmrc
 .sass-cache/**
-external/mailer/node_modules
+**/**/node_modules
 log/**
