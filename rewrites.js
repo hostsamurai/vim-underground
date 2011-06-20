@@ -7,10 +7,10 @@
         "to": "_list/blurbs/latest_articles",
         "method": "GET",
         "query": {
-            "descending": true,
-            "limit": 15,
-            "rows": 3,
-            "cols": 5,
+            "descending": "true",
+            "limit": "15",
+            "rows": "3",
+            "cols": "5",
             "heading": "Latest Articles",
             "type": "articles",
             "bottomRow": "true",
@@ -24,10 +24,10 @@
         "to": "_list/blurbs/latest_articles",
         "method": "GET",
         "query": {
-            "descending": true,
-            "limit": 25,
-            "rows": 5,
-            "cols": 5,
+            "descending": "true",
+            "limit": "25",
+            "rows": "5",
+            "cols": "5",
             "heading": "Latest Articles",
             "type": "articles",
             "pageTitle": "Articles",
@@ -40,10 +40,10 @@
         "to": "_list/blurbs/latest_screencasts",
         "method": "GET",
         "query": {
-            "descending": true,
-            "limit": 25,
-            "rows": 5,
-            "cols": 5,
+            "descending": "true",
+            "limit": "25",
+            "rows": "5",
+            "cols": "5",
             "heading": "Latest Screencasts",
             "type": "t-screencasts",
             "pageTitle": "Screencasts",
@@ -56,10 +56,10 @@
         "to": "_list/blurbs/script_fragment",
         "method": "GET",
         "query": {
-            "descending": true,
-            "limit": 21,
-            "rows": 7,
-            "cols": 3,
+            "descending": "true",
+            "limit": "21",
+            "rows": "7",
+            "cols": "3",
             "heading": "Latest Script Updates",
             "type": "t-scripts",
             "pageTitle": "Scripts",
@@ -72,8 +72,8 @@
         "to": "_list/blurbs/latest_articles",
         "method": "GET",
         "query": {
-            "descending": true,
-            "limit": 20,
+            "descending": "true",
+            "limit": "20",
             "format": "atom",
             "title": "Articles Feed"
         }
@@ -84,8 +84,8 @@
         "to": "_list/blurbs/latest_screencasts",
         "method": "GET",
         "query": {
-            "descending": true,
-            "limit": 20,
+            "descending": "true",
+            "limit": "20",
             "format": "atom",
             "title": "Screencasts Feed"
         }
